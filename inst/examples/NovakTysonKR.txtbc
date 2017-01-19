@@ -1,0 +1,129 @@
+********** MODEL NAME
+
+Novak-Tyson Model
+
+********** MODEL NOTES
+
+Novak-Tyson cell cycle  model, described in J. theor. Biol. (1998) 195, 69-85
+Used in IQRsim as an example model for quick model generation and testing.
+
+Kinetic rate laws have been used in reaction definitions, instead of writing out
+the equations directly.
+
+********** MODEL STATE INFORMATION
+
+
+Cyclin(0) = 0.0172
+YT(0) = 0.0116
+PYT(0) = 9e-04
+PYTP(0) = 0.0198
+MPF(0) = 0.073
+Cdc25P(0) = 0.95
+Wee1P(0) = 0.95
+IEP(0) = 0.242
+APCstar(0) = 0.3132
+
+********** MODEL PARAMETERS
+
+Ka = 0.1
+Kb = 1
+Kc = 0.01
+Kd = 1
+Ke = 0.1
+Kf = 1
+Kg = 0.01
+Kh = 0.01
+k1 = 0.01
+k3 = 0.5
+V2p = 0.005
+V2pp = 0.25
+V25p = 0.017
+V25pp = 0.17
+Vweep = 0.01
+Vweepp = 1
+kcak = 0.64
+kpp = 0.004
+kas = 2
+kbs = 0.1
+kcs = 0.13
+kds = 0.13
+kes = 2
+kfs = 0.1
+kgs = 2
+khs = 0.15
+
+********** MODEL VARIABLES
+
+k2 = V2p+APCstar*(V2pp-V2p)
+kwee = Vweepp+Wee1P*(Vweep-Vweepp)
+k25 = V25p+Cdc25P*(V25pp-V25p)
+
+********** MODEL REACTIONS
+
+ => Cyclin : R1
+	vf = kin_constantflux(k1)
+
+Cyclin =>  : R2
+	vf = kin_mass_action_irr(k2,Cyclin)
+
+Cyclin => YT : R3
+	vf = kin_mass_action_irr(k3,Cyclin)
+
+MPF => YT : R4
+	vf = kin_mass_action_irr(kpp,MPF)
+
+YT => PYT : R5
+	vf = kin_mass_action_irr(kwee,YT)
+
+YT => MPF : R6
+	vf = kin_mass_action_irr(kcak,YT)
+
+YT =>  : R7
+	vf = kin_mass_action_irr(k2,YT)
+
+PYT => YT : R8
+	vf = kin_mass_action_irr(k25,PYT)
+
+PYT => PYTP : R9
+	vf = kin_mass_action_irr(kcak,PYT)
+
+PYT =>  : R10
+	vf = kin_mass_action_irr(k2,PYT)
+
+PYTP => PYT : R11
+	vf = kin_mass_action_irr(kpp,PYTP)
+
+MPF => PYTP : R12
+	vf = kin_mass_action_irr(kwee,MPF)
+
+PYTP => MPF : R13
+	vf = kin_mass_action_irr(k25,PYTP)
+
+PYTP =>  : R14
+	vf = kin_mass_action_irr(k2,PYTP)
+
+MPF =>  : R15
+	vf = kin_mass_action_irr(k2,MPF)
+
+ <=> Cdc25P : R16
+	vf = kin_michaelis_menten_irr(kas*MPF,(1-Cdc25P),Ka)
+	vr = kin_michaelis_menten_irr(kbs,Cdc25P,Kb)
+
+ <=> Wee1P : R17
+	vf = kin_michaelis_menten_irr(kes*MPF,(1-Wee1P),Ke)
+	vr = kin_michaelis_menten_irr(kfs,Wee1P,Kf)
+
+ <=> IEP : R18
+	vf = kin_michaelis_menten_irr(kgs*MPF,(1-IEP),Kg)
+	vr = kin_michaelis_menten_irr(khs,IEP,Kh)
+
+ <=> APCstar : R19
+	vf = kin_michaelis_menten_irr(kcs*IEP,(1-APCstar),Kc)
+	vr = kin_michaelis_menten_irr(kds,APCstar,Kd)
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS
+
+

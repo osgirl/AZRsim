@@ -1,0 +1,35 @@
+[
+    {
+        "definitions" : [
+            {
+                "column" : 15,
+                "file" : "C:/PROJTOOLS/AZRtoolsGITHUB/AZRsim/src/interpcse.cpp",
+                "kind" : 6,
+                "line" : 36,
+                "name" : "interpcse(NumericVector, NumericVector, NumericVector, double, double)",
+                "parent_name" : "",
+                "usr" : "c:@F@interpcse#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S0_#S0_#d#d#"
+            },
+            {
+                "column" : 6,
+                "file" : "C:/PROJTOOLS/AZRtoolsGITHUB/AZRsim/src/interpcse.cpp",
+                "kind" : 6,
+                "line" : 182,
+                "name" : "spline(int, int, int, double, double, double *, double *, double *, double *, double *, int *)",
+                "parent_name" : "",
+                "usr" : "c:@F@spline#I#I#I#d#d#*d#S0_#S0_#S0_#S0_#*I#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/PROJTOOLS/AZRtoolsGITHUB/AZRsim/src/interpcse.cpp",
+                "kind" : 6,
+                "line" : 300,
+                "name" : "seval(int, double, double *, double *, double *, double *, double *, int *)",
+                "parent_name" : "",
+                "usr" : "c:@F@seval#I#d#*d#S0_#S0_#S0_#S0_#*I#"
+            }
+        ],
+        "file" : "C:/PROJTOOLS/AZRtoolsGITHUB/AZRsim/src/interpcse.cpp",
+        "file_last_write" : 1484640752
+    }
+]

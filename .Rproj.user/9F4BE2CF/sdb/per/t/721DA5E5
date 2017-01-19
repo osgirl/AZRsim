@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "Package: AZRsim\nType: Package\nVersion: 0.0.0.9000\nTitle: Powerful Dynamic Model Representation and Simulation\nAuthor: Henning Schmidt [cre,aut], Mikael Sunnaker [aut], IntiQuan GmbH\n    [cre,aut,cph]\nMaintainer: IntiQuan GmbH <info@intiquan.com>\nDescription: Implementation of a powerful ODE and biochemical reaction expression \n    based model description language, allowing to describe most models used \n    in systems biology, systems pharmacology, and pharmacometrics. Simulation \n    of models is possible with or without dosing tables. AZRsim is an integral \n    part of the \"AZRtools Suite of R packages\".\nDepends:\n    R (>= 3.3.1)\nLicense: GPL-3\nURL: https://github.com/IntiQuan/AZRtools\nBugReports: https://github.com/IntiQuan/AZRtools/issues\nEncoding: UTF-8\nLazyData: true\nRoxygenNote: 5.0.1\nSuggests: testthat,\n    covr,\n    devtools,\n    roxygen2\nImports: deSolve (>= 1.14),\n    shiny (>= 0.14.1),\n    ggplot2 (>= 2.1.0),\n    tidyr (>= 0.6.0),\n    dplyr (>= 0.5.0),\n    methods (>= 3.3.1),\n    Rcpp (>= 0.12.7),\n    AZRaux\nLinkingTo: Rcpp\n",
+    "created" : 1484640792356.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3406530800",
+    "id" : "721DA5E5",
+    "lastKnownWriteTime" : 1484640798,
+    "last_content_update" : 1484640798822,
+    "path" : "C:/PROJTOOLS/AZRtoolsGITHUB/AZRsim/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "dcf"
+}

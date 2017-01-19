@@ -1,0 +1,32 @@
+********** MODEL NAME
+
+Bouncing ball
+
+********** MODEL NOTES
+
+Simple example, implementing  ODEs simulating a bouncing ball, using events.
+
+********** MODEL STATES
+
+d/dt(height) = velocity
+d/dt(velocity) = -9.8
+
+height(0) = 0
+velocity(0) = 10
+
+********** MODEL PARAMETERS
+
+
+********** MODEL VARIABLES
+
+
+********** MODEL REACTIONS
+
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS
+
+Event1 = lt(height,0),height,0,velocity,-0.9*velocity
+

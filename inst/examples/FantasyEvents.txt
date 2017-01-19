@@ -1,0 +1,43 @@
+********** MODEL NAME
+
+Fantasy Event Model
+
+********** MODEL NOTES
+
+Fantasy model based on the bounci ng ball example but adding more events
+testing the use of state contraints and changing both states and parameters
+using events.
+
+********** MODEL STATES
+
+d/dt(height) = velocity
+d/dt(velocity) = -9.8*p2
+d/dt(X1) = 1 {constraints:[0,10]}
+
+height(0) = height0
+velocity(0) = 10
+X1(0) = 0
+
+********** MODEL PARAMETERS
+
+p1 = 1
+p2 = 1
+height0 = 10
+
+********** MODEL VARIABLES
+
+v1 = mult(p1,p2)
+
+********** MODEL REACTIONS
+
+
+********** MODEL FUNCTIONS
+
+mult(x,y) = x*y
+
+********** MODEL EVENTS
+
+Event1 = lt(height,-0.001),velocity,-0.9*velocity,height,0,p1,-p1
+Event2 = ge(time,10),height,height+5,velocity,0,p1,3
+Event3 = ge(time,15),p2,10
+
