@@ -26,11 +26,11 @@ AZRplot <- function(data) {
     stop("AZRplot: 'data' is not a data frame")
 
   # Keep "numeric" columns only
-  dataNum <- data[,AZRaux:::veclocate(sapply(data, class)=="numeric")]
+  dataNum <- data[,veclocate(sapply(data, class)=="numeric")]
 
   # Check if a TIME column is present if yes then move it to first column
   # Use case insensitive matching
-  indexTIME <- AZRaux:::veclocate(toupper(names(dataNum))=="TIME")
+  indexTIME <- veclocate(toupper(names(dataNum))=="TIME")
 
   # Reorder columns in dataframe if "TIME" was found
   if (length(indexTIME)>0)

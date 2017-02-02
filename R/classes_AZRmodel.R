@@ -59,7 +59,7 @@ AZRmodel <- function (input=NULL,simFlag=TRUE) {
   #################################
   # Get extension of model file
   #################################
-  fileInfo <- AZRaux:::fileparts(input)
+  fileInfo <- fileparts(input)
 
   #################################
   # Try to import the file
@@ -291,7 +291,7 @@ hasonlynumericICsAZRmodel <- function(model) {
   if (getNumberOfStatesAZRmodel(model) < 1) return(TRUE)
 
   for (k in 1:getNumberOfStatesAZRmodel(model))
-    if (!AZRaux:::isnumericVector(model$state[[k]]$IC))
+    if (!isnumericVector(model$state[[k]]$IC))
       return(FALSE)
 
   return(TRUE)
@@ -807,7 +807,7 @@ delParameterAZRmodel <- function(model, index) {
   if (getNumberOfInputsAZRmodel(model) > 0) {
     paramnames <- getAllParametersAZRmodel(model)$paramnames
     for (k in 1:getNumberOfInputsAZRmodel(model)) {
-      model$inputs[[k]]$parindex = AZRaux:::strmatch(paramnames,model$inputs[[k]]$name)
+      model$inputs[[k]]$parindex = strmatch(paramnames,model$inputs[[k]]$name)
     }
   }
 
@@ -974,7 +974,7 @@ delVariableAZRmodel <- function(model, index) {
   if (getNumberOfOutputsAZRmodel(model) > 0) {
     varnames <- getAllVariablesAZRmodel(model)$varnames
     for (k in 1:getNumberOfOutputsAZRmodel(model)) {
-      model$outputs[[k]]$varindex = AZRaux:::strmatch(varnames,model$outputs[[k]]$name)
+      model$outputs[[k]]$varindex = strmatch(varnames,model$outputs[[k]]$name)
     }
   }
 
@@ -1775,12 +1775,12 @@ addInputAZRmodel <- function(model,
 
   name <- paste("INPUT", getNumberOfInputsAZRmodel(model)+1, sep="")
   for (k in 1:length(factors)) {
-    factors[k] <- AZRaux:::strtrim(factors[k])
+    factors[k] <- strtrim(factors[k])
     if (substr(factors[k],1,1)!="+") factors[k] <- paste("+",factors[k],sep="")
   }
 
   terms <- factors
-  for (k in 1:length(terms)) terms[k] <- paste(AZRaux:::strremWhite(factors[k]),"*",name, sep="")
+  for (k in 1:length(terms)) terms[k] <- paste(strremWhite(factors[k]),"*",name, sep="")
   model <- addParameterAZRmodel(model,name=name,value=0)
   parindex <- getNumberOfParametersAZRmodel(model)
   for (k in 1:length(stateindex))
@@ -1845,7 +1845,7 @@ delInputAZRmodel <- function(model, index) {
   # Remove INPUT term in ODE
   si <- model$inputs[[index]]$stateindex
   for (k in 1:length(si))
-    model$states[[si[k]]]$ODE <- AZRaux:::strrep(AZRaux:::strremWhite(model$states[[si[k]]]$ODE),model$inputs[[index]]$terms[[k]],"")
+    model$states[[si[k]]]$ODE <- strrep(strremWhite(model$states[[si[k]]]$ODE),model$inputs[[index]]$terms[[k]],"")
 
   # Save parindex of input
   parindex <- model$inputs[[index]]$parindex
@@ -2134,14 +2134,14 @@ renameElementsAZRmodel <- function(model, origStrings, newStrings) {
   # with simfunction handling !!!
   exportTxtAZRmodel(model,filename=tempfilename)
   # Load text file
-  content <- AZRaux:::fileread(tempfilename)
+  content <- fileread(tempfilename)
   # Exchange strings
   searchStrings <- paste("\\b",origStrings,"\\b",sep="")
   for (k in 1:length(searchStrings)) {
     content <- gsub(searchStrings[k], newStrings[k], content)
   }
   # Save modified model
-  AZRaux:::filewrite(content,tempfilename)
+  filewrite(content,tempfilename)
   # Load model (without generation of simulation functions)
   model <- importTxtAZRmodel(AZRmodel(),tempfilename)
   # Delete temp file
@@ -2176,11 +2176,11 @@ replaceTextAZRmodel <- function(model, origString, newString) {
   # Export model to temporary text file
   exportTxtAZRmodel(model,filename=tempfilename)
   # Load text file
-  content <- AZRaux:::fileread(tempfilename)
+  content <- fileread(tempfilename)
   # Exchange string
   content <- gsub(origString, newString, content, fixed=TRUE)
   # Save modified model
-  AZRaux:::filewrite(content,tempfilename)
+  filewrite(content,tempfilename)
   # Load model (without generation of simulation functions)
   model <- importTxtAZRmodel(AZRmodel(),tempfilename)
   # Delete temp file

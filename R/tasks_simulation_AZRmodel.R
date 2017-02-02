@@ -318,7 +318,7 @@ simulateAZRmodelDeSolve <- function(model,simtime,ICsim,parametersSim,method,ato
       simresALL = rbind(simresALL,simresALLpiece)
 
       # Check if an event has fired
-      ixevent <- AZRaux:::veclocate(attributes(simresODEpiece)$iroot==1)
+      ixevent <- veclocate(attributes(simresODEpiece)$iroot==1)
       if (length(ixevent!=0)) {
         # Event has fired - get the relevant event assignment function
         # and apply it to states and parameters

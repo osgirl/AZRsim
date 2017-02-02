@@ -25,7 +25,7 @@ importTxtBcAZRmodel <- function(model,filename) {
   ################################################################
 
   # Read model file row by row (already split by row)
-  modelText <- AZRaux:::fileread(filename,collapserows=FALSE)
+  modelText <- fileread(filename,collapserows=FALSE)
 
   # Remove empty rows
   modelText <- gsub("^\\s+$", "", modelText)
@@ -88,7 +88,7 @@ importTxtBcAZRmodel <- function(model,filename) {
   ################################################################
   model$name <- model_name[1]
   if (length(model_name) > 1) warning("importTxtBcAZRmodel: model name defined over more than one line. Only first line will be used.")
-  model$notes <- paste(AZRaux:::strtrim(model_notes),collapse="\n")
+  model$notes <- paste(strtrim(model_notes),collapse="\n")
   # Parameters, Variables, Functions, and Events are handled exactly like for TXT model import
   model <- getParameters(model,model_parameters)
   model <- getVariables(model,model_variables)
@@ -117,14 +117,14 @@ getReactionTerms <- function(reactionPart) {
   # explode into species and stoichiometric coefficients
   # expect the terms to be of the format:
   # factor*species + factor*species + ...
-  allTerms <- AZRaux:::strexplode(reactionPart,"\\+")
+  allTerms <- strexplode(reactionPart,"\\+")
 
   # check the syntax of the single terms (name or numeric*name)
   reactiontermsNames <- c()
   reactiontermsFactors <- c()
 
   for (k in 1:length(allTerms)) {
-    checkTerms <- AZRaux:::strexplode(allTerms[k],"\\*")
+    checkTerms <- strexplode(allTerms[k],"\\*")
     if (length(checkTerms) == 1) {
       reactiontermsNames <- c(reactiontermsNames, checkTerms[1])
       reactiontermsFactors <- c(reactiontermsFactors, 1)
@@ -158,54 +158,54 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
     # Get next row
     rowText = model_reactions[k]
     # Check if row contains a new reaction definition
-    if (!is.null(AZRaux:::strlocateall(rowText,":")$start)) {
+    if (!is.null(strlocateall(rowText,":")$start)) {
       nReac <- nReac+1
       # It is a new reaction definition
       # Get notes and definition
       reacInfo <- checkgetNotes(rowText)
-      reacDef <- AZRaux:::strremWhite(reacInfo$main)
+      reacDef <- strremWhite(reacInfo$main)
       reacNotes <- reacInfo$comment
       # Check FAST flag
       flagCheck <- checkGetFlag(reacDef,"{fast}")
       reacFast <- flagCheck$flagPresent
       reacDef <- flagCheck$textString
       # Get name, LHS, RHS, and reversibility information
-      if (!is.null(AZRaux:::strlocateall(reacDef,"<=>")$start)) {
+      if (!is.null(strlocateall(reacDef,"<=>")$start)) {
         reacReversible <- TRUE
-        reacDef <- AZRaux:::strrep(reacDef,"<=>","&&&")
+        reacDef <- strrep(reacDef,"<=>","&&&")
       } else {
-        if (!is.null(AZRaux:::strlocateall(reacDef,"=>")$start)) {
+        if (!is.null(strlocateall(reacDef,"=>")$start)) {
           reacReversible <- FALSE
-          reacDef <- AZRaux:::strrep(reacDef,"=>","&&&")
+          reacDef <- strrep(reacDef,"=>","&&&")
         } else {
           stop("getStatesReactionsTxtBc: wrong reaction expression")
         }
       }
       # Get name and equation
-      terms <- AZRaux:::strexplode(reacDef,":")
+      terms <- strexplode(reacDef,":")
       reacName <- terms[2]
       reacDef <- terms[1]
       # Get LHS and RHS
-      terms <- AZRaux:::strexplode(paste(" ",reacDef," ",sep=""),"&&&")
-      reacLHS <- AZRaux:::strtrim(terms[1])
-      reacRHS <- AZRaux:::strtrim(terms[2])
+      terms <- strexplode(paste(" ",reacDef," ",sep=""),"&&&")
+      reacLHS <- strtrim(terms[1])
+      reacRHS <- strtrim(terms[2])
 
       # Now parse the reaction kinetics
       # Next row should be "vf="
       k <- k+1
       if (k>length(model_reactions)) stop("getStatesReactionsTxtBc: error in reaction expression")
-      rowKineticsVF <- AZRaux:::strremWhite(model_reactions[k])
-      if (is.null(AZRaux:::strlocateall(rowKineticsVF,"vf=")$start))
+      rowKineticsVF <- strremWhite(model_reactions[k])
+      if (is.null(strlocateall(rowKineticsVF,"vf=")$start))
         stop("getStatesReactionsTxtBc: error in reaction expression")
-      rowKineticsVF <- AZRaux:::strrep(rowKineticsVF,"vf=","")
+      rowKineticsVF <- strrep(rowKineticsVF,"vf=","")
       if (reacReversible) {
         # Next row should be "vr="
         k <- k+1
         if (k>length(model_reactions)) stop("getStatesReactionsTxtBc: error in reaction expression")
-        rowKineticsVR <- AZRaux:::strremWhite(model_reactions[k])
-        if (is.null(AZRaux:::strlocateall(rowKineticsVR,"vr=")$start))
+        rowKineticsVR <- strremWhite(model_reactions[k])
+        if (is.null(strlocateall(rowKineticsVR,"vr=")$start))
           stop("getStatesReactionsTxtBc: error in reaction expression")
-        rowKineticsVR <- AZRaux:::strrep(rowKineticsVR,"vr=","")
+        rowKineticsVR <- strrep(rowKineticsVR,"vr=","")
         reacFormula <- paste(rowKineticsVF,"-",rowKineticsVR,sep="")
       } else {
         rowKineticsVR <- NULL
@@ -249,8 +249,8 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
   allVarNames <- getAllVariablesAZRmodel(model)$varnames
   if (length(allSpecies) > 0) {
     for (k in 1:length(allSpecies)) {
-      parameterIndex <- AZRaux:::strmatch(allSpecies[k],allParNames)
-      variableIndex <- AZRaux:::strmatch(allSpecies[k],allVarNames)
+      parameterIndex <- strmatch(allSpecies[k],allParNames)
+      variableIndex <- strmatch(allSpecies[k],allVarNames)
       if (is.null(parameterIndex) && is.null(variableIndex))
         allSpeciesStates <- c(allSpeciesStates, allSpecies[k])
     }
@@ -265,11 +265,11 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
     for (k2 in 1:length(reactionsList)) {
       reacName <- reactionsList[[k2]]$name
       # Check substrate names
-      ix <- AZRaux:::strmatch(stateName,reactionsList[[k2]]$substrateNames)
+      ix <- strmatch(stateName,reactionsList[[k2]]$substrateNames)
       if (!is.null(ix))
         stateODE <- paste(stateODE,"-",reactionsList[[k2]]$substrateFactors[ix],"*",reacName,sep="")
       # Check product names
-      ix <- AZRaux:::strmatch(stateName,reactionsList[[k2]]$productNames)
+      ix <- strmatch(stateName,reactionsList[[k2]]$productNames)
       if (!is.null(ix))
           stateODE <- paste(stateODE,"+",reactionsList[[k2]]$productFactors[ix],"*",reacName,sep="")
     }
@@ -326,7 +326,7 @@ getStatesTxtBc <- function(model,model_states) {
   # PROCESS ODEs
   ###################
   for (k in 1:length(ODEtest)) {
-    stateString <- AZRaux:::strtrim(model_states[ODEtest[k]])
+    stateString <- strtrim(model_states[ODEtest[k]])
 
     # extract the state name
     temp <- regexpr(")", stateString)
@@ -335,7 +335,7 @@ getStatesTxtBc <- function(model,model_states) {
     if (nchar(test) == 0) {
       stop("getStatesTxtBc: At least on state name in ODE definition is not given.")
     }
-    namek <- AZRaux:::strremWhite(test)
+    namek <- strremWhite(test)
 
     # extract the state ODE
     temp <- regexpr("=", stateString)
@@ -345,7 +345,7 @@ getStatesTxtBc <- function(model,model_states) {
       stop("getStatesTxtBc: At least one RHS of an ODE is not given.")
     }
     # The test string contains now the ODE
-    ODEk <- AZRaux:::strtrim(test)
+    ODEk <- strtrim(test)
 
     # Add state in model with default IC
     model <- addStateAZRmodel(model,name=namek,IC=0,ODE=ODEk)
@@ -358,25 +358,25 @@ getStatesTxtBc <- function(model,model_states) {
   if (length(ARtest) > 0) {
     for (k in 1:length(ARtest)) {
       # get each single AR
-      ARk <- AZRaux:::strtrim(model_states[ARtest[k]])
+      ARk <- strtrim(model_states[ARtest[k]])
 
       # split rhs in formula and variable name
-      terms <- AZRaux:::strexplode(ARk,':')
+      terms <- strexplode(ARk,':')
       if (length(terms) != 2) {
         ARformulak <- terms[1]
         ARnamek <- NULL # keep it empty
         ARick <- NULL
       } else {
-        ARformulak <- AZRaux:::strtrim(terms[1])
-        ARnamek <- AZRaux:::strtrim(terms[2])
+        ARformulak <- strtrim(terms[1])
+        ARnamek <- strtrim(terms[2])
         ARick <- 0 # default setting
       }
 
       # Remove 0 = in formula
-      terms <- AZRaux:::strexplode(ARformulak,'=')
+      terms <- strexplode(ARformulak,'=')
       if (length(terms) != 2 || as.numeric(terms[1])!=0)
         stop("getStatesTxtBc: error in algebraic state definition")
-      ARformulak <- AZRaux:::strtrim(terms[2])
+      ARformulak <- strtrim(terms[2])
 
       # add algebraic state to the model
       model <- addAlgebraicAZRmodel(model,name=ARnamek,IC=ARick,formula=ARformulak)
@@ -391,7 +391,7 @@ getStatesTxtBc <- function(model,model_states) {
   # First check if any initial conditions are given - if not then don't execute this part!
   if (length(ICtest) > 0) {
     for (k1 in 1:length(ICtest)) {
-      ICString <- AZRaux:::strremWhite(model_states[ICtest[k1]])
+      ICString <- strremWhite(model_states[ICtest[k1]])
 
       # Parse comments / notes
       commentInfo <- checkgetNotes(ICString)
@@ -403,18 +403,18 @@ getStatesTxtBc <- function(model,model_states) {
       infoStartConstraints <- grep("\\{constraints:", ICString)
 
       if (length(infoStartConstraints) > 0) {
-        ICString <- AZRaux:::strremWhite(ICString)
+        ICString <- strremWhite(ICString)
 
         tempStart <- regexpr("\\{constraints:", ICString)
         tempEnd <- regexpr("\\]\\}", ICString)
 
         # get first bracket after {constraints}
-        constraintsString <- AZRaux:::strtrim(substr(ICString,(tempStart[1]+13),(tempEnd[tempStart<tempEnd][1])))
-        ICString <- AZRaux:::strtrim(paste(substr(ICString,1,tempStart[1]-1), substr(ICString,(tempEnd[tempStart<tempEnd][1]),nchar(ICString)-2), sep = ""))
+        constraintsString <- strtrim(substr(ICString,(tempStart[1]+13),(tempEnd[tempStart<tempEnd][1])))
+        ICString <- strtrim(paste(substr(ICString,1,tempStart[1]-1), substr(ICString,(tempEnd[tempStart<tempEnd][1]),nchar(ICString)-2), sep = ""))
         tempStart2 <- regexpr("\\[", constraintsString)
         tempEnd2 <- regexpr("\\]", constraintsString)
         constraintsString <- substr(constraintsString,(tempStart2[1]+1),(tempEnd2[1]-1))
-        stateConstraints <- AZRaux:::strexplode(constraintsString,',')
+        stateConstraints <- strexplode(constraintsString,',')
         if (length(stateConstraints) != 2) {
           stop('getStatesTxtBc: A state-constraint information seems to be wrongly defined')
         }
@@ -431,16 +431,16 @@ getStatesTxtBc <- function(model,model_states) {
 
       # extract the state name
       temp <- regexpr("\\(0\\)", ICString)
-      stateName <- AZRaux:::strtrim(substr(ICString,1,temp[1]-1))
+      stateName <- strtrim(substr(ICString,1,temp[1]-1))
 
       # extract the states' initial condition
       temp <- regexpr("=", ICString)
-      stateIC <- AZRaux:::strtrim(substr(ICString,temp[1]+1,nchar(ICString)))
+      stateIC <- strtrim(substr(ICString,temp[1]+1,nchar(ICString)))
 
       # add state information into model
       found <- FALSE
 
-      ix <- AZRaux:::veclocate(getAllStatesAZRmodel(model)$statenames==stateName)
+      ix <- veclocate(getAllStatesAZRmodel(model)$statenames==stateName)
 
       if (length(ix) > 1)
         stop("getStatesTxtBc: error in model definition - a state appears more than once.")
@@ -462,7 +462,7 @@ getStatesTxtBc <- function(model,model_states) {
             algebraic_names <- cbind(algebraic_names,"UNDEFINED_AR_NAME")
           }
         }
-        ix <- AZRaux:::veclocate(algebraic_names==stateName)
+        ix <- veclocate(algebraic_names==stateName)
         if (length(ix) != 0) {
           model <- setAlgebraicAZRmodel(model,ix,IC=stateIC,type=typek,compartment=compartmentk,unittype=unittypek,
                                         notes=notesk)
