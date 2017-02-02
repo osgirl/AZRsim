@@ -5,10 +5,10 @@ Title: Powerful Dynamic Model Representation and Simulation
 Author: Henning Schmidt [cre,aut], Mikael Sunnaker [aut], IntiQuan GmbH
     [cre,aut,cph]
 Maintainer: IntiQuan GmbH <info@intiquan.com>
-Description: Implementation of a powerful ODE and biochemical reaction expression 
-    based model description language, allowing to describe most models used 
-    in systems biology, systems pharmacology, and pharmacometrics. Simulation 
-    of models is possible with or without dosing tables. AZRsim is an integral 
+Description: Implementation of a powerful ODE and biochemical reaction expression
+    based model description language, allowing to describe most models used
+    in systems biology, systems pharmacology, and pharmacometrics. Simulation
+    of models is possible with or without dosing tables. AZRsim is an integral
     part of the "AZRtools Suite of R packages".
 Depends:
     R (>= 3.3.1)
@@ -29,5 +29,4 @@ Imports: deSolve (>= 1.14),
     dplyr (>= 0.5.0),
     methods (>= 3.3.1),
     Rcpp (>= 0.12.7),
-    AZRaux
 LinkingTo: Rcpp
