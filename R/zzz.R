@@ -3,10 +3,6 @@
 ###############################################################################
 ###############################################################################
 
-#' @useDynLib AZRsim
-#' @importFrom Rcpp sourceCpp
-NULL
-
 ###############################################################################
 # .onAttach
 ###############################################################################
@@ -26,5 +22,12 @@ NULL
 # .onUnload
 ###############################################################################
 .onUnload <- function(libpath) {
-  library.dynam.unload("AZRsim", libpath)
 }
+
+###############################################################################
+# Halleluja CRAN check ...
+# globalVariables is a hideous hack and I will never use it. – hadley Sep 25 '12 at 16:10
+# @hadley you shouldn't say you'll never use things when only two years later you think it's fine – hadley Dec 31 '14 at 19:31
+# http://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when
+###############################################################################
+globalVariables(c("TIME", "INPUT", "TIME_DOSE_EFFECT_START", "time"))

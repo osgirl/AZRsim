@@ -13,7 +13,7 @@ checkProcessDosingTable <- function(dosingTable) {
   if (!("DOSE" %in% names(dosingTable))) stop("DOSE column required in a dosing table")
 
   # Sort the dosing table after TIME and INPUT
-  dosingTable <- dplyr::arrange(dosingTable,dosingTable[,"TIME"],dosingTable[,"INPUT"])
+  dosingTable <- dplyr::arrange(dosingTable,TIME,INPUT)
 
   # Check if DURATION is present in dosing table
   # Handle DURATION and RATE columns
@@ -51,12 +51,12 @@ checkProcessDosingTable <- function(dosingTable) {
   # (time+duration+lagtime < next dosing time)
   inputs <- unique(dosingTable$INPUT)
   for (k in 1:length(inputs)) {
-    dosingTableInputk <- dplyr::filter(dosingTable,dosingTable[,"INPUT"]==inputs[k])
+    dosingTableInputk <- dplyr::filter(dosingTable,INPUT==inputs[k])
     DoseTimes <- sort(unique(dosingTableInputk$TIME))
     if (length(DoseTimes) > 1) {
       dosingTableInputk$TEST_TIMING <- dosingTableInputk$TIME+dosingTableInputk$DURATION+dosingTableInputk$LAGTIME
       for (k in 1:(length(DoseTimes)-1)) {
-        if (max(dplyr::filter(dosingTableInputk,dosingTableInputk[,"TIME"]==DoseTimes[k])$TEST_TIMING) > DoseTimes[k+1])
+        if (max(dplyr::filter(dosingTableInputk,TIME==DoseTimes[k])$TEST_TIMING) > DoseTimes[k+1])
           stop("checkProcessDosingTable: dose administration of a dose happens after start of next dosing event")
       }
     }

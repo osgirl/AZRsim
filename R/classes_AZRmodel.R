@@ -59,7 +59,7 @@ AZRmodel <- function (input=NULL,simFlag=TRUE) {
   #################################
   # Get extension of model file
   #################################
-  fileInfo <- fileparts(input)
+  fileInfo <- AZRaux::fileparts(input)
 
   #################################
   # Try to import the file
@@ -259,7 +259,7 @@ checkNamesAZRmodel <- function(model) {
 
   # Define reserved words - case insensitive
   reservedWords <- toupper(c("F","G","H","gt","ge","lt","le","mod","and","or","multiply",
-                             "piecewise","interp0","interp1","interpcs","interpcse"))
+                             "piecewise","interp0","interp1","interpcs", "default", "F1", "F2"))
 
   # Check if model contains elements with names matching reserved words
   if (length(intersect(stateNames,reservedWords)) > 0)
@@ -291,7 +291,7 @@ hasonlynumericICsAZRmodel <- function(model) {
   if (getNumberOfStatesAZRmodel(model) < 1) return(TRUE)
 
   for (k in 1:getNumberOfStatesAZRmodel(model))
-    if (!isnumericVector(model$state[[k]]$IC))
+    if (!AZRaux::isnumericVector(model$state[[k]]$IC))
       return(FALSE)
 
   return(TRUE)
@@ -339,6 +339,32 @@ hasalgebraicAZRmodel <- function(model) {
   if (getNumberOfAlgebraicAZRmodel(model) < 1) return(FALSE)
 
   return(TRUE)
+}
+
+###############################################################################
+# hasconstraintsAZRmodel
+###############################################################################
+# Checks if the model contains state constraints
+#
+# @param model An AZRmodel object
+# @return TRUE if model contains state constraints, FALSE otherwise
+# @examples
+hasconstraintsAZRmodel <- function(model) {
+
+  if (!is.AZRmodel(model))
+    stop("hasconstraintsAZRmodel: input argument is not an AZRmodel")
+
+  if (!is.null(attr(model,"originalModel")))
+    model <- attr(model,"originalModel")
+
+  for (k in 1:getNumberOfStatesAZRmodel(model)) {
+    if (!is.null(model$states[[k]]$lowConstraint))
+      return(TRUE)
+    if (!is.null(model$states[[k]]$highConstraint))
+      return(TRUE)
+  }
+
+  return(FALSE)
 }
 
 ###############################################################################
@@ -807,7 +833,7 @@ delParameterAZRmodel <- function(model, index) {
   if (getNumberOfInputsAZRmodel(model) > 0) {
     paramnames <- getAllParametersAZRmodel(model)$paramnames
     for (k in 1:getNumberOfInputsAZRmodel(model)) {
-      model$inputs[[k]]$parindex = strmatch(paramnames,model$inputs[[k]]$name)
+      model$inputs[[k]]$parindex = AZRaux::strmatch(paramnames,model$inputs[[k]]$name)
     }
   }
 
@@ -974,7 +1000,7 @@ delVariableAZRmodel <- function(model, index) {
   if (getNumberOfOutputsAZRmodel(model) > 0) {
     varnames <- getAllVariablesAZRmodel(model)$varnames
     for (k in 1:getNumberOfOutputsAZRmodel(model)) {
-      model$outputs[[k]]$varindex = strmatch(varnames,model$outputs[[k]]$name)
+      model$outputs[[k]]$varindex = AZRaux::strmatch(varnames,model$outputs[[k]]$name)
     }
   }
 
@@ -1775,12 +1801,12 @@ addInputAZRmodel <- function(model,
 
   name <- paste("INPUT", getNumberOfInputsAZRmodel(model)+1, sep="")
   for (k in 1:length(factors)) {
-    factors[k] <- strtrim(factors[k])
+    factors[k] <- AZRaux::strtrimM(factors[k])
     if (substr(factors[k],1,1)!="+") factors[k] <- paste("+",factors[k],sep="")
   }
 
   terms <- factors
-  for (k in 1:length(terms)) terms[k] <- paste(strremWhite(factors[k]),"*",name, sep="")
+  for (k in 1:length(terms)) terms[k] <- paste(AZRaux::strremWhite(factors[k]),"*",name, sep="")
   model <- addParameterAZRmodel(model,name=name,value=0)
   parindex <- getNumberOfParametersAZRmodel(model)
   for (k in 1:length(stateindex))
@@ -1845,7 +1871,7 @@ delInputAZRmodel <- function(model, index) {
   # Remove INPUT term in ODE
   si <- model$inputs[[index]]$stateindex
   for (k in 1:length(si))
-    model$states[[si[k]]]$ODE <- strrep(strremWhite(model$states[[si[k]]]$ODE),model$inputs[[index]]$terms[[k]],"")
+    model$states[[si[k]]]$ODE <- AZRaux::strrepM(AZRaux::strremWhite(model$states[[si[k]]]$ODE),model$inputs[[index]]$terms[[k]],"")
 
   # Save parindex of input
   parindex <- model$inputs[[index]]$parindex
@@ -2109,6 +2135,74 @@ getAllReactionsAZRmodel <- function(model) {
   return(list(reacnames=reacnames,reacformulas=reacformulas,reacfast=reacfast,reacreversible=reacreversible))
 }
 
+# Get information about all functions in an AZRmodel
+#
+# @param model An AZRmodel
+# @return A list with the following components:
+# \item{funcnames}{Vector with function names}
+# \item{funcformulas}{Vector with function formulas}
+# \item{funcarguments}{Flag for fast reactions}
+# @examples
+# @export
+getAllFunctionsAZRmodel <- function(model) {
+
+  if (!is.AZRmodel(model))
+    stop("getAllFunctionsAZRmodel: model argument is not an AZRmodel")
+
+  funcnames <- c()
+  funcformulas <- c()
+  funcarguments <- c()
+  if (getNumberOfFunctionsAZRmodel(model) > 0) {
+    for (k in 1:getNumberOfFunctionsAZRmodel(model)) {
+      x <- getFunctionAZRmodel(model,k)
+      funcnames[k] <- x$name
+      funcformulas[k] <- x$formula
+      funcarguments[k] <- x$arguments
+    }
+  }
+  names(funcnames) <- funcnames
+  names(funcformulas) <- funcnames
+  names(funcarguments) <- funcnames
+  return(list(funcnames=funcnames,funcformulas=funcformulas,funcarguments=funcarguments))
+}
+
+# Get information about all events in an AZRmodel
+#
+# @param model An AZRmodel
+# @return A list with the following components:
+# \item{evenames}{Vector with event names}
+# \item{evetriggers}{Vector with event triggers}
+# \item{evevariables}{Vector with states/parameters affected by the event assignments}
+# \item{eveformulas}{Vector with event assignment expressions}
+# @examples
+# @export
+getAllEventsAZRmodel <- function(model) {
+
+  if (!is.AZRmodel(model))
+    stop("getAllEventsAZRmodel: model argument is not an AZRmodel")
+
+  evenames <- c()
+  evetriggers <- c()
+  evevariables <- c()
+  eveformulas <- c()
+  if (getNumberOfEventsAZRmodel(model) > 0) {
+    for (k in 1:getNumberOfEventsAZRmodel(model)) {
+      x <- getEventAZRmodel(model,k)
+      evenames[k] <- x$name
+      evetriggers[k] <- x$trigger
+      # unlist assignments
+      y <- unname(unlist(x$assignment))
+      evevariables[k] <- list(y[seq(1,length(y),2)])
+      eveformulas[k] <- list(y[seq(2,length(y),2)])
+    }
+  }
+  names(evenames) <- evenames
+  names(evetriggers) <- evenames
+  names(evevariables) <- evenames
+  names(eveformulas) <- evenames
+  return(list(evenames=evenames,evetriggers=evetriggers,evevariables=evevariables,eveformulas=eveformulas))
+}
+
 
 ###############################################################################
 # Rename model elements
@@ -2134,14 +2228,14 @@ renameElementsAZRmodel <- function(model, origStrings, newStrings) {
   # with simfunction handling !!!
   exportTxtAZRmodel(model,filename=tempfilename)
   # Load text file
-  content <- fileread(tempfilename)
+  content <- AZRaux::fileread(tempfilename)
   # Exchange strings
   searchStrings <- paste("\\b",origStrings,"\\b",sep="")
   for (k in 1:length(searchStrings)) {
     content <- gsub(searchStrings[k], newStrings[k], content)
   }
   # Save modified model
-  filewrite(content,tempfilename)
+  AZRaux::filewrite(content,tempfilename)
   # Load model (without generation of simulation functions)
   model <- importTxtAZRmodel(AZRmodel(),tempfilename)
   # Delete temp file
@@ -2176,11 +2270,11 @@ replaceTextAZRmodel <- function(model, origString, newString) {
   # Export model to temporary text file
   exportTxtAZRmodel(model,filename=tempfilename)
   # Load text file
-  content <- fileread(tempfilename)
+  content <- AZRaux::fileread(tempfilename)
   # Exchange string
   content <- gsub(origString, newString, content, fixed=TRUE)
   # Save modified model
-  filewrite(content,tempfilename)
+  AZRaux::filewrite(content,tempfilename)
   # Load model (without generation of simulation functions)
   model <- importTxtAZRmodel(AZRmodel(),tempfilename)
   # Delete temp file

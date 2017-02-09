@@ -164,8 +164,8 @@ AZRsimulate <- function (model,
     dte <- dosingTable
     dte$EVID<-1
     y <- dplyr::full_join(xe,dte,by=c("TIME","EVID"))
-    y <- dplyr::arrange(y,y[,"TIME"])
-    y <- dplyr::filter(y,y[,"TIME"]<=max(simtime))
+    y <- dplyr::arrange(y,TIME)
+    y <- dplyr::filter(y,TIME<=max(simtime))
     y$EVID <- NULL
     if (getNumberOfInputsAZRmodel(attr(model,"originalModel")) > 0) {
       for (k in 1:getNumberOfInputsAZRmodel(attr(model,"originalModel"))) {
@@ -189,13 +189,13 @@ simulateAZRmodelDosingTableDeSolve <- function(model,simtime,ICsim,parametersSim
   simresALL <- c()
 
   # Adjust dosing table to max TIME as in max simtime
-  dosingTable <- dplyr::filter(dosingTable,dosingTable[,"TIME"]<=max(simtime))
+  dosingTable <- dplyr::filter(dosingTable,TIME<=max(simtime))
 
   # Add information about actual dose administration start
   dosingTable$TIME_DOSE_EFFECT_START <- dosingTable$TIME+dosingTable$LAGTIME
 
   # Sort by start of dose effect
-  dosingTable <- dplyr::arrange(dosingTable,dosingTable[,"TIME_DOSE_EFFECT_START"])
+  dosingTable <- dplyr::arrange(dosingTable,TIME_DOSE_EFFECT_START)
 
   # Simulations need to be done from current TIME_DOSE_EFFECT_START to next TIME_DOSE_EFFECT_START ...
 
@@ -229,7 +229,7 @@ simulateAZRmodelDosingTableDeSolve <- function(model,simtime,ICsim,parametersSim
       simtimePiece <- unique(c(dosingEffectStartTimes[k],simtime[simtime>=dosingEffectStartTimes[k] & simtime<=dosingEffectStartTimes[k+1]],dosingEffectStartTimes[k+1]))
 
       # Get dosing information for the dosing time
-      doseInfo <- dplyr::filter(dosingTable,dosingTable[,"TIME_DOSE_EFFECT_START"]==dosingEffectStartTimes[k])
+      doseInfo <- dplyr::filter(dosingTable,TIME_DOSE_EFFECT_START==dosingEffectStartTimes[k])
 
       # Need to generate an updated parameter vector with dosing information
       for (k2 in 1:nrow(doseInfo)) {
@@ -258,7 +258,7 @@ simulateAZRmodelDosingTableDeSolve <- function(model,simtime,ICsim,parametersSim
 
   if (length(simresPostLastDose)>1) {
     # Get dosing information for the dosing time
-    doseInfo <- dplyr::filter(dosingTable,dosingTable[,"TIME_DOSE_EFFECT_START"]==dosingEffectStartTimes[length(dosingEffectStartTimes)])
+    doseInfo <- dplyr::filter(dosingTable,TIME_DOSE_EFFECT_START==dosingEffectStartTimes[length(dosingEffectStartTimes)])
 
     # Need to generate an updated parameter vector with dosing information
     for (k2 in 1:nrow(doseInfo)) {
@@ -277,7 +277,7 @@ simulateAZRmodelDosingTableDeSolve <- function(model,simtime,ICsim,parametersSim
   }
 
   # Keep only simtime elements
-  simresALL <- dplyr::filter(simresALL,simresALL[,"time"] %in% simtime)
+  simresALL <- dplyr::filter(simresALL,time %in% simtime)
 
   return(simresALL)
 }
@@ -318,7 +318,7 @@ simulateAZRmodelDeSolve <- function(model,simtime,ICsim,parametersSim,method,ato
       simresALL = rbind(simresALL,simresALLpiece)
 
       # Check if an event has fired
-      ixevent <- veclocate(attributes(simresODEpiece)$iroot==1)
+      ixevent <- unname(which(attributes(simresODEpiece)$iroot==1))
       if (length(ixevent!=0)) {
         # Event has fired - get the relevant event assignment function
         # and apply it to states and parameters
@@ -339,7 +339,7 @@ simulateAZRmodelDeSolve <- function(model,simtime,ICsim,parametersSim,method,ato
       # Get new simtimePiece vector
       simtimePiece <- c(timeEndPiece,simtimePiece[simtimePiece>timeEndPiece])
     }
-    simresALL <- dplyr::filter(simresALL,simresALL[,"time"] %in% simtime)
+    simresALL <- dplyr::filter(simresALL,time %in% simtime)
   }
   return(simresALL)
 }

@@ -4,7 +4,7 @@ Novak-Tyson Model
 
 ********** MODEL NOTES
 
-Novak-Tyson cell cycle  model, described in J. theor. Biol. (1998) 195, 69-85
+Novak-Tyson cell cycle model, described in J. theor. Biol. (1998) 195, 69-85
 Used in IQRsim as an example model for quick model generation and testing.
 
 Kinetic rate laws have been used in reaction definitions, instead of writing out
@@ -12,7 +12,7 @@ the equations directly.
 
 ********** MODEL STATE INFORMATION
 
-
+ 
 Cyclin(0) = 0.0172
 YT(0) = 0.0116
 PYT(0) = 9e-04
@@ -22,7 +22,7 @@ Cdc25P(0) = 0.95
 Wee1P(0) = 0.95
 IEP(0) = 0.242
 APCstar(0) = 0.3132
-
+ 
 ********** MODEL PARAMETERS
 
 Ka = 0.1
@@ -51,13 +51,13 @@ kes = 2
 kfs = 0.1
 kgs = 2
 khs = 0.15
-
+ 
 ********** MODEL VARIABLES
 
 k2 = V2p+APCstar*(V2pp-V2p)
 kwee = Vweepp+Wee1P*(Vweep-Vweepp)
 k25 = V25p+Cdc25P*(V25pp-V25p)
-
+ 
 ********** MODEL REACTIONS
 
  => Cyclin : R1
@@ -108,7 +108,7 @@ MPF =>  : R15
  <=> Cdc25P : R16
 	vf = kin_michaelis_menten_irr(kas*MPF,(1-Cdc25P),Ka)
 	vr = kin_michaelis_menten_irr(kbs,Cdc25P,Kb)
-
+	
  <=> Wee1P : R17
 	vf = kin_michaelis_menten_irr(kes*MPF,(1-Wee1P),Ke)
 	vr = kin_michaelis_menten_irr(kfs,Wee1P,Kf)
@@ -123,7 +123,7 @@ MPF =>  : R15
 
 ********** MODEL FUNCTIONS
 
-
+ 
 ********** MODEL EVENTS
 
-
+ 

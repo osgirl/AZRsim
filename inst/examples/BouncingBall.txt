@@ -4,7 +4,7 @@ Bouncing ball
 
 ********** MODEL NOTES
 
-Simple example, implementing  ODEs simulating a bouncing ball, using events.
+Simple example, implementing ODEs simulating a bouncing ball, using events.
 
 ********** MODEL STATES
 

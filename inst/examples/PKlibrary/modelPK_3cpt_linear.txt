@@ -1,0 +1,51 @@
+********** MODEL NAME
+
+model_3cpt_linear
+
+********** MODEL NOTES
+
+Linear three compartmental distribution model with inputs
+allowing to realize first order absorptions into central
+compartment and direct administration into central compartment.
+
+********** MODEL STATES
+
+d/dt(Ad) 	= -ka*Ad + Fabs1*INPUT1
+d/dt(Ac) 	=  ka*Ad - CL/Vc*Ac - Q1/Vc*Ac + Q1/Vp1*Ap1 - Q2/Vc*Ac + Q2/Vp2*Ap2 + INPUT2
+d/dt(Ap1) =                     Q1/Vc*Ac - Q1/Vp1*Ap1
+d/dt(Ap2) =                                             Q2/Vc*Ac - Q2/Vp2*Ap2
+
+Ad(0) 	 	= 0
+Ac(0)    	= 0
+Ap1(0)   	= 0
+Ap2(0)   	= 0
+
+********** MODEL PARAMETERS
+
+Fabs1    	= 1   	% Bioavailability
+ka 			  = 0.2 	% Absorption rate parameter
+CL 			  = 0.2 	% Clearance
+Vc 			  = 3 	  % Central volume
+Q1        = 0.8   % Intercompartmental clearance first peripheral compartment
+Vp1       = 3     % Peripheral volume first peripheral compartment
+Q2        = 0.8   % Intercompartmental clearance second peripheral compartment
+Vp2       = 3     % Peripheral volume second peripheral compartment
+
+********** MODEL VARIABLES
+
+% Calculation of concentration in central compartment
+Cc 			  = Ac/Vc
+
+% Defining an output (only needed when interfacing with NLME
+% parameter estimation tools such as NONMEM and MONOLIX)
+OUTPUT1  	= Cc
+
+********** MODEL REACTIONS
+
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS
+
+

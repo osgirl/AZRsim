@@ -1,0 +1,47 @@
+********** MODEL NAME
+
+model_2cpt_linear
+
+********** MODEL NOTES
+
+Linear two compartmental distribution model with inputs
+allowing to realize first order absorptions into central
+compartment and direct administration into central compartment.
+
+********** MODEL STATES
+
+d/dt(Ad) 	= -ka*Ad + Fabs1*INPUT1
+d/dt(Ac) 	=  ka*Ad - CL/Vc*Ac - Q1/Vc*Ac + Q1/Vp1*Ap1 + INPUT2
+d/dt(Ap1) =                     Q1/Vc*Ac - Q1/Vp1*Ap1
+
+Ad(0) 	 	= 0
+Ac(0)    	= 0
+Ap1(0)   	= 0
+
+********** MODEL PARAMETERS
+
+Fabs1    	= 1   	% Bioavailability
+ka 			  = 0.2 	% Absorption rate parameter
+CL 			  = 0.2 	% Clearance
+Vc 			  = 3 	  % Central volume
+Q1        = 0.8   % Intercompartmental clearance
+Vp1       = 3     % Peripheral volume
+
+********** MODEL VARIABLES
+
+% Calculation of concentration in central compartment
+Cc 			  = Ac/Vc
+
+% Defining an output (only needed when interfacing with NLME
+% parameter estimation tools such as NONMEM and MONOLIX)
+OUTPUT1  	= Cc
+
+********** MODEL REACTIONS
+
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS
+
+

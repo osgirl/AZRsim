@@ -234,7 +234,6 @@ piecewise <- function (...) {
 # interp0
 # interp1
 # interpcs
-# interpcse
 # Important: due to R syntax the use of these functions in AZRmodels is limited
 # to C-code simulation. Therefor, when simulating a model with any of these
 # functions using deSolve, only an error will be shown and thus the functions
@@ -290,8 +289,4 @@ interpcs <- function (x,y,xi) {
   if (xi <= x[1]) return(y[1])
   return(stats::spline(x=x,y=y,xout=xi,method="natural")$y)
 }
-
-# interpcse: Cubic spline interpolation with endpoints
-# Implemented as C code function in the src folder.
-
 

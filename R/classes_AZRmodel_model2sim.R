@@ -48,7 +48,7 @@ genSimFunctions <- function (model) {
   # Replace names of specific functions and kinetic rate laws by adding the AZRsim:::
   # namespace identifier in front.
   origStrings <- c("gt","ge","lt","le","mod","and","or","multiply","piecewise",
-                   "interp0","interp1","interpcs","interpcse")
+                   "interp0","interp1","interpcs")
   origStrings <- c(origStrings, getAllKineticRateLaws())
   newStrings <- paste("AZRsim:::",origStrings,sep="")
   modelDeSolveSpecific <- renameElementsAZRmodel(model, origStrings, newStrings)
@@ -99,11 +99,11 @@ handleVectorSyntaxDeSolve <- function(model) {
     formula <- model$states[[k]]$ODE
     # Check if square brackets present in formula - if so then lets
     # make R vectors out of it
-    if (!is.null(strlocateall(formula,"[")$start)) {
+    if (!is.null(AZRaux::strlocateall(formula,"[")$start)) {
       # Square brackets present
-      formula <- strremWhite(formula)
-      formula <- strrep(formula,"[","c(")
-      formula <- strrep(formula,"]",")")
+      formula <- AZRaux::strremWhite(formula)
+      formula <- AZRaux::strrepM(formula,"[","c(")
+      formula <- AZRaux::strrepM(formula,"]",")")
       model$states[[k]]$ODE <- formula
     }
   }
@@ -114,11 +114,11 @@ handleVectorSyntaxDeSolve <- function(model) {
       formula <- model$variables[[k]]$formula
       # Check if square brackets present in formula - if so then lets
       # make R vectors out of it
-      if (!is.null(strlocateall(formula,"[")$start)) {
+      if (!is.null(AZRaux::strlocateall(formula,"[")$start)) {
         # Square brackets present
-        formula <- strremWhite(formula)
-        formula <- strrep(formula,"[","c(")
-        formula <- strrep(formula,"]",")")
+        formula <- AZRaux::strremWhite(formula)
+        formula <- AZRaux::strrepM(formula,"[","c(")
+        formula <- AZRaux::strrepM(formula,"]",")")
         model$variables[[k]]$formula <- formula
       }
     }
@@ -130,11 +130,11 @@ handleVectorSyntaxDeSolve <- function(model) {
       formula <- model$reactions[[k]]$formula
       # Check if square brackets present in formula - if so then lets
       # make R vectors out of it
-      if (!is.null(strlocateall(formula,"[")$start)) {
+      if (!is.null(AZRaux::strlocateall(formula,"[")$start)) {
         # Square brackets present
-        formula <- strremWhite(formula)
-        formula <- strrep(formula,"[","c(")
-        formula <- strrep(formula,"]",")")
+        formula <- AZRaux::strremWhite(formula)
+        formula <- AZRaux::strrepM(formula,"[","c(")
+        formula <- AZRaux::strrepM(formula,"]",")")
         model$reactions[[k]]$formula <- formula
       }
     }
@@ -217,7 +217,7 @@ nnICsim <- function (model) {
 
   nnICfctText <- paste(nnICfctText,"\n",sep="")
 
-  nnICfctText <- paste(nnICfctText,"  if (length(veclocate(is.na(out)))>0)\n",sep="")
+  nnICfctText <- paste(nnICfctText,"  if (length(which(is.na(out)))>0)\n",sep="")
   nnICfctText <- paste(nnICfctText,"    stop('nnICsim: problem in evaluation of non-numerical initial conditions')\n",sep="")
 
   nnICfctText <- paste(nnICfctText,"\n",sep="")
@@ -377,10 +377,10 @@ genROOTsim <- function (model) {
   for (k in 1:(getNumberOfEventsAZRmodel(model))) {
     # Check first if trigger function contains either gtAZR, geAZR, ltAZR, leAZR if not throw an error
     trigger <- model$events[[k]]$trigger
-    testStart <- c(strlocateall(trigger,"AZRsim:::le(")$start,
-                   strlocateall(trigger,"AZRsim:::lt(")$start,
-                   strlocateall(trigger,"AZRsim:::ge(")$start,
-                   strlocateall(trigger,"AZRsim:::gt(")$start)
+    testStart <- c(AZRaux::strlocateall(trigger,"AZRsim:::le(")$start,
+                   AZRaux::strlocateall(trigger,"AZRsim:::lt(")$start,
+                   AZRaux::strlocateall(trigger,"AZRsim:::ge(")$start,
+                   AZRaux::strlocateall(trigger,"AZRsim:::gt(")$start)
     if (is.null(testStart))
       stop("genROOTsim: Trigger function(s) for event(s) wrongly defined. Please use syntax: gt/ge/lt/le(expr1,expr2)")
 
@@ -503,3 +503,4 @@ implementInputMath <- function(model,inputindex) {
 
   return(model)
 }
+

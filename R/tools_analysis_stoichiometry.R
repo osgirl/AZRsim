@@ -5,59 +5,59 @@
 ###############################################################################
 
 ###############################################################################
-# AZRstoichiometry: function returing the stoichiometric matrix for a an AZRmodel
+# stoichiometryAZRmodel: function returing the stoichiometric matrix for a an AZRmodel
 ###############################################################################
-#' Determination of stoichiometric matrix
-#'
-#' Determines the stoichiometric matrix for the given AZRmodel.
-#'
-#' In order determine the stoichiometric matrix, the differential
-#' equations for the components have to be
-#' expressed in terms of reaction rates. The stoichiometric constants need
-#' to be numeric and multiplied to the reaction terms.
-#'
-#' Example: d/dt(A) = -1*Re1+2*Re3-Re5+3.141*Re8
-#'
-#' Especially when importing models from SBML the right hand side of the
-#' ODEs might show a correction term that is needed for transport between two
-#' different compartments in the case that the species is defined in
-#' concentration units. In this case the ODE can look as follows:
-#'
-#'    d/dt(B) = (-1*Re1+2*Re3-Re5+3.141*Re8)/compartmentsize
-#'
-#' This syntax is also accepted. In this case the stoichiometric elements
-#' in the parenthesis will be divided by 'compartmentsize'.
-#'
-#' The 'compartmentsize' is only allowed to be a parameter! It can not be a
-#' numeric value, a state, a variable, or a function!
-#'
-#' Except the above shown pair of parentheses, no additional parentheses are
-#' allowed to appear in the ODE definitions. Otherwise, and in case that not
-#' only reaction rates are present in the ODE expression, the corresponding
-#' component is not taken into account for the stoichiometric matrix.
-#'
-#' @param model An AZRmodel
-#' @param raw Flag used to force the AZRstoichiometry function
-#'  not to correct the elements of the stoichiometric matrix for the
-#'  compartment information in cases where species are given in
-#'  concentrations. This is needed for model construction (BC type of
-#'  representation and for other things). This flag should be kept on "FALSE"
-#'  for the casual user of this function.
-#' @return A list with the following components:
-#' \item{N}{The stoichimoetric matrix}
-#' \item{statenames}{Vector with names of states in N}
-#' \item{reacnames}{Vector with reaction names in N}
-#' \item{reacreversible}{Vector with reversible flags for the reactions in reacnames}
-#' @examples
-#' filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
-#' model <- AZRmodel(filename)
-#' AZRstoichiometry(model)
-#' @export
+# Determination of stoichiometric matrix
+#
+# Determines the stoichiometric matrix for the given AZRmodel.
+#
+# In order determine the stoichiometric matrix, the differential
+# equations for the components have to be
+# expressed in terms of reaction rates. The stoichiometric constants need
+# to be numeric and multiplied to the reaction terms.
+#
+# Example: d/dt(A) = -1*Re1+2*Re3-Re5+3.141*Re8
+#
+# Especially when importing models from SBML the right hand side of the
+# ODEs might show a correction term that is needed for transport between two
+# different compartments in the case that the species is defined in
+# concentration units. In this case the ODE can look as follows:
+#
+#    d/dt(B) = (-1*Re1+2*Re3-Re5+3.141*Re8)/compartmentsize
+#
+# This syntax is also accepted. In this case the stoichiometric elements
+# in the parenthesis will be divided by 'compartmentsize'.
+#
+# The 'compartmentsize' is only allowed to be a parameter! It can not be a
+# numeric value, a state, a variable, or a function!
+#
+# Except the above shown pair of parentheses, no additional parentheses are
+# allowed to appear in the ODE definitions. Otherwise, and in case that not
+# only reaction rates are present in the ODE expression, the corresponding
+# component is not taken into account for the stoichiometric matrix.
+#
+# @param model An AZRmodel
+# @param raw Flag used to force the stoichiometryAZRmodel function
+#  not to correct the elements of the stoichiometric matrix for the
+#  compartment information in cases where species are given in
+#  concentrations. This is needed for model construction (BC type of
+#  representation and for other things). This flag should be kept on "FALSE"
+#  for the casual user of this function.
+# @return A list with the following components:
+# \item{N}{The stoichimoetric matrix}
+# \item{statenames}{Vector with names of states in N}
+# \item{reacnames}{Vector with reaction names in N}
+# \item{reacreversible}{Vector with reversible flags for the reactions in reacnames}
+# @examples
+# filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
+# model <- AZRmodel(filename)
+# stoichiometryAZRmodel(model)
+# @export
 
-AZRstoichiometry <- function (model,raw=TRUE) {
+stoichiometryAZRmodel <- function (model,raw=TRUE) {
 
   if (!is.AZRmodel(model))
-    stop("AZRstoichiometry: model argument is not an AZRmodel")
+    stop("stoichiometryAZRmodel: model argument is not an AZRmodel")
 
   # Get state, parameter, reaction information
   stateInfo <- getAllStatesAZRmodel(model)
@@ -80,12 +80,12 @@ AZRstoichiometry <- function (model,raw=TRUE) {
   # adjustment term and the needed parentheses should be detected and
   # neglected.
   getStoichiometryInformation <- function(ODE) {
-    ODE <- strremWhite(ODE)
+    ODE <- AZRaux::strremWhite(ODE)
     # check if a scaling by the compartment volume is done
     # in this case the expected syntax is
     # ODE = ("reactionterms")/compartmentvolume
-    numberOpenParentheses <- length(strlocateall(ODE,"(")$start)
-    numberClosedParentheses <- length(strlocateall(ODE,")")$start)
+    numberOpenParentheses <- length(AZRaux::strlocateall(ODE,"(")$start)
+    numberClosedParentheses <- length(AZRaux::strlocateall(ODE,")")$start)
     compartmentSize <- 1
     if (numberOpenParentheses != numberClosedParentheses)
       stop("getStoichiometryInformation: parentheses not in pairs")
@@ -99,7 +99,7 @@ AZRstoichiometry <- function (model,raw=TRUE) {
       # One parenthesis present and it is the first char in the ODE
       # assume that this is due to a adjustement to compartment sizes
       # cut out the content of the parentheses
-      closePar <- strlocateall(ODE,")")
+      closePar <- AZRaux::strlocateall(ODE,")")
       ODEinpar <- substr(ODE,2,closePar$start-1)
       rest <- substr(ODE,closePar$start+1,nchar(ODE))
       # first character needs to be a '/' based on assumption of compartment scaling
@@ -110,7 +110,7 @@ AZRstoichiometry <- function (model,raw=TRUE) {
       rest <- substr(rest,2,nchar(rest))
 
       # check if this rest corresponds to a parameter name and if yes get its value
-      index <- strmatch(paramInfo$paramnames,rest)
+      index <- AZRaux::strmatch(paramInfo$paramnames,rest)
       if (is.null(index))
         # not a parameter name => return
         return(NULL)
@@ -149,7 +149,7 @@ AZRstoichiometry <- function (model,raw=TRUE) {
       if (substr(ODE,k,k) == '+' || substr(ODE,k,k) == '-') {
         element <- substr(ODE,lastIndex,k-1)
         # check the element if composed of term in the right format
-        multIndex <- strlocateall(element,"*")$start
+        multIndex <- AZRaux::strlocateall(element,"*")$start
         if (is.null(multIndex)) {
           stoichiometry <- signCurrent*1
           reactionterm <- element
@@ -167,7 +167,7 @@ AZRstoichiometry <- function (model,raw=TRUE) {
 
         # find the index of the reaction name and add the
         # stoichiometric information to Nrow
-        indexReaction <- strmatch(reacInfo$reacnames,reactionterm)
+        indexReaction <- AZRaux::strmatch(reacInfo$reacnames,reactionterm)
         if (is.null(indexReaction))
           return(NULL)
         if(is.na(stoichiometry))
@@ -212,3 +212,6 @@ AZRstoichiometry <- function (model,raw=TRUE) {
 
   return(list(N=N,statenames=statenames,reacnames=reacInfo$reacnames,reacreversible=reacInfo$reacreversible))
 }
+
+
+

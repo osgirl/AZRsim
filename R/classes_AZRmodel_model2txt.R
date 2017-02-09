@@ -1,6 +1,6 @@
 ###############################################################################
 ###############################################################################
-# This file contains the export functions for AZRmodels to TXT  files
+# This file contains the export functions for AZRmodels to TXT files
 # These are not exported and called from AZRexportAZRmodel
 ###############################################################################
 ###############################################################################
@@ -27,27 +27,27 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
   if (is.null(filename))
     filename <- gsub("\\W","",model$name)
 
-  filename <- paste(strrep(filename,".txt",""), ".txt", sep="")
+  filename <- paste(AZRaux::strrepM(filename,".txt",""), ".txt", sep="")
 
-  # Open the file
-  fid <- fopen(filename)
+  # Initialize the FILETEXT
+  FILETEXT <- ""
 
-  fwrite(fid,paste("********** MODEL NAME\n\n",model$name,"\n",sep=""));
+  FILETEXT <- paste(FILETEXT,"********** MODEL NAME\n\n",model$name,"\n\n",sep="")
 
-  fwrite(fid,paste("********** MODEL NOTES\n\n",model$notes,"\n",sep=""));
+  FILETEXT <- paste(FILETEXT,"********** MODEL NOTES\n\n",model$notes,"\n\n",sep="")
 
   ###############################################
   # States
   ###############################################
 
-  fwrite(fid,"********** MODEL STATES\n");
+  FILETEXT <- paste(FILETEXT,"********** MODEL STATES\n\n",sep="")
 
   if (getNumberOfStatesAZRmodel(model) > 0) {
     for (k in 1:getNumberOfStatesAZRmodel(model)) {
       ODEtext <- paste("d/dt(",model$states[[k]]$name,") = ",model$states[[k]]$ODE,sep="")
-      type <- model$states[[k]]$type;
-      compartment <- model$states[[k]]$compartment;
-      unittype <- model$states[[k]]$unittype;
+      type <- model$states[[k]]$type
+      compartment <- model$states[[k]]$compartment
+      unittype <- model$states[[k]]$unittype
       informationText <- ""
 
       if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
@@ -58,7 +58,6 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for state ",model$states[[k]]$name," seems to be wrong."),sep="")
         }
       }
@@ -69,12 +68,12 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         constraintsText = ""
       }
 
-      ODEtext <- strtrim(paste(ODEtext,informationText,constraintsText,sep=""))
+      ODEtext <- AZRaux::strtrimM(paste(ODEtext,informationText,constraintsText,sep=""))
       if (!is.null(model$states[[k]]$notes))
-        ODEtext <- strtrim(paste(ODEtext,"%",model$states[[k]]$notes,sep=" "))
-      fwrite(fid,ODEtext)
+        ODEtext <- AZRaux::strtrimM(paste(ODEtext,"%",model$states[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,ODEtext,"\n",sep="")
     }
-    fwrite(fid," ");
+    FILETEXT <- paste(FILETEXT," \n",sep="")
   }
 
   ###############################################
@@ -88,9 +87,9 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
       } else {
         ALGtext <- paste("0 = ",model$algebraic[[k]]$formula,sep="")
       }
-      type <- model$algebraic[[k]]$type;
-      compartment <- model$algebraic[[k]]$compartment;
-      unittype <- model$algebraic[[k]]$unittype;
+      type <- model$algebraic[[k]]$type
+      compartment <- model$algebraic[[k]]$compartment
+      unittype <- model$algebraic[[k]]$unittype
       informationText <- ""
 
       if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
@@ -101,17 +100,16 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for algebraic state ",model$algebraic[[k]]$name," seems to be wrong."),sep="")
         }
       }
 
-      ALGtext <- strtrim(paste(ALGtext,informationText,sep=""))
+      ALGtext <- AZRaux::strtrimM(paste(ALGtext,informationText,sep=""))
       if (!is.null(model$algebraic[[k]]$notes))
-        ALGtext <- strtrim(paste(ALGtext,"%",model$algebraic[[k]]$notes,sep=" "))
-      fwrite(fid,ALGtext)
+        ALGtext <- AZRaux::strtrimM(paste(ALGtext,"%",model$algebraic[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,ALGtext,"\n",sep="")
     }
-    fwrite(fid," ")
+    FILETEXT <- paste(FILETEXT," \n",sep="")
   }
 
   ###############################################
@@ -121,29 +119,29 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
   # states
   if (getNumberOfStatesAZRmodel(model) > 0) {
     for (k in 1:length(model$states))
-      fwrite(fid,paste(model$states[[k]]$name,"(0) = ",model$states[[k]]$IC,sep=""))
+      FILETEXT <- paste(FILETEXT,model$states[[k]]$name,"(0) = ",model$states[[k]]$IC,"\n",sep="")
   }
 
   # algebraic states
   if (getNumberOfAlgebraicAZRmodel(model) > 0) {
     for (k in 1:length(model$algebraic))
       if (!is.null(model$algebraic[[k]]$name))
-        fwrite(fid,paste(model$algebraic[[k]]$name,"(0) = ",model$algebraic[[k]]$IC,sep=""))
+        FILETEXT <- paste(FILETEXT,model$algebraic[[k]]$name,"(0) = ",model$algebraic[[k]]$IC,"\n",sep="")
   }
-  fwrite(fid," ")
+  FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
   # Parameters
   ###############################################
 
-  fwrite(fid,"********** MODEL PARAMETERS\n");
+  FILETEXT <- paste(FILETEXT,"********** MODEL PARAMETERS\n\n",sep="")
 
   if (getNumberOfParametersAZRmodel(model) > 0) {
     for (k in 1:length(model$parameters)) {
       PARtext <- paste(model$parameters[[k]]$name," = ",model$parameters[[k]]$value,sep="")
-      type <- model$parameters[[k]]$type;
-      compartment <- model$parameters[[k]]$compartment;
-      unittype <- model$parameters[[k]]$unittype;
+      type <- model$parameters[[k]]$type
+      compartment <- model$parameters[[k]]$compartment
+      unittype <- model$parameters[[k]]$unittype
       informationText <- ""
 
       if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
@@ -154,37 +152,36 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for parameter ",model$parameters[[k]]$name," seems to be wrong."),sep="")
         }
       }
 
-      PARtext <- strtrim(paste(PARtext,informationText,sep=""))
+      PARtext <- AZRaux::strtrimM(paste(PARtext,informationText,sep=""))
 
       if (model$parameters[[k]]$estimate)
-        PARtext <- strtrim(paste(PARtext,"<estimate>",sep=" "))
+        PARtext <- AZRaux::strtrimM(paste(PARtext,"<estimate>",sep=" "))
       if (model$parameters[[k]]$regressor)
-        PARtext <- strtrim(paste(PARtext,"<regressor>",sep=" "))
+        PARtext <- AZRaux::strtrimM(paste(PARtext,"<regressor>",sep=" "))
 
       if (!is.null(model$parameters[[k]]$notes))
-        PARtext <- strtrim(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
-      fwrite(fid,PARtext)
+        PARtext <- AZRaux::strtrimM(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,PARtext,"\n",sep="")
     }
   }
-  fwrite(fid," ")
+  FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
   # Variables
   ###############################################
 
-  fwrite(fid,"********** MODEL VARIABLES\n");
+  FILETEXT <- paste(FILETEXT,"********** MODEL VARIABLES\n\n",sep="")
 
   if (getNumberOfVariablesAZRmodel(model) > 0) {
     for (k in 1:length(model$variables)) {
       VARtext <- paste(model$variables[[k]]$name," = ",model$variables[[k]]$formula,sep="")
-      type <- model$variables[[k]]$type;
-      compartment <- model$variables[[k]]$compartment;
-      unittype <- model$variables[[k]]$unittype;
+      type <- model$variables[[k]]$type
+      compartment <- model$variables[[k]]$compartment
+      unittype <- model$variables[[k]]$unittype
       informationText <- ""
 
       if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
@@ -195,24 +192,23 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for variable ",model$variables[[k]]$name," seems to be wrong."),sep="")
         }
       }
 
-      VARtext <- strtrim(paste(VARtext,informationText,sep=""))
+      VARtext <- AZRaux::strtrimM(paste(VARtext,informationText,sep=""))
       if (!is.null(model$variables[[k]]$notes))
-        VARtext <- strtrim(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
-      fwrite(fid,VARtext)
+        VARtext <- AZRaux::strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,VARtext,"\n",sep="")
     }
   }
-  fwrite(fid," ")
+  FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
   # Reactions
   ###############################################
 
-  fwrite(fid,"********** MODEL REACTIONS\n");
+  FILETEXT <- paste(FILETEXT,"********** MODEL REACTIONS\n\n",sep="")
 
   if (getNumberOfReactionsAZRmodel(model) > 0) {
     for (k in 1:length(model$reactions)) {
@@ -220,48 +216,48 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
       if (model$reactions[[k]]$reversible) REAtext <- paste(REAtext,"{reversible}")
       if (model$reactions[[k]]$fast) REAtext <- paste(REAtext,"{fast}")
       if (!is.null(model$reactions[[k]]$notes))
-        REAtext <- strtrim(paste(REAtext,"%",model$reactions[[k]]$notes,sep=" "))
-      fwrite(fid,REAtext)
+        REAtext <- AZRaux::strtrimM(paste(REAtext,"%",model$reactions[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,REAtext,"\n",sep="")
     }
   }
-  fwrite(fid," ")
+  FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
   # Functions
   ###############################################
 
-  fwrite(fid,"********** MODEL FUNCTIONS\n");
+  FILETEXT <- paste(FILETEXT,"********** MODEL FUNCTIONS\n\n",sep="")
 
   if (getNumberOfFunctionsAZRmodel(model) > 0) {
     for (k in 1:length(model$functions)) {
       FUNtext <- paste(model$functions[[k]]$name,"(",model$functions[[k]]$arguments,") = ",model$functions[[k]]$formula,sep="")
       if (!is.null(model$functions[[k]]$notes))
-        FUNtext <- strtrim(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
-      fwrite(fid,FUNtext)
+        FUNtext <- AZRaux::strtrimM(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,FUNtext,"\n",sep="")
     }
   }
-  fwrite(fid," ")
+  FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
   # Events
   ###############################################
 
-  fwrite(fid,"********** MODEL EVENTS\n");
+  FILETEXT <- paste(FILETEXT,"********** MODEL EVENTS\n\n",sep="")
 
   if (getNumberOfEventsAZRmodel(model) > 0) {
     for (k in 1:length(model$events)) {
       EVEtext <- paste(model$events[[k]]$name," = ",model$events[[k]]$trigger,sep="")
       if (getNumberOfEventassignmentsAZRmodel(model,k) > 0) {
         for (k2 in 1:length(model$events[[k]]$assignment))
-          EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,",",model$events[[k]]$assignment[[k2]]$formula,sep="");
+          EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,",",model$events[[k]]$assignment[[k2]]$formula,sep="")
       }
       if (!is.null(model$events[[k]]$notes))
-        EVEtext <- strtrim(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
-      fwrite(fid,EVEtext)
+        EVEtext <- AZRaux::strtrimM(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,EVEtext,"\n",sep="")
     }
   }
-  fwrite(fid," ")
+  FILETEXT <- paste(FILETEXT," ",sep="")
 
-  # Close the file
-  fclose(fid)
+  # Write the file
+  AZRaux::filewrite(FILETEXT,filename)
 }

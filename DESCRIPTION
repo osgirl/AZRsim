@@ -5,10 +5,10 @@ Title: Powerful Dynamic Model Representation and Simulation
 Author: Henning Schmidt [cre,aut], Mikael Sunnaker [aut], IntiQuan GmbH
     [cre,aut,cph]
 Maintainer: IntiQuan GmbH <info@intiquan.com>
-Description: Implementation of a powerful ODE and biochemical reaction expression
-    based model description language, allowing to describe most models used
-    in systems biology, systems pharmacology, and pharmacometrics. Simulation
-    of models is possible with or without dosing tables. AZRsim is an integral
+Description: Implementation of a powerful ODE and biochemical reaction expression 
+    based model description language, allowing to describe most models used 
+    in systems biology, systems pharmacology, and pharmacometrics. Simulation 
+    of models is possible with or without dosing tables. AZRsim is an integral 
     part of the "AZRtools Suite of R packages".
 Depends:
     R (>= 3.3.1)
@@ -18,8 +18,7 @@ BugReports: https://github.com/IntiQuan/AZRtools/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
-Suggests: testthat,
-    covr,
+Suggests: 
     devtools,
     roxygen2
 Imports: deSolve (>= 1.14),
@@ -28,5 +27,4 @@ Imports: deSolve (>= 1.14),
     tidyr (>= 0.6.0),
     dplyr (>= 0.5.0),
     methods (>= 3.3.1),
-    Rcpp (>= 0.12.7),
-LinkingTo: Rcpp
+    AZRaux

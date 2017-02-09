@@ -4,7 +4,7 @@ Fantasy Event Model
 
 ********** MODEL NOTES
 
-Fantasy model based on the bounci ng ball example but adding more events
+Fantasy model based on the bouncing ball example but adding more events
 testing the use of state contraints and changing both states and parameters
 using events.
 
