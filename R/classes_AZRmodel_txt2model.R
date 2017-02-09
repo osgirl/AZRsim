@@ -25,7 +25,7 @@ importTxtAZRmodel <- function(model,filename) {
   ################################################################
 
   # Read model file row by row (already split by row)
-  modelText <- AZRaux::fileread(filename,collapserows=FALSE)
+  modelText <- fileread(filename,collapserows=FALSE)
 
   # Remove empty rows
   modelText <- gsub("^\\s+$", "", modelText)
@@ -88,7 +88,7 @@ importTxtAZRmodel <- function(model,filename) {
   ################################################################
   model$name <- model_name[1]
   if (length(model_name) > 1) warning("importTxtAZRmodel: model name defined over more than one line. Only first line will be used.")
-  model$notes <- paste(AZRaux::strtrimM(model_notes),collapse="\n")
+  model$notes <- paste(strtrimM(model_notes),collapse="\n")
 
   # Handled for TXT models specifically
   model <- getStatesTxt(model,model_states)
@@ -146,7 +146,7 @@ getStatesTxt <- function(model,model_states) {
   # PROCESS ODEs
   ###################
   for (k in 1:length(ODEtest)) {
-    stateString <- AZRaux::strtrimM(model_states[ODEtest[k]])
+    stateString <- strtrimM(model_states[ODEtest[k]])
 
     # Parse comments / notes
     commentInfo <- checkgetNotes(stateString)
@@ -158,18 +158,18 @@ getStatesTxt <- function(model,model_states) {
     infoStartConstraints <- grep("\\{constraints:", stateString)
 
     if (length(infoStartConstraints) > 0) {
-      stateString <- AZRaux::strremWhite(stateString)
+      stateString <- strremWhite(stateString)
 
       tempStart <- regexpr("\\{constraints:", stateString)
       tempEnd <- regexpr("\\]}", stateString)
 
       # get first bracket after {constraints}
-      constraintsString <- AZRaux::strtrimM(substr(stateString,(tempStart[1]+13),(tempEnd[tempStart<tempEnd][1])))
-      stateString <- AZRaux::strtrimM(paste(substr(stateString,1,tempStart[1]-1), substr(stateString,(tempEnd[tempStart<tempEnd][1]),nchar(stateString)-2), sep = ""))
+      constraintsString <- strtrimM(substr(stateString,(tempStart[1]+13),(tempEnd[tempStart<tempEnd][1])))
+      stateString <- strtrimM(paste(substr(stateString,1,tempStart[1]-1), substr(stateString,(tempEnd[tempStart<tempEnd][1]),nchar(stateString)-2), sep = ""))
       tempStart2 <- regexpr("\\[", constraintsString)
       tempEnd2 <- regexpr("\\]", constraintsString)
       constraintsString <- substr(constraintsString,(tempStart2[1]+1),(tempEnd2[1]-1))
-      stateConstraints <- AZRaux::strexplode(constraintsString,',')
+      stateConstraints <- strexplode(constraintsString,',')
       if (length(stateConstraints) != 2) {
         stop('getStatesTxt: A state-constraint information seems to be wrongly defined')
       }
@@ -191,7 +191,7 @@ getStatesTxt <- function(model,model_states) {
     if (nchar(test) == 0) {
       stop("getStatesTxt: At least on state name in ODE definition is not given.")
     }
-    namek <- AZRaux::strremWhite(test)
+    namek <- strremWhite(test)
 
     # extract the state ODE
     temp <- regexpr("=", stateString)
@@ -201,7 +201,7 @@ getStatesTxt <- function(model,model_states) {
       stop("getStatesTxt: At least one RHS of an ODE is not given.")
     }
     # The test string contains now the ODE
-    ODEk <- AZRaux::strtrimM(test)
+    ODEk <- strtrimM(test)
 
     # Add state in model with default IC
     model <- addStateAZRmodel(model,name=namek,IC=0,ODE=ODEk,lowConstraint=stateConstraints[1],highConstraint=stateConstraints[2],type=typek,
@@ -215,7 +215,7 @@ getStatesTxt <- function(model,model_states) {
   if (length(ARtest) > 0) {
     for (k in 1:length(ARtest)) {
       # get each single AR
-      ARk <- AZRaux::strtrimM(model_states[ARtest[k]])
+      ARk <- strtrimM(model_states[ARtest[k]])
 
       # Parse comments / notes
       commentInfo <- checkgetNotes(ARk)
@@ -230,22 +230,22 @@ getStatesTxt <- function(model,model_states) {
       ARformulak   <- SBMLinfo$textString
 
       # split rhs in formula and variable name
-      terms <- AZRaux::strexplode(ARformulak,':')
+      terms <- strexplode(ARformulak,':')
       if (length(terms) != 2) {
         ARformulak <- terms[1]
         ARnamek <- NULL # keep it empty
         ARick <- NULL
       } else {
-        ARformulak <- AZRaux::strtrimM(terms[1])
-        ARnamek <- AZRaux::strtrimM(terms[2])
+        ARformulak <- strtrimM(terms[1])
+        ARnamek <- strtrimM(terms[2])
         ARick <- 0 # default setting
       }
 
       # Remove 0 = in formula
-      terms <- AZRaux::strexplode(ARformulak,'=')
+      terms <- strexplode(ARformulak,'=')
       if (length(terms) != 2 || as.numeric(terms[1])!=0)
         stop("getStatesTxt: error in algebraic state definition")
-      ARformulak <- AZRaux::strtrimM(terms[2])
+      ARformulak <- strtrimM(terms[2])
 
       # add algebraic state to the model
       model <- addAlgebraicAZRmodel(model,name=ARnamek,IC=ARick,formula=ARformulak,type=typek,
@@ -261,13 +261,13 @@ getStatesTxt <- function(model,model_states) {
   # First check if any initial conditions are given - if not then don't execute this part!
   if (length(ICtest) > 0) {
     for (k1 in 1:length(ICtest)) {
-      ICString <- AZRaux::strremWhite(model_states[ICtest[k1]])
+      ICString <- strremWhite(model_states[ICtest[k1]])
       # extract the state name
       temp <- regexpr("\\(0\\)", ICString)
-      stateName <- AZRaux::strtrimM(substr(ICString,1,temp[1]-1))
+      stateName <- strtrimM(substr(ICString,1,temp[1]-1))
       # extract the states' initial condition
       temp <- regexpr("=", ICString)
-      stateIC <- AZRaux::strtrimM(substr(ICString,temp[1]+1,nchar(ICString)))
+      stateIC <- strtrimM(substr(ICString,temp[1]+1,nchar(ICString)))
       found <- FALSE
       # add state ic into model
       ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
@@ -308,7 +308,7 @@ getReactionsTxt <- function(model,model_reactions) {
   # run through the reactions and process them
   if (!is.null(model_reactions)) {
     for (k in 1:length(model_reactions)) {
-      reactionString <- AZRaux::strtrimM(model_reactions[k])
+      reactionString <- strtrimM(model_reactions[k])
 
       # Parse comments / notes
       commentInfo    <- checkgetNotes(reactionString)
@@ -317,15 +317,15 @@ getReactionsTxt <- function(model,model_reactions) {
 
       # extract the reaction name
       temp <- regexpr("=", reactionString)
-      test <- AZRaux::strtrimM(substr(reactionString,1,(temp[1]-1)))
+      test <- strtrimM(substr(reactionString,1,(temp[1]-1)))
       # check if reaction name given
       if (nchar(test) == 0) {
         stop("getReactionsTxt: At least one reaction name not given.")
       }
-      namek <- AZRaux::strremWhite(test)
+      namek <- strremWhite(test)
 
       # extract the reaction expression
-      formulak = AZRaux::strtrimM(substr(reactionString,(temp+1),nchar(reactionString)))
+      formulak = strtrimM(substr(reactionString,(temp+1),nchar(reactionString)))
 
       # check if the "{reversible}" identifier is present.
       flagInfo       <- checkGetFlag(formulak,"{reversible}")
@@ -348,5 +348,3 @@ getReactionsTxt <- function(model,model_reactions) {
   }
   return(model)
 }
-
-

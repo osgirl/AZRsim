@@ -27,7 +27,7 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
   if (is.null(filename))
     filename <- gsub("\\W","",model$name)
 
-  filename <- paste(AZRaux::strrepM(filename,".txt",""), ".txt", sep="")
+  filename <- paste(strrepM(filename,".txt",""), ".txt", sep="")
 
   # Initialize the FILETEXT
   FILETEXT <- ""
@@ -68,9 +68,9 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         constraintsText = ""
       }
 
-      ODEtext <- AZRaux::strtrimM(paste(ODEtext,informationText,constraintsText,sep=""))
+      ODEtext <- strtrimM(paste(ODEtext,informationText,constraintsText,sep=""))
       if (!is.null(model$states[[k]]$notes))
-        ODEtext <- AZRaux::strtrimM(paste(ODEtext,"%",model$states[[k]]$notes,sep=" "))
+        ODEtext <- strtrimM(paste(ODEtext,"%",model$states[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,ODEtext,"\n",sep="")
     }
     FILETEXT <- paste(FILETEXT," \n",sep="")
@@ -104,9 +104,9 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         }
       }
 
-      ALGtext <- AZRaux::strtrimM(paste(ALGtext,informationText,sep=""))
+      ALGtext <- strtrimM(paste(ALGtext,informationText,sep=""))
       if (!is.null(model$algebraic[[k]]$notes))
-        ALGtext <- AZRaux::strtrimM(paste(ALGtext,"%",model$algebraic[[k]]$notes,sep=" "))
+        ALGtext <- strtrimM(paste(ALGtext,"%",model$algebraic[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,ALGtext,"\n",sep="")
     }
     FILETEXT <- paste(FILETEXT," \n",sep="")
@@ -156,15 +156,15 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         }
       }
 
-      PARtext <- AZRaux::strtrimM(paste(PARtext,informationText,sep=""))
+      PARtext <- strtrimM(paste(PARtext,informationText,sep=""))
 
       if (model$parameters[[k]]$estimate)
-        PARtext <- AZRaux::strtrimM(paste(PARtext,"<estimate>",sep=" "))
+        PARtext <- strtrimM(paste(PARtext,"<estimate>",sep=" "))
       if (model$parameters[[k]]$regressor)
-        PARtext <- AZRaux::strtrimM(paste(PARtext,"<regressor>",sep=" "))
+        PARtext <- strtrimM(paste(PARtext,"<regressor>",sep=" "))
 
       if (!is.null(model$parameters[[k]]$notes))
-        PARtext <- AZRaux::strtrimM(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
+        PARtext <- strtrimM(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,PARtext,"\n",sep="")
     }
   }
@@ -196,9 +196,9 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
         }
       }
 
-      VARtext <- AZRaux::strtrimM(paste(VARtext,informationText,sep=""))
+      VARtext <- strtrimM(paste(VARtext,informationText,sep=""))
       if (!is.null(model$variables[[k]]$notes))
-        VARtext <- AZRaux::strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
+        VARtext <- strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,VARtext,"\n",sep="")
     }
   }
@@ -216,7 +216,7 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
       if (model$reactions[[k]]$reversible) REAtext <- paste(REAtext,"{reversible}")
       if (model$reactions[[k]]$fast) REAtext <- paste(REAtext,"{fast}")
       if (!is.null(model$reactions[[k]]$notes))
-        REAtext <- AZRaux::strtrimM(paste(REAtext,"%",model$reactions[[k]]$notes,sep=" "))
+        REAtext <- strtrimM(paste(REAtext,"%",model$reactions[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,REAtext,"\n",sep="")
     }
   }
@@ -232,7 +232,7 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
     for (k in 1:length(model$functions)) {
       FUNtext <- paste(model$functions[[k]]$name,"(",model$functions[[k]]$arguments,") = ",model$functions[[k]]$formula,sep="")
       if (!is.null(model$functions[[k]]$notes))
-        FUNtext <- AZRaux::strtrimM(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
+        FUNtext <- strtrimM(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,FUNtext,"\n",sep="")
     }
   }
@@ -252,12 +252,12 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
           EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,",",model$events[[k]]$assignment[[k2]]$formula,sep="")
       }
       if (!is.null(model$events[[k]]$notes))
-        EVEtext <- AZRaux::strtrimM(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
+        EVEtext <- strtrimM(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,EVEtext,"\n",sep="")
     }
   }
   FILETEXT <- paste(FILETEXT," ",sep="")
 
   # Write the file
-  AZRaux::filewrite(FILETEXT,filename)
+  filewrite(FILETEXT,filename)
 }

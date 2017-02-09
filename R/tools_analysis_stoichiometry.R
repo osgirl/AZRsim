@@ -80,12 +80,12 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
   # adjustment term and the needed parentheses should be detected and
   # neglected.
   getStoichiometryInformation <- function(ODE) {
-    ODE <- AZRaux::strremWhite(ODE)
+    ODE <- strremWhite(ODE)
     # check if a scaling by the compartment volume is done
     # in this case the expected syntax is
     # ODE = ("reactionterms")/compartmentvolume
-    numberOpenParentheses <- length(AZRaux::strlocateall(ODE,"(")$start)
-    numberClosedParentheses <- length(AZRaux::strlocateall(ODE,")")$start)
+    numberOpenParentheses <- length(strlocateall(ODE,"(")$start)
+    numberClosedParentheses <- length(strlocateall(ODE,")")$start)
     compartmentSize <- 1
     if (numberOpenParentheses != numberClosedParentheses)
       stop("getStoichiometryInformation: parentheses not in pairs")
@@ -99,7 +99,7 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
       # One parenthesis present and it is the first char in the ODE
       # assume that this is due to a adjustement to compartment sizes
       # cut out the content of the parentheses
-      closePar <- AZRaux::strlocateall(ODE,")")
+      closePar <- strlocateall(ODE,")")
       ODEinpar <- substr(ODE,2,closePar$start-1)
       rest <- substr(ODE,closePar$start+1,nchar(ODE))
       # first character needs to be a '/' based on assumption of compartment scaling
@@ -110,7 +110,7 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
       rest <- substr(rest,2,nchar(rest))
 
       # check if this rest corresponds to a parameter name and if yes get its value
-      index <- AZRaux::strmatch(paramInfo$paramnames,rest)
+      index <- strmatch(paramInfo$paramnames,rest)
       if (is.null(index))
         # not a parameter name => return
         return(NULL)
@@ -149,7 +149,7 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
       if (substr(ODE,k,k) == '+' || substr(ODE,k,k) == '-') {
         element <- substr(ODE,lastIndex,k-1)
         # check the element if composed of term in the right format
-        multIndex <- AZRaux::strlocateall(element,"*")$start
+        multIndex <- strlocateall(element,"*")$start
         if (is.null(multIndex)) {
           stoichiometry <- signCurrent*1
           reactionterm <- element
@@ -167,7 +167,7 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
 
         # find the index of the reaction name and add the
         # stoichiometric information to Nrow
-        indexReaction <- AZRaux::strmatch(reacInfo$reacnames,reactionterm)
+        indexReaction <- strmatch(reacInfo$reacnames,reactionterm)
         if (is.null(indexReaction))
           return(NULL)
         if(is.na(stoichiometry))
@@ -212,6 +212,3 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
 
   return(list(N=N,statenames=statenames,reacnames=reacInfo$reacnames,reacreversible=reacInfo$reacreversible))
 }
-
-
-

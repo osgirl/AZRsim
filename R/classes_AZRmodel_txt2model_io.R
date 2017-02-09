@@ -138,7 +138,7 @@ getInputs <- function(model) {
     inputTerms <- c()
 
     for (k2 in inputStateindex) {
-      ODE <- AZRaux::strremWhite(states$stateODEs[[k2]])
+      ODE <- strremWhite(states$stateODEs[[k2]])
       results <- getFactorsTermsInput(model,inputName,ODE)
       inputFactors <- cbind(inputFactors,results$inputFactor)
       inputTerms <- cbind(inputTerms,results$inputTerm)
@@ -158,16 +158,16 @@ getInputs <- function(model) {
 # getFactorsTermsInput: get factor and input for given input and given ODE
 ###############################################################################
 getFactorsTermsInput <- function(model,inputName,ODE) {
-  ix <- AZRaux::strlocateall(ODE,inputName)
+  ix <- strlocateall(ODE,inputName)
   if (length(ix$start)>1)
     stop("getInputs: Same INPUT more than once on an ODE - not allowed!")
   # get ODE text before and after input
   if (ix$start==1) {
     ODEpre <- ""
   } else {
-    ODEpre <- AZRaux::strtrimM(substr(ODE,1,ix$start-1))
+    ODEpre <- strtrimM(substr(ODE,1,ix$start-1))
   }
-  ODEpost = AZRaux::strtrimM(substr(ODE,ix$end+1,nchar(ODE)))
+  ODEpost = strtrimM(substr(ODE,ix$end+1,nchar(ODE)))
 
   # 1) the INPUT* identifier needs to be the last element in the input term.
   # => ODEpost needs to start by "+" or "-"
@@ -179,8 +179,8 @@ getFactorsTermsInput <- function(model,inputName,ODE) {
   # and contain as many opening
   # parentheses than closing ones. Because otherwise INPUT* would be in at
   # least one parenthesis. => Not allowed.
-  npo <- length(AZRaux::strlocateall(ODEpost,'(')$start)
-  npc <- length(AZRaux::strlocateall(ODEpost,')')$start)
+  npo <- length(strlocateall(ODEpost,'(')$start)
+  npc <- length(strlocateall(ODEpost,')')$start)
   if (npo != npc)
     stop("The INPUT* identifier is not allowed to be inside a parentheses.")
 
@@ -256,7 +256,7 @@ getCheckNumberInputs <- function(model) {
   m      <- gregexpr("INPUT[0-9]+",states$stateODEs,perl=TRUE)
   y      <- regmatches(states$stateODEs,m)
   y      <- unique(unlist(y))
-  y      <- sort(as.numeric(AZRaux::strrepM(y,"INPUT","")))
+  y      <- sort(as.numeric(strrepM(y,"INPUT","")))
 
   if (length(y) == 0) return(0)
 
@@ -310,24 +310,24 @@ handleINPUTreactions <- function(model) {
     reacName <- reactions$reacnames[reacIndex]
     reacFormula <- reactions$reacformulas[reacIndex]
     # Check formula ... no + or - allowed outside parentheses
-    terms <- AZRaux::strexplodePC(reacFormula,"\\+")
+    terms <- strexplodePC(reacFormula,"\\+")
     if (length(terms) > 1)
       stop("getInputs: model contains reaction with INPUT as additive term. This is not allowed!")
-    terms <- AZRaux::strexplodePC(reacFormula,"\\-")
+    terms <- strexplodePC(reacFormula,"\\-")
     if (length(terms) > 1)
       stop("getInputs: model contains reaction with INPUT as additive term. This is not allowed!")
     # Check formula - no parentheses allowed
-    terms <- AZRaux::strlocateall(reacFormula,"(")
+    terms <- strlocateall(reacFormula,"(")
     if (!is.null(terms$start))
       stop("getInputs: model contains reaction with INPUT and parentheses in formula. Parentheses not allowed in this case!")
-    terms <- AZRaux::strlocateall(reacFormula,")")
+    terms <- strlocateall(reacFormula,")")
     if (!is.null(terms$start))
       stop("getInputs: model contains reaction with INPUT and parentheses in formula. Parentheses not allowed in this case!")
     # Now it is ensured that INPUT appears outside parentheses and not in an sum of terms on
     # the RHS of the reaction formula - exchange in ODEs can now happen!
     # Cycle through states and update ODEs
     for (k2 in 1:getNumberOfStatesAZRmodel(model)) {
-      model$states[[k2]]$ODE <- AZRaux::strrepM(model$states[[k2]]$ODE,reacName,reacFormula)
+      model$states[[k2]]$ODE <- strrepM(model$states[[k2]]$ODE,reacName,reacFormula)
     }
     # Check if the reaction name is used in other reactions
     for (k2 in 1:getNumberOfReactionsAZRmodel(model)) {

@@ -25,7 +25,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
   if (is.null(filename))
     filename <- gsub("\\W","",model$name)
 
-  filename <- paste(AZRaux::strrepM(filename,".txtbc",""), ".txtbc", sep="")
+  filename <- paste(strrepM(filename,".txtbc",""), ".txtbc", sep="")
 
   # Initialize the FILETEXT
   FILETEXT <- ""
@@ -56,7 +56,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
   # first the definition of the states+ODEs that need to be described by ODEs
   if (length(stateNamesODE) > 0) {
     for (k in 1:length(stateNamesODE)) {
-      index <- AZRaux::strmatch(stateNamesAll,stateNamesODE[k])
+      index <- strmatch(stateNamesAll,stateNamesODE[k])
       ODEtext <- paste("d/dt(",model$states[[index]]$name,") = ",model$states[[index]]$ODE,sep="")
       FILETEXT <- paste(FILETEXT,ODEtext,"\n",sep="")
     }
@@ -103,7 +103,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          AZRaux::fclose(fid)
+          fclose(fid)
           stop(paste("exportTxtBcAZRmodel: Type information for state ",model$states[[k]]$name," seems to be wrong."),sep="")
         }
       }
@@ -114,10 +114,10 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         constraintsText = ""
       }
 
-      ICtext <- AZRaux::strtrimM(paste(ICtext,informationText,constraintsText,sep=""))
+      ICtext <- strtrimM(paste(ICtext,informationText,constraintsText,sep=""))
 
       if (!is.null(model$states[[k]]$notes))
-        ICtext <- AZRaux::strtrimM(paste(ICtext,"%",model$states[[k]]$notes,sep=" "))
+        ICtext <- strtrimM(paste(ICtext,"%",model$states[[k]]$notes,sep=" "))
 
       FILETEXT <- paste(FILETEXT,ICtext,"\n",sep="")
 
@@ -143,14 +143,14 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
           if (type=="isCompartment" && is.null(unittype))
             informationText <- paste(" {",type,":",compartment,"}",sep="")
           if (informationText=="") {
-            AZRaux::fclose(fid)
+            fclose(fid)
             stop(paste("exportTxtBcAZRmodel: Type information for algebraic state ",model$algebraic[[k]]$name," seems to be wrong."),sep="")
           }
         }
 
-        ICtext <- AZRaux::strtrimM(paste(ICtext,informationText,sep=""))
+        ICtext <- strtrimM(paste(ICtext,informationText,sep=""))
         if (!is.null(model$algebraic[[k]]$notes))
-          ICtext <- AZRaux::strtrimM(paste(ICtext,"%",model$algebraic[[k]]$notes,sep=" "))
+          ICtext <- strtrimM(paste(ICtext,"%",model$algebraic[[k]]$notes,sep=" "))
         FILETEXT <- paste(FILETEXT,ICtext,"\n",sep="")
       }
     }
@@ -179,20 +179,20 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          AZRaux::fclose(fid)
+          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for parameter ",model$parameters[[k]]$name," seems to be wrong."),sep="")
         }
       }
 
-      PARtext <- AZRaux::strtrimM(paste(PARtext,informationText,sep=""))
+      PARtext <- strtrimM(paste(PARtext,informationText,sep=""))
 
       if (model$parameters[[k]]$estimate)
-        PARtext <- AZRaux::strtrimM(paste(PARtext,"<estimate>",sep=" "))
+        PARtext <- strtrimM(paste(PARtext,"<estimate>",sep=" "))
       if (model$parameters[[k]]$regressor)
-        PARtext <- AZRaux::strtrimM(paste(PARtext,"<regressor>",sep=" "))
+        PARtext <- strtrimM(paste(PARtext,"<regressor>",sep=" "))
 
       if (!is.null(model$parameters[[k]]$notes))
-        PARtext <- AZRaux::strtrimM(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
+        PARtext <- strtrimM(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,PARtext,"\n",sep="")
     }
   }
@@ -220,14 +220,14 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          AZRaux::fclose(fid)
+          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for variable ",model$variables[[k]]$name," seems to be wrong."),sep="")
         }
       }
 
-      VARtext <- AZRaux::strtrimM(paste(VARtext,informationText,sep=""))
+      VARtext <- strtrimM(paste(VARtext,informationText,sep=""))
       if (!is.null(model$variables[[k]]$notes))
-        VARtext <- AZRaux::strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
+        VARtext <- strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,VARtext,"\n",sep="")
 
     }
@@ -266,7 +266,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
       # if reversible split up the reaction rate in two parts. if this is not
       # possible, issue a warning and set the reaction as irreversible
       if (reactionRevFlag) {
-        irreversibleRates <- AZRaux::strexplodePC(reactionFormula,'-')
+        irreversibleRates <- strexplodePC(reactionFormula,'-')
         if (length(irreversibleRates) != 2) {
           # Need to have two parts that are separated by a '-' sign. (Forward
           # first, then reverse reaction kinetics).
@@ -351,7 +351,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
     for (k in 1:length(model$functions)) {
       FUNtext <- paste(model$functions[[k]]$name,"(",model$functions[[k]]$arguments,") = ",model$functions[[k]]$formula,sep="")
       if (!is.null(model$functions[[k]]$notes))
-        FUNtext <- AZRaux::strtrimM(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
+        FUNtext <- strtrimM(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,FUNtext,"\n",sep="")
 
     }
@@ -372,7 +372,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
           EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,",",model$events[[k]]$assignment[[k2]]$formula,sep="")
       }
       if (!is.null(model$events[[k]]$notes))
-        EVEtext <- AZRaux::strtrimM(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
+        EVEtext <- strtrimM(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
       FILETEXT <- paste(FILETEXT,EVEtext,"\n",sep="")
 
     }
@@ -380,5 +380,5 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
   FILETEXT <- paste(FILETEXT," ",sep="")
 
   # Write the file
-  AZRaux::filewrite(FILETEXT,filename)
+  filewrite(FILETEXT,filename)
 }
