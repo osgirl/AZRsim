@@ -17,4 +17,3 @@ Generic print function for AZRmodels
 \examples{
   print(AZRmodel())
 }
-

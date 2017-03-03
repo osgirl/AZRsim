@@ -24,4 +24,3 @@ strlocateall("abcdefgabcdefg","a")
 strlocateall("abcdefgabcdefg","ab")
 strlocateall("abcdefgabcdefg","x")
 }
-

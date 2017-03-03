@@ -57,4 +57,3 @@ x <- AZRsimulate(model,400,parameters=c(k1=0.5))
 x <- AZRsimulate(model,0:400,IC=c(Cyclin=0.5))
 x <- AZRsimulate(model,0:400,IC=c(Cyclin=0.5),parameters=c(k1=0.9))
 }
-
