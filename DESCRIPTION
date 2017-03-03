@@ -2,9 +2,14 @@ Package: AZRsim
 Type: Package
 Version: 0.0.0.9000
 Title: Powerful Dynamic Model Representation and Simulation
-Author: Henning Schmidt [cre,aut], Mikael Sunnaker [aut], IntiQuan GmbH
-    [cre,aut,cph]
-Maintainer: IntiQuan GmbH <info@intiquan.com>
+Authors@R: c(
+  person("Henning", "Schmidt", role = c("aut", "cre"), email = "unknown@intiquan.com"),
+  person("Mikael", "Sunnaker", role = "aut", email = "unknown@intiquan.com"),
+  person("Devin", "Pastoor", role = "aut", email = "devin.pastoor@gmail.com"),
+  person("Imad", "Ali", role = "aut", email = "imad.ali@columbia.edu"),
+  person(family = "Intiquan GmbH", email = "info@intiquan.com", role = "cph"),
+  person(family = "AstraZeneca", role = "cph")
+  )
 Description: Implementation of a powerful ODE and biochemical reaction expression
     based model description language, allowing to describe most models used
     in systems biology, systems pharmacology, and pharmacometrics. Simulation
