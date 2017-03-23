@@ -16,4 +16,3 @@ In the future it might handle "ID" columns in some way and others,
 such as "TAD" and "AMT", ... Lets start simple for now.
 Only numeric columns in the dataframe are considered.
 }
-

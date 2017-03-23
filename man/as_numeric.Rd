@@ -22,4 +22,3 @@ as_numeric(c('1','a',3))
 as_numeric(c('1','2',NA))
 as_numeric(factor(c(1, "4", 3)))
 }
-

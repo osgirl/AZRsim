@@ -22,4 +22,3 @@ isnumericVector(c('1',2,3))
 isnumericVector(c('1','a',3))
 isnumericVector(c('1','2',NA))
 }
-

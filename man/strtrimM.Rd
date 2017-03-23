@@ -21,4 +21,3 @@ strtrimM("a b c d e")
 strtrimM(" a b c d e    ")
 strtrimM(intToUtf8(c(9, 10, 11, 12, 13, 32, 97,  32,  98,  32,  99,  32, 100,  32, 101, 32, 13)))
 }
-

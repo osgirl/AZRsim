@@ -33,4 +33,3 @@ x <- AZRxdotcalc(model)
 x <- AZRxdotcalc(model,400)
 x <- AZRxdotcalc(model,400,parameters=c(k1=0.5))
 }
-

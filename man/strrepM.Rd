@@ -23,4 +23,3 @@ String replacement function
 strrepM("Hello World!","World","Kitty")
 strrepM("a b c d e"," ","")
 }
-

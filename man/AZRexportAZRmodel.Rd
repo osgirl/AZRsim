@@ -32,4 +32,3 @@ model <- AZRmodel(filename)
 AZRexportAZRmodel(model,"filename")
 AZRexportAZRmodel(model,'filename',useBC=TRUE)
 }
-

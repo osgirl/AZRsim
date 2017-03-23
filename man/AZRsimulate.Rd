@@ -85,4 +85,3 @@ model <- AZRmodel(system.file("examples/NovakTyson.txt", package="AZRsim"))
 x <- AZRsimulate(model,400)
 x <- AZRsimulate(model,400,parameters=c(k1=0.5))
 }
-

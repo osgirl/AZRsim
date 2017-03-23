@@ -20,4 +20,3 @@ Closes a file
 fclose(fid)
 }
 }
-
