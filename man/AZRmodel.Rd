@@ -30,3 +30,4 @@ AZRmodel()
 filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
 AZRmodel(filename)
 }
+

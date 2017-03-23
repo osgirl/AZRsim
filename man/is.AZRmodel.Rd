@@ -18,3 +18,4 @@ Check function if it is an AZRmodel
 \examples{
   is.AZRmodel(AZRmodel())
 }
+

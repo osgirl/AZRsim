@@ -26,3 +26,4 @@ strmatch(c("hello","test","a","e","hello"),"Hello")
 strmatch(c("hello","test","a","e","hello"),"xyz")
 strmatch(c(1,2,3,4,8,3),3)
 }
+

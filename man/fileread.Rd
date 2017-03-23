@@ -29,3 +29,4 @@ fileread("filename.txt")
 fileread("filename.txt",collapserows=FALSE)
 }
 }
+
