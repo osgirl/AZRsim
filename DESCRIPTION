@@ -26,7 +26,8 @@ RoxygenNote: 6.0.1
 Suggests:
     devtools,
     roxygen2
-Imports: deSolve (>= 1.14),
+Imports:
+    deSolve (>= 1.14),
     shiny (>= 0.14.1),
     ggplot2 (>= 2.1.0),
     tidyr (>= 0.6.0),

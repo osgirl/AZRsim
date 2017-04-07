@@ -5,7 +5,6 @@ Novak-Tyson Model
 ********** MODEL NOTES
 
 Novak-Tyson cell cycle model, described in J. theor. Biol. (1998) 195, 69-85
-Used in IQRsim as an example model for quick model generation and testing.
 
 Kinetic rate laws have been used in reaction definitions, instead of writing out
 the equations directly.
