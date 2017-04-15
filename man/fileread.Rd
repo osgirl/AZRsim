@@ -16,6 +16,9 @@ TRUE: a single block is returned for the whole text}
 Character string with files contents
 }
 \description{
+Reads a text file and returns it as string
+}
+\details{
 Should only be used on text files. Will read line by line until the end and
 return the results in a character string, using "\\n" as separator between
 read lines.

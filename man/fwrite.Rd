@@ -15,6 +15,9 @@ fwrite(fid, text)
 None
 }
 \description{
+Writes text into an opened file
+}
+\details{
 File needs to be opened with fopen and closed with fclose
 }
 \examples{

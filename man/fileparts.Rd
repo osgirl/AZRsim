@@ -2,7 +2,7 @@
 % Please edit documentation in R/auxiliaries_io.R
 \name{fileparts}
 \alias{fileparts}
-\title{fileparts function}
+\title{Get the various parts of a file with path string.}
 \usage{
 fileparts(filename.with.path)
 }

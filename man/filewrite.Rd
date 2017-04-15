@@ -15,6 +15,9 @@ filewrite(text, filename)
 None
 }
 \description{
+Writes a formatted string to a text file
+}
+\details{
 This is a wrapper to the write function. Ideally, use it only for text to
 write to a file. If the file with the filename already exists, it will be
 overwritten. If a path is provided and the folder does not exist, the folder
