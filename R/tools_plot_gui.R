@@ -19,7 +19,7 @@
 #' @param data A dataframe
 #' @export
 
-AZRplot <- function(data) {
+shiny_plot <- function(data) {
 
   # Check dataframe
   if (!is.data.frame(data))

@@ -29,7 +29,7 @@
 #' AZRmodel(filename)
 #' @export
 
-AZRmodel <- function (input=NULL,simFlag=TRUE) {
+create_model <- function (input=NULL,simFlag=TRUE) {
 
   #################################
   # Handle optional input arguments
@@ -2237,7 +2237,7 @@ renameElementsAZRmodel <- function(model, origStrings, newStrings) {
   # Save modified model
   filewrite(content,tempfilename)
   # Load model (without generation of simulation functions)
-  model <- importTxtAZRmodel(AZRmodel(),tempfilename)
+  model <- importTxtAZRmodel(create_model(),tempfilename)
   # Delete temp file
   unlink(tempfilename)
   # Return model
@@ -2276,7 +2276,7 @@ replaceTextAZRmodel <- function(model, origString, newString) {
   # Save modified model
   filewrite(content,tempfilename)
   # Load model (without generation of simulation functions)
-  model <- importTxtAZRmodel(AZRmodel(),tempfilename)
+  model <- importTxtAZRmodel(create_model(),tempfilename)
   # Delete temp file
   unlink(tempfilename)
   # Return model

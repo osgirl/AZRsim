@@ -45,17 +45,17 @@
 #' x <- AZRsimulate(model,0:400,IC=c(Cyclin=0.5),parameters=c(k1=0.9))
 #' @export
 
-AZRsimulate <- function (model,
-                         simtime = NULL,
-                         IC = NULL,
-                         parameters = NULL,
-                         paramnames = NULL,
-                         paramvalues = NULL,
-                         dosingTable = NULL,
-                         FLAGdosOut = FALSE,
-                         method = "lsode",
-                         atol = 1e-6,
-                         rtol = 1e-6
+simulate <- function (model,
+                      simtime = NULL,
+                      IC = NULL,
+                      parameters = NULL,
+                      paramnames = NULL,
+                      paramvalues = NULL,
+                      dosingTable = NULL,
+                      FLAGdosOut = FALSE,
+                      method = "lsode",
+                      atol = 1e-6,
+                      rtol = 1e-6
 ) {
 
   if (!is.AZRmodel(model))
