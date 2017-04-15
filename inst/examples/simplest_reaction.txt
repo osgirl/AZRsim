@@ -1,0 +1,14 @@
+******** MODEL NAME
+Simple model
+
+******** MODEL STATES
+d/dt(A) = -k1*A
+d/dt(B) = k1*A
+A(0) = 1
+B(0) = 0
+
+******** MODEL PARAMETERS
+k1 = 0.5
+
+******** MODEL REACTIONS
+R = k1*A
