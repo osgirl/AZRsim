@@ -21,57 +21,6 @@ fileparts <- function(filename.with.path){
 }
 
 
-#' Writes a formatted string to a text file
-#'
-#' @details
-#' This is a wrapper to the write function. Ideally, use it only for text to
-#' write to a file. If the file with the filename already exists, it will be
-#' overwritten. If a path is provided and the folder does not exist, the folder
-#' will be created first.
-#'
-#' @param text A character string
-#' @param filename, possibly including the path
-#' @return None
-#' @examples
-#' \dontrun{
-#' filewrite("Hello World!","filename.txt")
-#' filewrite("Hello World!","test/filename.txt")
-#' }
-filewrite <- function(text,filename) {
-  fid <- fopen(filename, mode="w")
-  write(text, fid)
-  fclose(fid)
-}
-
-
-#' Reads a text file and returns it as string
-#'
-#' @details
-#' Should only be used on text files. Will read line by line until the end and
-#' return the results in a character string, using "\\n" as separator between
-#' read lines.
-#'
-#' @param filename The filename, possibly including the path
-#' @param collapserows FALSE: each row of the txt file is returned as a separate list element
-#'                     TRUE: a single block is returned for the whole text
-#' @return Character string with files contents
-#' @examples
-#' \dontrun{
-#' filewrite("Hello World!","filename.txt")
-#' fileread("filename.txt")
-#' filewrite("Hello\nWorld!","filename.txt")
-#' fileread("filename.txt")
-#' fileread("filename.txt",collapserows=FALSE)
-#' }
-fileread <- function(filename,collapserows=TRUE) {
-  fid <- fopen(filename, mode="r")
-  text <- readLines(fid)
-  fclose(fid)
-  if (collapserows) {
-    text <- paste(text,collapse="\n")
-  }
-  return(text)
-}
 
 #' Creates a folder if it does not yet exist
 #'
