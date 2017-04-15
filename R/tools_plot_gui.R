@@ -25,8 +25,16 @@ AZRplot <- function(data) {
   if (!is.data.frame(data))
     stop("AZRplot: 'data' is not a data frame")
 
+  # Check if ID column present ... then error if more than 1 entry as the AZRplot
+  # function currently is only for single subject results
+  if ("ID" %in% colnames(data) && length(unique(data$ID)) > 1)
+    stop("AZRplot: ID column present with more than one unique entry. AZRplot function currently for single subject data only")
+
+  # Drop ID column if present
+  data$ID <- NULL
+
   # Keep "numeric" columns only
-  dataNum <- data[,unname(which(sapply(data, class)=="numeric"))]
+  dataNum <- data[,unname(which(sapply(data, is.numeric)=="TRUE"))]
 
   # Check if a TIME column is present if yes then move it to first column
   # Use case insensitive matching

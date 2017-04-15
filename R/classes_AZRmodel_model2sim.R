@@ -1,26 +1,14 @@
 ###############################################################################
 ###############################################################################
-# Generation of deSolve related simulation functions for AZRmodels.
+# Generation of needed simulation functions for AZRmodels.
 ###############################################################################
 ###############################################################################
 
 
 ###############################################################################
-# genSimFunctions: Generate simulation functions for deSolve
+# genSimFunctions: Generate simulation functions for the C simulator interface
 #                  and attach them to the model
 ###############################################################################
-# Generate a simulation function for deSolve
-#
-# Several functions will be generated and attached to the model as attributes
-# ODEsim: ODE simulation function for deSolve
-# VARsim: function returning variable and reaction values
-# EVEsim: Event trigger function
-# EASsim: Event assignment function
-# Additionally, before generating the simulation functions, the model will be
-# updated to be able to handle constraints (only if constraints are present)
-#
-# In the case that the model contains DAEs, the following function will be generated
-# DAEsim: DAE simulation function for deSolve
 genSimFunctions <- function (model) {
 
   if (!is.AZRmodel(model))
@@ -40,47 +28,23 @@ genSimFunctions <- function (model) {
   model <- implementALLinputMath(model)
 
   ##############################################################################
-  # Handle deSolve specific things in the model
-  #   This is not done in the model itself but in a copy that is passed
-  #   to the simulation function generation function
-  ##############################################################################
-
-  # Replace names of specific functions and kinetic rate laws by adding the AZRsim:::
-  # namespace identifier in front.
-  origStrings <- c("gt","ge","lt","le","mod","and","or","multiply","piecewise",
-                   "interp0","interp1","interpcs")
-  origStrings <- c(origStrings, getAllKineticRateLaws())
-  newStrings <- paste("AZRsim:::",origStrings,sep="")
-  modelDeSolveSpecific <- renameElementsAZRmodel(model, origStrings, newStrings)
-
-  # Replace syntax for interpolation functions from
-  # interpx([comma sep vector],[comma sep vector],element) to
-  # interpx(c(comma sep vector),c(comma sep vector),element)
-  # More in general all "vector definitions" with "[...]" are replaced by "c(...)"
-  modelDeSolveSpecific <- handleVectorSyntaxDeSolve(modelDeSolveSpecific)
-
-
-  ##############################################################################
-  # Generate all simulation functions for deSolve
-  ##############################################################################
-
-  # Generate and add ODEsim function
-  attr(model,"ODEsim") <- genODEsim(modelDeSolveSpecific)
-
-  # Generate and add VARsim function
-  attr(model,"VARsim") <- genVARsim(modelDeSolveSpecific)
-
-  # Generate and add ROOTsim function if events present
-  if (getNumberOfEventsAZRmodel(model) > 0) {
-    attr(model,"ROOTsim") <- genROOTsim(modelDeSolveSpecific)
-    attr(model,"EVASsim") <- genEVASsim(modelDeSolveSpecific)
-  } else {
-    attr(model,"ROOTsim") <- NULL
-    attr(model,"EVASsim") <- NULL
-  }
-
   # Generate and add non-numerical IC handling function
-  attr(model,"nnICsim") <- nnICsim(modelDeSolveSpecific)
+  ##############################################################################
+  # For this potentially available interpolation function need to get some
+  # syntax change so that non-numerical initial conditions can be evaluated in R
+  # even in the case of presence of interpolations.
+  #   Replace syntax for interpolation functions from
+  #   interpx([comma sep vector],[comma sep vector],element) to
+  #   interpx(c(comma sep vector),c(comma sep vector),element)
+  #   More in general all "vector definitions" with "[...]" are replaced by "c(...)"
+  modelInterpSyntaxR <- handleVectorSyntaxInterpR(model)
+  attr(model,"nnICsim") <- nnICsim(modelInterpSyntaxR)
+
+  ##############################################################################
+  # Generate C code model, compile it, load it, attach address of model function
+  # to attributes
+  ##############################################################################
+  model <- compileAZRmodelAZR(model)
 
   ##############################################################################
   # Return the updated model
@@ -88,11 +52,92 @@ genSimFunctions <- function (model) {
   return(model)
 }
 
+###############################################################################
+# compileAZRmodelAZR: Converts an AZRmodel to C-code and compiles it
+###############################################################################
+# Converts an AZRmodel to C-code and compiles it
+#
+# Converts an AZRmodel to C code, compiles it to DLL and loads this DLL.
+# Attaches information about DLL path and model address to the AZRmodel object.
+# If previous DLL present, it will attempt to unload the previous DLL.
+#
+# Function normally not needed - except if model object was
+#
+# @param model An AZRmodel
+# @return AZRmodel with attached address and DLL information
+
+compileAZRmodelAZR <- function(model) {
+
+  if (!is.AZRmodel(model))
+    stop("compileAZRmodelAZR: input argument is not an AZRmodel")
+
+  # Check if model was already compiled and in this case unload DLL and
+  # remove the DLL file
+  if (!is.null(attr(model,"modelDLLfile"))) {
+    try(dyn.unload(attr(model,"modelDLLfile")), silent=TRUE)
+    try(unlink(paste(attr(model,"modelDLLfile"),".*",sep="")),silent=TRUE)
+  }
+
+  # Get temporary file name for C code model and DLL
+  modelCfilepath <- tempfile()
+  modelCpath     <- fileparts(modelCfilepath)$pathname
+  modelCfilename <- fileparts(modelCfilepath)$filename
+
+  # Change to temporary folder
+  oldpath        <- getwd()
+  setwd(modelCpath)
+
+  # Convert to C
+  exportCcodeAZRmodel(model,modelCfilename)
+
+  # Create Makevars file in same folder as the model is located (work folder)
+  includesPaths <- .libPaths()
+  includesLocDef <- paste('PKG_CPPFLAGS =',sep="")
+  for (k in seq_along(includesPaths))
+    includesLocDef <- paste(includesLocDef,' -I"',includesPaths[k],'/AZRsim/solver/include/"',sep="")
+  includesLocDef <- paste(includesLocDef, "\nPKG_LIBS=  -lm")
+
+  filewrite(text=includesLocDef,filename="Makevars")
+
+  # Compile model to DLL - stdout to xxx
+  system(paste("R CMD SHLIB ",modelCfilename,".c",sep=""))
+
+  # Clean files
+  unlink(paste(modelCfilename,".c",sep=""))
+  unlink(paste(modelCfilename,".o",sep=""))
+  unlink("Makevars")
+
+  # Load model DLL
+  tryCatch({
+    if (.Platform$OS.type=="unix") {
+      dyn.load(paste0(modelCfilename,".so"))
+    } else {
+      dyn.load(modelCfilename)
+    }
+  }, error = function(err) {
+    setwd(oldpath)
+    stop("compileAZRmodelAZR: Compilation of model led to an error. Please check the above output and correct the model.")
+  })
+
+  # Return to old working directory
+  setwd(oldpath)
+
+  # Get pointer to rhs function of C-code ODE model
+  model_func_ptr <- getNativeSymbolInfo("model",PACKAGE=modelCfilename)$address
+
+  # Add DLL information to the model
+  attr(model,"modelDLLfile")     <- modelCfilepath
+  attr(model,"modelDLLname")     <- modelCfilename
+  attr(model,"modelCfunAddress") <- model_func_ptr
+
+  # Return model
+  return(model)
+}
 
 ###############################################################################
-# handleVectorSyntaxDeSolve: Handles vector syntax
+# handleVectorSyntaxInterpR: Handles vector syntax
 ###############################################################################
-handleVectorSyntaxDeSolve <- function(model) {
+handleVectorSyntaxInterpR <- function(model) {
 
   # Handle ODEs
   for (k in 1:getNumberOfStatesAZRmodel(model)) {
@@ -170,250 +215,6 @@ handleConstraintsSim <- function (model) {
 }
 
 ###############################################################################
-# nnICsim: Handle default non-numeric initial conditions
-###############################################################################
-nnICsim <- function (model) {
-
-  nnICfctText <- "function () {\n"
-
-  for (k in seq_along(model$functions)) {
-    nnICfctText <- paste(nnICfctText, "  ", model$functions[[k]]$name,
-                         " <- function(", model$functions[[k]]$arguments,
-                         ") { ",model$functions[[k]]$formula," }\n",sep="")
-  }
-  nnICfctText <- paste(nnICfctText,"\n",sep="")
-
-  for (k in seq_along(model$states)) {
-    nnICfctText <- paste(nnICfctText, "  try(", model$states[[k]]$name,
-                         " <- ",model$states[[k]]$IC,
-                         ", silent=TRUE)\n",sep="")
-  }
-  nnICfctText <- paste(nnICfctText,"\n",sep="")
-
-  for (k in seq_along(model$parameters)) {
-    nnICfctText <- paste(nnICfctText, "  try(", model$parameters[[k]]$name,
-                         " <- ",model$parameters[[k]]$value, ", silent=TRUE)\n", sep="")
-  }
-  nnICfctText <- paste(nnICfctText,"\n",sep="")
-
-  for (k in seq_along(model$variables)) {
-    nnICfctText <- paste(nnICfctText, "  try(", model$variables[[k]]$name,
-                         " <- ", model$variables[[k]]$formula, ", silent=TRUE)\n", sep="")
-  }
-  nnICfctText <- paste(nnICfctText,"\n",sep="")
-
-  for (k in seq_along(model$reactions)) {
-    nnICfctText <- paste(nnICfctText, "  try(",model$reactions[[k]]$name,
-                         " <- ", model$reactions[[k]]$formula, ", silent=TRUE)\n", sep="")
-  }
-  nnICfctText <- paste(nnICfctText,"\n",sep="")
-
-  nnICfctText <- paste(nnICfctText,"  out = c()\n",sep="")
-
-  for (k in seq_along(model$states)) {
-    nnICfctText <- paste(nnICfctText, "  out['", model$states[[k]]$name, "'] <- tryCatch(",
-                         model$states[[k]]$IC, ",error=function(cond) return(NA))\n", sep="")
-  }
-
-  nnICfctText <- paste(nnICfctText,"\n",sep="")
-
-  nnICfctText <- paste(nnICfctText, "  if (length(which(is.na(out)))>0)\n", sep="")
-  nnICfctText <- paste(nnICfctText, "    stop('nnICsim: problem in evaluation of non-numerical initial conditions')\n", sep="")
-
-  nnICfctText <- paste(nnICfctText, "\n", sep="")
-  nnICfctText <- paste(nnICfctText, "  return(out)\n", sep="")
-
-  nnICfctText <- paste(nnICfctText, "}\n", sep="")
-
-  outFunc <- eval(parse(text=nnICfctText))
-}
-
-###############################################################################
-# genODEsim: Generate ODEsim function for deSolve
-###############################################################################
-genODEsim <- function (model) {
-
-  SIMfctText <- "function (time, states, paramvalues) {\n"
-
-  SIMfctText <- paste(SIMfctText,getODEtext(model),sep="")
-
-  SIMfctText <- paste(SIMfctText,"  out <- list(c(\n",sep="")
-  if (length(model$states) > 1) {
-    for (k in 1:(length(model$states)-1)) {
-      SIMfctText <- paste(SIMfctText,"    ddt_",model$states[[k]]$name,",\n",sep="")
-    }
-  }
-  SIMfctText <- paste(SIMfctText,"    ddt_",model$states[[length(model$states)]]$name,"))\n",sep="")
-  SIMfctText <- paste(SIMfctText,"\n",sep="")
-
-  SIMfctText <- paste(SIMfctText,"  return(out)\n",sep="")
-  SIMfctText <- paste(SIMfctText,"}\n",sep="")
-
-  outFunc <- eval(parse(text=SIMfctText))
-}
-
-###############################################################################
-# genODEtext: Generate auxiliary text that is often used
-###############################################################################
-getODEtext <- function(model) {
-
-  ODEtext <- ""
-
-  for (k in seq_along(model$states)) {
-    ODEtext <- paste(ODEtext, "  ", model$states[[k]]$name, " = states[", k, "]\n", sep="")
-  }
-  ODEtext <- paste(ODEtext,"\n",sep="")
-
-  for (k in seq_along(model$parameters)) {
-    ODEtext <- paste(ODEtext, "  " ,model$parameters[[k]]$name, " = paramvalues[", k, "]\n", sep="")
-  }
-  ODEtext <- paste(ODEtext, "\n", sep="")
-
-  for (k in seq_along(model$functions)) {
-    ODEtext <- paste(ODEtext, "  ", model$functions[[k]]$name, " <- function(",
-                     model$functions[[k]]$arguments, ") { ", model$functions[[k]]$formula, " }\n", sep="")
-  }
-  ODEtext <- paste(ODEtext,"\n",sep="")
-
-  for (k in seq_along(model$variables)) {
-    ODEtext <- paste(ODEtext, "  ", model$variables[[k]]$name, " = ", model$variables[[k]]$formula, "\n", sep="")
-  }
-  ODEtext <- paste(ODEtext, "\n", sep="")
-
-  for (k in seq_along(model$reactions)) {
-    ODEtext <- paste(ODEtext, "  ", model$reactions[[k]]$name, " = ", model$reactions[[k]]$formula, "\n", sep="")
-  }
-  ODEtext <- paste(ODEtext, "\n", sep="")
-
-  for (k in seq_along(model$states)) {
-    ODEtext <- paste(ODEtext,"  ddt_",model$states[[k]]$name," = ",model$states[[k]]$ODE,"\n",sep="")
-  }
-  ODEtext <- paste(ODEtext,"\n",sep="")
-  return(ODEtext)
-}
-
-
-###############################################################################
-# genVARsim: Generate VARsim function
-###############################################################################
-genVARsim <- function (model) {
-
-  VARfctText <- "function (simresODE, paramvalues) {\n"
-
-  VARfctText <- paste(VARfctText,"  simresVAR <- c()\n",sep="")
-
-  if (length(model$variables) > 0 || length(model$reactions) > 0) {
-    VARfctText <- paste(VARfctText,"  for (ksimresODE in 1:nrow(simresODE)) {\n",sep="")
-
-    VARfctText <- paste(VARfctText,"    time = simresODE[ksimresODE,1]\n",sep="")
-
-    for (k in seq_along(model$states)) {
-      VARfctText <- paste(VARfctText, "    ", model$states[[k]]$name,
-                          " = simresODE[ksimresODE,", k+1,"]\n", sep="")
-    }
-
-    for (k in seq_along(model$parameters)) {
-      VARfctText <- paste(VARfctText, "    ", model$parameters[[k]]$name,
-                          " = paramvalues[", k, "]\n", sep="")
-    }
-
-    for (k in seq_along(model$functions)) {
-      VARfctText <- paste(VARfctText, "  ", model$functions[[k]]$name, " <- function(",
-                          model$functions[[k]]$arguments, ") { ", model$functions[[k]]$formula,
-                          " }\n", sep="")
-    }
-    VARfctText <- paste(VARfctText,"\n",sep="")
-
-    for (k in seq_along(model$variables)) {
-      VARfctText <- paste(VARfctText, "    ", model$variables[[k]]$name,
-                          " = ", model$variables[[k]]$formula, "\n", sep="")
-    }
-
-    for (k in seq_along(model$reactions)) {
-      VARfctText <- paste(VARfctText, "    ", model$reactions[[k]]$name,
-                          " = ", model$reactions[[k]]$formula, "\n", sep="")
-    }
-
-    VARfctText <- paste(VARfctText,"    simresVAR <- rbind(simresVAR,c(\n",sep="")
-
-    for (k in seq_along(model$variables)) {
-      VARfctText <- paste(VARfctText,"      ",model$variables[[k]]$name,"=unname(",model$variables[[k]]$name,"),\n",sep="")
-    }
-    for (k in seq_along(model$reactions)) {
-      VARfctText <- paste(VARfctText,"      ",model$reactions[[k]]$name,"=unname(",model$reactions[[k]]$name,"),\n",sep="")
-    }
-    VARfctText <- substr(VARfctText,1,nchar(VARfctText)-2)
-    VARfctText <- paste(VARfctText,"))\n",sep="")
-    VARfctText <- paste(VARfctText,"  }\n",sep="")
-  }
-
-  VARfctText <- paste(VARfctText,"  return(simresVAR)\n",sep="")
-  VARfctText <- paste(VARfctText,"}\n",sep="")
-  outFunc <- eval(parse(text=VARfctText))
-}
-
-
-###############################################################################
-# genROOTsim: Generate event root finding function
-###############################################################################
-genROOTsim <- function (model) {
-
-  ROOTfctText <- "function (time,states,paramvalues) {\n"
-  ROOTfctText <- paste(ROOTfctText,getODEtext(model),sep="")
-  ROOTfctText <- paste(ROOTfctText,"  roots <- c(\n",sep="")
-  for (k in 1:(getNumberOfEventsAZRmodel(model))) {
-    # Check first if trigger function contains either gtAZR, geAZR, ltAZR, leAZR if not throw an error
-    trigger <- model$events[[k]]$trigger
-    testStart <- c(strlocateall(trigger,"AZRsim:::le(")$start,
-                   strlocateall(trigger,"AZRsim:::lt(")$start,
-                   strlocateall(trigger,"AZRsim:::ge(")$start,
-                   strlocateall(trigger,"AZRsim:::gt(")$start)
-    if (is.null(testStart))
-      stop("genROOTsim: Trigger function(s) for event(s) wrongly defined. Please use syntax: gt/ge/lt/le(expr1,expr2)")
-
-    ROOTfctText <- paste(ROOTfctText,"      ",model$events[[k]]$trigger,"-0.5,\n",sep="")
-  }
-  ROOTfctText <- substr(ROOTfctText,1,nchar(ROOTfctText)-2)
-  ROOTfctText <- paste(ROOTfctText,")\n",sep="")
-  ROOTfctText <- paste(ROOTfctText,"  return(roots)\n",sep="")
-  ROOTfctText <- paste(ROOTfctText,"}\n",sep="")
-
-  outFunc <- eval(parse(text=ROOTfctText))
-}
-
-
-###############################################################################
-# genEVASsim: Generate event assignment function
-###############################################################################
-genEVASsim <- function (model) {
-
-  EVASfctText <- "function (EVENTindex,time,states,paramvalues) {\n"
-  EVASfctText <- paste(EVASfctText,getODEtext(model),sep="")
-
-  EVASfctText <- paste(EVASfctText,"  eventAssignment <- c()\n",sep="")
-  for (k in 1:getNumberOfEventsAZRmodel(model)) {
-    if (getNumberOfEventassignmentsAZRmodel(model,k) == 0)
-      stop("genEVASsim: model contains an event without assignments")
-
-    # We generate named vectors, depending on the event index
-    EVASfctText <- paste(EVASfctText,"  if (EVENTindex==",k,") {\n",sep="")
-    EVASfctText <- paste(EVASfctText,"    eventAssignment <- c(\n",sep="")
-    for (k2 in 1:getNumberOfEventassignmentsAZRmodel(model,k)) {
-      EVASfctText <- paste(EVASfctText,"      ",
-                           model$events[[k]]$assignment[[k2]]$variable," = ",
-                           model$events[[k]]$assignment[[k2]]$formula,",\n",sep="")
-    }
-    EVASfctText <- substr(EVASfctText,1,nchar(EVASfctText)-2)
-    EVASfctText <- paste(EVASfctText,")\n",sep="")
-    EVASfctText <- paste(EVASfctText,"  }\n",sep="")
-  }
-  EVASfctText <- paste(EVASfctText,"  return(eventAssignment)\n",sep="")
-  EVASfctText <- paste(EVASfctText,"}\n",sep="")
-  outFunc <- eval(parse(text=EVASfctText))
-}
-
-
-###############################################################################
 # implementALLinputMath: Calls implementInputMath for all inputs in a model
 # Returns updated model with all inputs handled.
 ###############################################################################
@@ -489,4 +290,142 @@ implementInputMath <- function(model,inputindex) {
   }
 
   return(model)
+}
+
+###############################################################################
+# nnICsim: Handle non-numeric initial conditions
+# This function generates a function for the evaluation of non-numerical initial
+# conditions. This generated function is faster to evaluate and the good thing is
+# that here during the generation of this function it is already checked if the
+# non-numerical initial conditions can be evaluated ... meaning during import of
+# a model rather than during simulation of an imported model. Also the possible
+# dependencies of nn ICs are much wider than in the IQM Tools.
+###############################################################################
+nnICsim <- function (model) {
+
+  ###############################################
+  # STEP 1: Expand all IC RHSs to only states and parameters
+  ###############################################
+  # GET ALL FORMULAS AND ODES
+  stateInfo <- getAllStatesAZRmodel(model)
+  paramInfo <- getAllParametersAZRmodel(model)
+  varInfo   <- getAllVariablesAZRmodel(model)
+  reacInfo  <- getAllReactionsAZRmodel(model)
+  # EXPAND VARIABLES
+  if (length(varInfo$varnames) > 0) {
+    for (k in 1:length(varInfo$varnames)) {
+      if (k+1 <= length(varInfo$varnames)) {
+        for (k2 in (k+1):length(varInfo$varnames)) {
+          varInfo$varformulas[k2] <- gsub(pattern = paste("\\<",varInfo$varnames[k],"\\>",sep=""),replacement = paste("(",varInfo$varformulas[k],")",sep=""),x = varInfo$varformulas[k2])
+        }
+      }
+    }
+  }
+  # EXPAND REACTIONS
+  if (length(reacInfo$reacnames) > 0) {
+    for (k in 1:length(reacInfo$reacnames)) {
+      if (k+1 <= length(reacInfo$reacnames)) {
+        for (k2 in (k+1):length(reacInfo$reacnames)) {
+          reacInfo$reacformulas[k2] <- gsub(pattern = paste("\\<",reacInfo$reacnames[k],"\\>",sep=""),replacement = paste("(",reacInfo$reacformulas[k],")",sep=""),x = reacInfo$reacformulas[k2])
+        }
+      }
+    }
+  }
+  # INSERT REACTIONS INTO ODES (might contain VARIABLES)
+  if (length(stateInfo$statenames) > 0) {
+    for (k in 1:length(stateInfo$statenames)) {
+      if (length(reacInfo$reacnames) > 0) {
+        for (k2 in 1:length(reacInfo$reacnames)) {
+          updatedIC <- gsub(pattern = paste("\\<",reacInfo$reacnames[k2],"\\>",sep=""),replacement = paste("(",reacInfo$reacformulas[k2],")",sep=""),x = stateInfo$stateICs[k])
+          stateInfo$stateICs[k] <- updatedIC
+        }
+      }
+    }
+  }
+  # INSERT VARIABLES INTO ODES
+  if (length(stateInfo$statenames) > 0) {
+    for (k in 1:length(stateInfo$statenames)) {
+      if (length(varInfo$varnames) > 0) {
+        for (k2 in 1:length(varInfo$varnames)) {
+          updatedIC <- gsub(pattern = paste("\\<",varInfo$varnames[k2],"\\>",sep=""),replacement = paste("(",varInfo$varformulas[k2],")",sep=""),x = stateInfo$stateICs[k])
+          stateInfo$stateICs[k] <- updatedIC
+        }
+      }
+    }
+  }
+
+  ###############################################
+  # STEP 2: Test run the equations to see if they can be evaluated ... if not then
+  #         throw an error and tell user that non-numeric ICs badly formed
+  ###############################################
+  # Define functions
+  for (k in seq_along(model$functions)) {
+    text <- paste(model$functions[[k]]$name," <- function(",model$functions[[k]]$arguments,") { ",model$functions[[k]]$formula," }")
+    eval(parse(text=text))
+  }
+  # Initialize states with NA
+  for (k in seq_along(stateInfo$statenames)) {
+    text <- paste(stateInfo$statenames[k],"= NA")
+    eval(parse(text=text))
+  }
+  # Initialize parameters with default values
+  for (k in seq_along(paramInfo$paramnames)) {
+    text <- paste(paramInfo$paramnames[k],"=",paramInfo$paramvalues[k])
+    eval(parse(text=text))
+  }
+  # Evaluate IC RHS expressions in order of appearance in the model
+  for (k in seq_along(stateInfo$statenames)) {
+    text <- paste(stateInfo$statenames[k],"=",stateInfo$stateICs[k])
+    eval(parse(text=text))
+  }
+  # Collect resulting numerical ICs
+  test <- c()
+  for (k in seq_along(stateInfo$statenames)) {
+    text <- paste("test[k] <- ",stateInfo$statenames[k])
+    eval(parse(text=text))
+  }
+  # Check if any of the elements in "test" is NA ... then NN ICs are non-evaluable
+  if (sum(as.double(is.na(test))) > 0)
+    stop("nnICsim: Non-numerical initial conditions are wrongly defined and non-evaluable.")
+
+  ###############################################
+  # STEP 3: Generate NN ICs function
+  ###############################################
+
+  nnICfctText <- "function (parameters) {\n"
+
+  # Define functions
+  for (k in seq_along(model$functions))
+    nnICfctText <- paste(nnICfctText,"  ",model$functions[[k]]$name," <- function(",model$functions[[k]]$arguments,") { ",model$functions[[k]]$formula," }\n",sep="")
+
+  # Initialize states with NA
+  for (k in seq_along(stateInfo$statenames))
+    nnICfctText <- paste(nnICfctText,"  ",stateInfo$statenames[k]," <- NA\n",sep="")
+
+  # Initialize parameters with provided values
+  for (k in seq_along(paramInfo$paramnames))
+    nnICfctText <- paste(nnICfctText,"  ",paramInfo$paramnames[k]," <- parameters[",k,"]\n",sep="")
+
+  # Evaluate IC RHS expressions
+  for (k in seq_along(stateInfo$statenames))
+    nnICfctText <- paste(nnICfctText,"  ",stateInfo$statenames[k]," <- ",stateInfo$stateICs[k],"\n",sep="")
+
+  # Collect results
+  nnICfctText <- paste(nnICfctText,"  out <- c()\n",sep="")
+  for (k in seq_along(stateInfo$statenames))
+    nnICfctText <- paste(nnICfctText,'  out["',stateInfo$statenames[k],'"] <- ',stateInfo$statenames[k],"\n",sep="")
+
+  # Check if any of the elements in "test" is NA ... then NN ICs are non-evaluable
+  # This should not happen except if parameters are wrongly defined ...
+  nnICfctText <- paste(nnICfctText,"  if (sum(as.double(is.na(out))) > 0) stop('Non-numerical initial conditions are wrongly defined and non-evaluable.')\n",sep="")
+
+  # Return
+  nnICfctText <- paste(nnICfctText,"  return(out)\n",sep="")
+  nnICfctText <- paste(nnICfctText,"}\n",sep="")
+  outFunc <- eval(parse(text=nnICfctText))
+
+  ###############################################
+  # STEP 4: Done! Return the generated function
+  ###############################################
+  return(outFunc)
 }

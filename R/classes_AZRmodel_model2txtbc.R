@@ -99,7 +99,6 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtBcAZRmodel: Type information for state ",model$states[[k]]$name," seems to be wrong."),sep="")
         }
       }
@@ -138,9 +137,41 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
-          stop(paste("exportTxtBcAZRmodel: Type information for algebraic state ",
-                     model$algebraic[[k]]$name," seems to be wrong."),sep="")
+          stop(paste("exportTxtBcAZRmodel: Type information for algebraic state ",model$algebraic[[k]]$name," seems to be wrong."),sep="")
+        }
+      }
+
+      ICtext <- strtrimM(paste(ICtext,informationText,sep=""))
+      if (!is.null(model$algebraic[[k]]$notes))
+        ICtext <- strtrimM(paste(ICtext,"%",model$algebraic[[k]]$notes,sep=" "))
+      FILETEXT <- paste(FILETEXT,ICtext,"\n",sep="")
+    }
+  }
+  FILETEXT <- paste(FILETEXT," \n",sep="")
+
+  ###############################################
+  # Parameters
+  ###############################################
+
+  FILETEXT <- paste(FILETEXT,"********** MODEL PARAMETERS\n\n",sep="")
+
+  if (getNumberOfParametersAZRmodel(model) > 0) {
+    for (k in 1:length(model$parameters)) {
+      PARtext <- paste(model$parameters[[k]]$name," = ",model$parameters[[k]]$value,sep="")
+      type <- model$parameters[[k]]$type
+      compartment <- model$parameters[[k]]$compartment
+      unittype <- model$parameters[[k]]$unittype
+      informationText <- ""
+
+      if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
+        if (type=="isSpecie" && !is.null(compartment) && (unittype=="amount" || unittype=="concentration"))
+          informationText <- paste(" {",type,":",compartment,":",unittype,"}",sep="")
+        if (type=="isParameter" && is.null(compartment) && is.null(unittype))
+          informationText <- paste(" {",type,"}",sep="")
+        if (type=="isCompartment" && is.null(unittype))
+          informationText <- paste(" {",type,":",compartment,"}",sep="")
+        if (informationText=="") {
+          stop(paste("exportTxtAZRmodel: Type information for parameter ",model$parameters[[k]]$name," seems to be wrong."),sep="")
         }
       }
 
@@ -212,17 +243,16 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
       if (type=="isCompartment" && is.null(unittype))
         informationText <- paste(" {",type,":",compartment,"}",sep="")
       if (informationText=="") {
-        fclose(fid)
         stop(paste("exportTxtAZRmodel: Type information for variable ",model$variables[[k]]$name," seems to be wrong."),sep="")
       }
     }
-
-    VARtext <- strtrimM(paste(VARtext,informationText,sep=""))
-    if (!is.null(model$variables[[k]]$notes))
-      VARtext <- strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
-    FILETEXT <- paste(FILETEXT,VARtext,"\n",sep="")
-
   }
+
+  VARtext <- strtrimM(paste(VARtext,informationText,sep=""))
+  if (!is.null(model$variables[[k]]$notes))
+    VARtext <- strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
+  FILETEXT <- paste(FILETEXT,VARtext,"\n",sep="")
+
   FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
