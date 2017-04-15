@@ -2227,7 +2227,7 @@ renameElementsAZRmodel <- function(model, origStrings, newStrings) {
   # with simfunction handling !!!
   exportTxtAZRmodel(model,filename=tempfilename)
   # Load text file
-  content <- fileread(tempfilename)
+  content <- readr::read_lines(tempfilename)
   # Exchange strings
   searchStrings <- paste("\\b",origStrings,"\\b",sep="")
   for (k in 1:length(searchStrings)) {
@@ -2269,7 +2269,7 @@ replaceTextAZRmodel <- function(model, origString, newString) {
   # Export model to temporary text file
   exportTxtAZRmodel(model,filename=tempfilename)
   # Load text file
-  content <- fileread(tempfilename)
+  content <- readr::read_lines(tempfilename)
   # Exchange string
   content <- gsub(origString, newString, content, fixed=TRUE)
   # Save modified model
