@@ -1,0 +1,44 @@
+********** MODEL NAME
+
+unnamed_model
+
+********** MODEL NOTES
+
+model notes
+
+********** MODEL STATES
+
+d/dt(Ad) = -ka*Ad         + F11*INPUT1     + F21*INPUT2
+d/dt(Ac) = ka*Ad-CL/Vc*Ac + (1-F11)*INPUT1
+
+Ad(0) = 0
+Ac(0) = 0
+
+********** MODEL PARAMETERS
+
+ka = 0.2
+CL = 0.4
+Vc = 12
+F11 = 0.5
+F21 = 0.5
+INPUT1 = 0
+INPUT2 = 0
+
+********** MODEL VARIABLES
+
+Cc = Ac/Vc
+
+OUTPUT1 = Cc
+OUTPUT2 = Ad
+
+
+********** MODEL REACTIONS
+
+x2 = 1
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS
+
+

@@ -5,26 +5,38 @@
 \title{Simulate an AZRmodel}
 \usage{
 AZRsimulate(model, simtime = NULL, IC = NULL, parameters = NULL,
-  paramnames = NULL, paramvalues = NULL, dosingTable = NULL,
-  FLAGdosOut = FALSE, method = "lsode", atol = 1e-06, rtol = 1e-06)
+  dosingTable = NULL, FLAGdosOut = FALSE, outputs = NULL,
+  opt_method_stiff = TRUE, opt_abstol = 1e-06, opt_reltol = 1e-06,
+  opt_minstep = 0, opt_maxstep = 0, opt_initstep = 0,
+  opt_maxnumsteps = 1e+05, opt_maxerrtestfails = 50,
+  opt_maxorder_stiff = 5, opt_maxorder_nonstiff = 12,
+  opt_maxconvfails = 10, opt_maxnonlineariter = 3, verbose = FALSE)
 }
 \arguments{
 \item{model}{An AZRmodel}
 
 \item{simtime}{Simulation time vector. If scalar provided then 1001 simulation
-steps will be used.}
+steps will be used. If not provided (20) seq(0,20,1000) will be used if
+no dosingTable provided. If not provided and a dosingTable is provided,
+seq(0,1.5x the max dosing time,1000) is used.}
 
-\item{IC}{Vector with initial conditions. If not provided the initial
-conditions stored in the model will be used as defaults.}
+\item{IC}{Named vector with numeric initial conditions for ALL states. If not
+provided the initial conditions stored in the model will be used as
+defaults. Important: If initial conditions are provided, then these
+need to be NUMERIC and be provided for ALL states! If the model contains
+non-numeric initial conditions, these will be ignored. Basically, user
+provided initial conditions overwrite all other settings. If the model
+itself does contain non-numeric initial conditions, then it might be
+more useful to change these via parameter settings, using the "parameters"
+input argument.}
 
 \item{parameters}{A named parameter vector to be used for simulation.
-Named parameters need to be present in the model.}
-
-\item{paramnames}{An alternative to providing a named vector with parameter
-values is to provide a vector with parameter names and a vector
-with corresponding parameter values (see next input argument)}
-
-\item{paramvalues}{A vector with parameter values is 'paramnames' is defined.}
+Named parameters need to be present in the model. Initial condition
+definitions in AZRmodels can be non-numeric mathematical expressions
+and depend on states, parameters, variables, reactions, and functions.
+A states IC can depend on a previously defined state in the model.
+Otherwise an error message will appear during the import of a model from
+text.}
 
 \item{dosingTable}{A dataframe defining a dosing table. Required columns:
 TIME, INPUT, DOSE, DURATION, LAGTIME}
@@ -33,27 +45,43 @@ TIME, INPUT, DOSE, DURATION, LAGTIME}
 output variable. If FALSE then it will not be added. This flag only
 has effect if a dosingTable is given as input argument.}
 
-\item{method}{String with the deSolve method for ODE integration (default: lsode
-as this is a solver that can reasonably deal with state constraints)}
+\item{outputs}{A vector with names of outputs to return from simulation.
+By default (NULL) all states, variables, reactions, are returned.}
 
-\item{atol}{Absolute tolerance for integration}
+\item{opt_method_stiff}{Flag (FALSE: non-stiff, TRUE: stiff)}
 
-\item{rtol}{Relative tolerance for integration}
+\item{opt_abstol}{Double value for absolute tolerance}
+
+\item{opt_reltol}{Double value for relative tolerance}
+
+\item{opt_minstep}{Double value for minimal integrator step-size}
+
+\item{opt_maxstep}{Double value for maximal integrator step-size}
+
+\item{opt_initstep}{Double value for initial step-size to be attempted}
+
+\item{opt_maxnumsteps}{Integer value for maximum number of steps between two outputs}
+
+\item{opt_maxerrtestfails}{Integer value for maximum number of error test failures in one step}
+
+\item{opt_maxorder_stiff}{Integer value for maximum order of linear multistep method for STIFF solver (BDF)}
+
+\item{opt_maxorder_nonstiff}{Integer value for maximum order of linear multistep method for NONSTIFF solver (Adams)}
+
+\item{opt_maxconvfails}{Integer value for maximum number of nonlinear solver convergence failures in one step}
+
+\item{opt_maxnonlineariter}{Integer value for maximum number of nonlinear solver iterations permitted per step}
+
+\item{verbose}{Integer flag for outputting additional diagnostic information}
 }
 \value{
-AZRmodel with attached simulation functions (see above)
+Dataframe with simulation results
 }
 \description{
-To be updated! Many things could be added to this simulation.
-The simulation function expects the model to be augmented with
-R or C functions for model. If these are not present, the function will add
-them. If they are present, the function assumes that these are correct and
-match the model structure.
+Simulation function for AZRmodels. Able to handle dosing events etc.
 }
 \examples{
 model <- AZRmodel(system.file("examples/NovakTyson.txt", package="AZRsim"))
 x <- AZRsimulate(model,400)
 x <- AZRsimulate(model,400,parameters=c(k1=0.5))
-x <- AZRsimulate(model,0:400,IC=c(Cyclin=0.5))
-x <- AZRsimulate(model,0:400,IC=c(Cyclin=0.5),parameters=c(k1=0.9))
 }

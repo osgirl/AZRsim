@@ -27,7 +27,8 @@ Suggests:
     devtools,
     roxygen2,
     testthat
-Imports: deSolve (>= 1.14),
+Imports:
+    deSolve (>= 1.14),
     shiny (>= 0.14.1),
     ggplot2 (>= 2.1.0),
     tidyr (>= 0.6.0),

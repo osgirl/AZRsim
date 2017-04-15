@@ -234,10 +234,6 @@ piecewise <- function (...) {
 # interp0
 # interp1
 # interpcs
-# Important: due to R syntax the use of these functions in AZRmodels is limited
-# to C-code simulation. Therefor, when simulating a model with any of these
-# functions using deSolve, only an error will be shown and thus the functions
-# defined below are merely "dummy" functions returning an error.
 ###############################################################################
 
 # interp0: zero order interpolation function
