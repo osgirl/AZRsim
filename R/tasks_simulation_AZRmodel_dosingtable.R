@@ -6,6 +6,15 @@
 
 checkProcessDosingTable <- function(dosingTable) {
 
+  # Handle undefined dosingTable
+  if (is.null(dosingTable)) return(NULL)
+
+  # If dosing table contains ID this ID should be unique!
+  if ("ID" %in% colnames(dosingTable)) {
+    if (length(unique(dosingTable$ID))> 1)
+      stop("checkProcessDosingTable: dosingTable contains ID with non-unique entries. Plase check if you used the AZRsimulate instead of AZRsimpop function")
+  }
+
   # Check if minimum required columns present
   # These are: TIME, INPUT, DOSE
   if (!("TIME" %in% names(dosingTable))) stop("TIME column required in a dosing table")

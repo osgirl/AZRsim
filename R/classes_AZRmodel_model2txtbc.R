@@ -103,7 +103,6 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtBcAZRmodel: Type information for state ",model$states[[k]]$name," seems to be wrong."),sep="")
         }
       }
@@ -143,7 +142,6 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
           if (type=="isCompartment" && is.null(unittype))
             informationText <- paste(" {",type,":",compartment,"}",sep="")
           if (informationText=="") {
-            fclose(fid)
             stop(paste("exportTxtBcAZRmodel: Type information for algebraic state ",model$algebraic[[k]]$name," seems to be wrong."),sep="")
           }
         }
@@ -179,7 +177,6 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for parameter ",model$parameters[[k]]$name," seems to be wrong."),sep="")
         }
       }
@@ -220,7 +217,6 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
         if (type=="isCompartment" && is.null(unittype))
           informationText <- paste(" {",type,":",compartment,"}",sep="")
         if (informationText=="") {
-          fclose(fid)
           stop(paste("exportTxtAZRmodel: Type information for variable ",model$variables[[k]]$name," seems to be wrong."),sep="")
         }
       }

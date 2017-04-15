@@ -83,7 +83,6 @@ create_model <- function (input=NULL,simFlag=TRUE) {
   #################################
   checkNamesAZRmodel(model)
 
-
   #################################
   # Add the original model as attribute (before generation of simulation functions
   # and required update of the model
@@ -94,7 +93,7 @@ create_model <- function (input=NULL,simFlag=TRUE) {
   # Update the models math to for simulation purposes
   # Constraints
   # Inputs / Dosing
-  # Namespace for deSolve (only in simfunctions)
+  # Generation of C code model and compilation
   #################################
   if (simFlag) {
     model <- genSimFunctions(model)
@@ -2251,7 +2250,7 @@ renameElementsAZRmodel <- function(model, origStrings, newStrings) {
 # Replace text in AZRmodel
 #
 # This function can be used to replace a text piece in an AZRmodel.
-# Useful to remove "AZRsim:::" strings before export of a model.
+# Useful to remove "" strings before export of a model.
 # No check will be done for a whole word - so be careful!
 #
 # @param model AZRmodel
