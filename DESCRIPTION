@@ -25,7 +25,8 @@ LazyData: true
 RoxygenNote: 6.0.1
 Suggests:
     devtools,
-    roxygen2
+    roxygen2,
+    testthat
 Imports: deSolve (>= 1.14),
     shiny (>= 0.14.1),
     ggplot2 (>= 2.1.0),
