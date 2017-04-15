@@ -247,13 +247,11 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
   allSpeciesStates <- c()
   allParNames <- getAllParametersAZRmodel(model)$paramnames
   allVarNames <- getAllVariablesAZRmodel(model)$varnames
-  if (length(allSpecies) > 0) {
-    for (k in 1:length(allSpecies)) {
-      parameterIndex <- strmatch(allSpecies[k],allParNames)
-      variableIndex <- strmatch(allSpecies[k],allVarNames)
-      if (is.null(parameterIndex) && is.null(variableIndex))
-        allSpeciesStates <- c(allSpeciesStates, allSpecies[k])
-    }
+  for (k in seq_along(allSpecies)) {
+    parameterIndex <- strmatch(allSpecies[k],allParNames)
+    variableIndex <- strmatch(allSpecies[k],allVarNames)
+    if (is.null(parameterIndex) && is.null(variableIndex))
+      allSpeciesStates <- c(allSpeciesStates, allSpecies[k])
   }
 
   # Now generate ODE information for each species defined by reaction expresssions and
@@ -355,32 +353,30 @@ getStatesTxtBc <- function(model,model_states) {
   # PROCESS ARs
   ###################
   # run through the ARs and process them
-  if (length(ARtest) > 0) {
-    for (k in 1:length(ARtest)) {
-      # get each single AR
-      ARk <- strtrimM(model_states[ARtest[k]])
+  for (k in seq_along(ARtest)) {
+    # get each single AR
+    ARk <- strtrimM(model_states[ARtest[k]])
 
-      # split rhs in formula and variable name
-      terms <- strexplode(ARk,':')
-      if (length(terms) != 2) {
-        ARformulak <- terms[1]
-        ARnamek <- NULL # keep it empty
-        ARick <- NULL
-      } else {
-        ARformulak <- strtrimM(terms[1])
-        ARnamek <- strtrimM(terms[2])
-        ARick <- 0 # default setting
-      }
-
-      # Remove 0 = in formula
-      terms <- strexplode(ARformulak,'=')
-      if (length(terms) != 2 || as.numeric(terms[1])!=0)
-        stop("getStatesTxtBc: error in algebraic state definition")
-      ARformulak <- strtrimM(terms[2])
-
-      # add algebraic state to the model
-      model <- addAlgebraicAZRmodel(model,name=ARnamek,IC=ARick,formula=ARformulak)
+    # split rhs in formula and variable name
+    terms <- strexplode(ARk,':')
+    if (length(terms) != 2) {
+      ARformulak <- terms[1]
+      ARnamek <- NULL # keep it empty
+      ARick <- NULL
+    } else {
+      ARformulak <- strtrimM(terms[1])
+      ARnamek <- strtrimM(terms[2])
+      ARick <- 0 # default setting
     }
+
+    # Remove 0 = in formula
+    terms <- strexplode(ARformulak,'=')
+    if (length(terms) != 2 || as.numeric(terms[1])!=0)
+      stop("getStatesTxtBc: error in algebraic state definition")
+    ARformulak <- strtrimM(terms[2])
+
+    # add algebraic state to the model
+    model <- addAlgebraicAZRmodel(model,name=ARnamek,IC=ARick,formula=ARformulak)
   }
 
   ###################
@@ -389,90 +385,89 @@ getStatesTxtBc <- function(model,model_states) {
   # run through the initial conditions and add them they can have a different order than the odes. if an initial
   # condition is not defined for a certain state then it is set to zero by default
   # First check if any initial conditions are given - if not then don't execute this part!
-  if (length(ICtest) > 0) {
-    for (k1 in 1:length(ICtest)) {
-      ICString <- strremWhite(model_states[ICtest[k1]])
+  for (k1 in seq_along(ICtest)) {
+    ICString <- strremWhite(model_states[ICtest[k1]])
 
-      # Parse comments / notes
-      commentInfo <- checkgetNotes(ICString)
-      ICString    <- commentInfo$main
-      notesk      <- commentInfo$comment
+    # Parse comments / notes
+    commentInfo <- checkgetNotes(ICString)
+    ICString    <- commentInfo$main
+    notesk      <- commentInfo$comment
 
-      # Check if constraint information is present on a state. Syntax: {constraints:[min,max]}
-      stateConstraints <- c(NULL,NULL)
-      infoStartConstraints <- grep("\\{constraints:", ICString)
+    # Check if constraint information is present on a state. Syntax: {constraints:[min,max]}
+    stateConstraints <- c(NULL,NULL)
+    infoStartConstraints <- grep("\\{constraints:", ICString)
 
-      if (length(infoStartConstraints) > 0) {
-        ICString <- strremWhite(ICString)
+    if (length(infoStartConstraints) > 0) {
+      ICString <- strremWhite(ICString)
 
-        tempStart <- regexpr("\\{constraints:", ICString)
-        tempEnd <- regexpr("\\]\\}", ICString)
+      tempStart <- regexpr("\\{constraints:", ICString)
+      tempEnd <- regexpr("\\]\\}", ICString)
 
-        # get first bracket after {constraints}
-        constraintsString <- strtrimM(substr(ICString,(tempStart[1]+13),(tempEnd[tempStart<tempEnd][1])))
-        ICString <- strtrimM(paste(substr(ICString,1,tempStart[1]-1), substr(ICString,(tempEnd[tempStart<tempEnd][1]),nchar(ICString)-2), sep = ""))
-        tempStart2 <- regexpr("\\[", constraintsString)
-        tempEnd2 <- regexpr("\\]", constraintsString)
-        constraintsString <- substr(constraintsString,(tempStart2[1]+1),(tempEnd2[1]-1))
-        stateConstraints <- strexplode(constraintsString,',')
-        if (length(stateConstraints) != 2) {
-          stop('getStatesTxtBc: A state-constraint information seems to be wrongly defined')
-        }
-        stateConstraints[1] <- as.numeric(stateConstraints[1])
-        stateConstraints[2] <- as.numeric(stateConstraints[2])
+      # get first bracket after {constraints}
+      constraintsString <- strtrimM(substr(ICString,(tempStart[1]+13),(tempEnd[tempStart<tempEnd][1])))
+      ICString <- strtrimM(paste(substr(ICString,1,tempStart[1]-1),
+                                 substr(ICString,(tempEnd[tempStart<tempEnd][1]),nchar(ICString)-2), sep = ""))
+      tempStart2 <- regexpr("\\[", constraintsString)
+      tempEnd2 <- regexpr("\\]", constraintsString)
+      constraintsString <- substr(constraintsString,(tempStart2[1]+1),(tempEnd2[1]-1))
+      stateConstraints <- strexplode(constraintsString,',')
+      if (length(stateConstraints) != 2) {
+        stop('getStatesTxtBc: A state-constraint information seems to be wrongly defined')
       }
+      stateConstraints[1] <- as.numeric(stateConstraints[1])
+      stateConstraints[2] <- as.numeric(stateConstraints[2])
+    }
 
-      # Parse SBML related information
-      SBMLinfo     <- checkGetSBMLinfo(ICString,"getStatesTxtBc","state")
-      typek        <- SBMLinfo$type
-      compartmentk <- SBMLinfo$compartment
-      unittypek    <- SBMLinfo$unittype
-      ICString     <- SBMLinfo$textString
+    # Parse SBML related information
+    SBMLinfo     <- checkGetSBMLinfo(ICString,"getStatesTxtBc","state")
+    typek        <- SBMLinfo$type
+    compartmentk <- SBMLinfo$compartment
+    unittypek    <- SBMLinfo$unittype
+    ICString     <- SBMLinfo$textString
 
-      # extract the state name
-      temp <- regexpr("\\(0\\)", ICString)
-      stateName <- strtrimM(substr(ICString,1,temp[1]-1))
+    # extract the state name
+    temp <- regexpr("\\(0\\)", ICString)
+    stateName <- strtrimM(substr(ICString,1,temp[1]-1))
 
-      # extract the states' initial condition
-      temp <- regexpr("=", ICString)
-      stateIC <- strtrimM(substr(ICString,temp[1]+1,nchar(ICString)))
+    # extract the states' initial condition
+    temp <- regexpr("=", ICString)
+    stateIC <- strtrimM(substr(ICString,temp[1]+1,nchar(ICString)))
 
-      # add state information into model
-      found <- FALSE
+    # add state information into model
+    found <- FALSE
 
-      ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
+    ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
 
-      if (length(ix) > 1)
-        stop("getStatesTxtBc: error in model definition - a state appears more than once.")
+    if (length(ix) > 1)
+      stop("getStatesTxtBc: error in model definition - a state appears more than once.")
 
+    if (length(ix) != 0) {
+      model <- setStateAZRmodel(model,ix,IC=stateIC,lowConstraint=stateConstraints[1],
+                                highConstraint=stateConstraints[2],type=typek,
+                                compartment=compartmentk,unittype=unittypek,notes=notesk)
+      found <- TRUE
+    }
+
+    # add algebraic ic into model
+    if (!found && getNumberOfAlgebraicAZRmodel(model)>0) {
+      algebraic_names = c()
+      for (k2 in 1:getNumberOfAlgebraicAZRmodel(model)) {
+        if (!is.null(model$algebraic[[k2]]$name)) {
+          algebraic_names <- cbind(algebraic_names,model$algebraic[[k2]]$name)
+        } else {
+          algebraic_names <- cbind(algebraic_names,"UNDEFINED_AR_NAME")
+        }
+      }
+      ix <- unname(which(algebraic_names==stateName))
       if (length(ix) != 0) {
-        model <- setStateAZRmodel(model,ix,IC=stateIC,lowConstraint=stateConstraints[1],
-                                  highConstraint=stateConstraints[2],type=typek,
-                                  compartment=compartmentk,unittype=unittypek,notes=notesk)
+        model <- setAlgebraicAZRmodel(model,ix,IC=stateIC,type=typek,compartment=compartmentk,unittype=unittypek,
+                                      notes=notesk)
         found <- TRUE
       }
-
-      # add algebraic ic into model
-      if (!found && getNumberOfAlgebraicAZRmodel(model)>0) {
-        algebraic_names = c()
-        for (k2 in 1:getNumberOfAlgebraicAZRmodel(model)) {
-          if (!is.null(model$algebraic[[k2]]$name)) {
-            algebraic_names <- cbind(algebraic_names,model$algebraic[[k2]]$name)
-          } else {
-            algebraic_names <- cbind(algebraic_names,"UNDEFINED_AR_NAME")
-          }
-        }
-        ix <- unname(which(algebraic_names==stateName))
-        if (length(ix) != 0) {
-          model <- setAlgebraicAZRmodel(model,ix,IC=stateIC,type=typek,compartment=compartmentk,unittype=unittypek,
-                                        notes=notesk)
-          found <- TRUE
-        }
-      }
-      # Check if found
-      if (!found)
-        stop("getStatesTxtBc: An initial condition is defined for a state that is not present in the model")
     }
+    # Check if found
+    if (!found)
+      stop("getStatesTxtBc: An initial condition is defined for a state that is not present in the model")
   }
   return(model)
 }

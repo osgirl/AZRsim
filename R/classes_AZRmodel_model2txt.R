@@ -80,54 +80,50 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
   # Algebraic Rules
   ###############################################
 
-  if (getNumberOfAlgebraicAZRmodel(model) > 0) {
-    for (k in 1:length(model$algebraic)) {
-      if (!is.null(model$algebraic[[k]]$name)) {
-        ALGtext <- paste("0 = ",model$algebraic[[k]]$formula," : ",model$algebraic[[k]]$name,sep="")
-      } else {
-        ALGtext <- paste("0 = ",model$algebraic[[k]]$formula,sep="")
-      }
-      type <- model$algebraic[[k]]$type
-      compartment <- model$algebraic[[k]]$compartment
-      unittype <- model$algebraic[[k]]$unittype
-      informationText <- ""
-
-      if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
-        if (type=="isSpecie" && !is.null(compartment) && (unittype=="amount" || unittype=="concentration"))
-          informationText <- paste(" {",type,":",compartment,":",unittype,"}",sep="")
-        if (type=="isParameter" && is.null(compartment) && is.null(unittype))
-          informationText <- paste(" {",type,"}",sep="")
-        if (type=="isCompartment" && is.null(unittype))
-          informationText <- paste(" {",type,":",compartment,"}",sep="")
-        if (informationText=="") {
-          stop(paste("exportTxtAZRmodel: Type information for algebraic state ",model$algebraic[[k]]$name," seems to be wrong."),sep="")
-        }
-      }
-
-      ALGtext <- strtrimM(paste(ALGtext,informationText,sep=""))
-      if (!is.null(model$algebraic[[k]]$notes))
-        ALGtext <- strtrimM(paste(ALGtext,"%",model$algebraic[[k]]$notes,sep=" "))
-      FILETEXT <- paste(FILETEXT,ALGtext,"\n",sep="")
+  for (k in seq_along(model$algebraic)) {
+    if (!is.null(model$algebraic[[k]]$name)) {
+      ALGtext <- paste("0 = ",model$algebraic[[k]]$formula," : ",model$algebraic[[k]]$name,sep="")
+    } else {
+      ALGtext <- paste("0 = ",model$algebraic[[k]]$formula,sep="")
     }
-    FILETEXT <- paste(FILETEXT," \n",sep="")
+    type <- model$algebraic[[k]]$type
+    compartment <- model$algebraic[[k]]$compartment
+    unittype <- model$algebraic[[k]]$unittype
+    informationText <- ""
+    if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
+      if (type=="isSpecie" && !is.null(compartment) && (unittype=="amount" || unittype=="concentration"))
+        informationText <- paste(" {",type,":",compartment,":",unittype,"}",sep="")
+      if (type=="isParameter" && is.null(compartment) && is.null(unittype))
+        informationText <- paste(" {",type,"}",sep="")
+      if (type=="isCompartment" && is.null(unittype))
+        informationText <- paste(" {",type,":",compartment,"}",sep="")
+      if (informationText=="") {
+        stop(paste("exportTxtAZRmodel: Type information for algebraic state ",
+                   model$algebraic[[k]]$name, " seems to be wrong."), sep="")
+      }
+    }
+    ALGtext <- strtrimM(paste(ALGtext,informationText,sep=""))
+    if (!is.null(model$algebraic[[k]]$notes))
+      ALGtext <- strtrimM(paste(ALGtext,"%",model$algebraic[[k]]$notes,sep=" "))
+    FILETEXT <- paste(FILETEXT,ALGtext,"\n",sep="")
   }
+  FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
   # Initial conditions
   ###############################################
 
   # states
-  if (getNumberOfStatesAZRmodel(model) > 0) {
-    for (k in 1:length(model$states))
-      FILETEXT <- paste(FILETEXT,model$states[[k]]$name,"(0) = ",model$states[[k]]$IC,"\n",sep="")
-  }
+  for (k in seq_along(model$states))
+    FILETEXT <- paste(FILETEXT, model$states[[k]]$name, "(0) = ",
+                      model$states[[k]]$IC, "\n", sep="")
 
   # algebraic states
-  if (getNumberOfAlgebraicAZRmodel(model) > 0) {
-    for (k in 1:length(model$algebraic))
-      if (!is.null(model$algebraic[[k]]$name))
-        FILETEXT <- paste(FILETEXT,model$algebraic[[k]]$name,"(0) = ",model$algebraic[[k]]$IC,"\n",sep="")
-  }
+  for (k in seq_along(model$algebraic))
+    if (!is.null(model$algebraic[[k]]$name))
+      FILETEXT <- paste(FILETEXT, model$algebraic[[k]]$name,
+                        "(0) = ", model$algebraic[[k]]$IC, "\n",sep="")
+
   FILETEXT <- paste(FILETEXT," \n",sep="")
 
   ###############################################
@@ -136,37 +132,35 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL PARAMETERS\n\n",sep="")
 
-  if (getNumberOfParametersAZRmodel(model) > 0) {
-    for (k in 1:length(model$parameters)) {
-      PARtext <- paste(model$parameters[[k]]$name," = ",model$parameters[[k]]$value,sep="")
-      type <- model$parameters[[k]]$type
-      compartment <- model$parameters[[k]]$compartment
-      unittype <- model$parameters[[k]]$unittype
-      informationText <- ""
+  for (k in seq_along(model$parameters)) {
+    PARtext <- paste(model$parameters[[k]]$name," = ",model$parameters[[k]]$value,sep="")
+    type <- model$parameters[[k]]$type
+    compartment <- model$parameters[[k]]$compartment
+    unittype <- model$parameters[[k]]$unittype
+    informationText <- ""
 
-      if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
-        if (type=="isSpecie" && !is.null(compartment) && (unittype=="amount" || unittype=="concentration"))
-          informationText <- paste(" {",type,":",compartment,":",unittype,"}",sep="")
-        if (type=="isParameter" && is.null(compartment) && is.null(unittype))
-          informationText <- paste(" {",type,"}",sep="")
-        if (type=="isCompartment" && is.null(unittype))
-          informationText <- paste(" {",type,":",compartment,"}",sep="")
-        if (informationText=="") {
-          stop(paste("exportTxtAZRmodel: Type information for parameter ",model$parameters[[k]]$name," seems to be wrong."),sep="")
-        }
+    if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
+      if (type=="isSpecie" && !is.null(compartment) && (unittype=="amount" || unittype=="concentration"))
+        informationText <- paste(" {",type,":",compartment,":",unittype,"}",sep="")
+      if (type=="isParameter" && is.null(compartment) && is.null(unittype))
+        informationText <- paste(" {",type,"}",sep="")
+      if (type=="isCompartment" && is.null(unittype))
+        informationText <- paste(" {",type,":",compartment,"}",sep="")
+      if (informationText=="") {
+        stop(paste("exportTxtAZRmodel: Type information for parameter ",model$parameters[[k]]$name," seems to be wrong."),sep="")
       }
-
-      PARtext <- strtrimM(paste(PARtext,informationText,sep=""))
-
-      if (model$parameters[[k]]$estimate)
-        PARtext <- strtrimM(paste(PARtext,"<estimate>",sep=" "))
-      if (model$parameters[[k]]$regressor)
-        PARtext <- strtrimM(paste(PARtext,"<regressor>",sep=" "))
-
-      if (!is.null(model$parameters[[k]]$notes))
-        PARtext <- strtrimM(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
-      FILETEXT <- paste(FILETEXT,PARtext,"\n",sep="")
     }
+
+    PARtext <- strtrimM(paste(PARtext,informationText,sep=""))
+
+    if (model$parameters[[k]]$estimate)
+      PARtext <- strtrimM(paste(PARtext,"<estimate>",sep=" "))
+    if (model$parameters[[k]]$regressor)
+      PARtext <- strtrimM(paste(PARtext,"<regressor>",sep=" "))
+
+    if (!is.null(model$parameters[[k]]$notes))
+      PARtext <- strtrimM(paste(PARtext,"%",model$parameters[[k]]$notes,sep=" "))
+    FILETEXT <- paste(FILETEXT,PARtext,"\n",sep="")
   }
   FILETEXT <- paste(FILETEXT," \n",sep="")
 
@@ -176,31 +170,29 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL VARIABLES\n\n",sep="")
 
-  if (getNumberOfVariablesAZRmodel(model) > 0) {
-    for (k in 1:length(model$variables)) {
-      VARtext <- paste(model$variables[[k]]$name," = ",model$variables[[k]]$formula,sep="")
-      type <- model$variables[[k]]$type
-      compartment <- model$variables[[k]]$compartment
-      unittype <- model$variables[[k]]$unittype
-      informationText <- ""
+  for (k in seq_along(model$variables)) {
+    VARtext <- paste(model$variables[[k]]$name," = ",model$variables[[k]]$formula,sep="")
+    type <- model$variables[[k]]$type
+    compartment <- model$variables[[k]]$compartment
+    unittype <- model$variables[[k]]$unittype
+    informationText <- ""
 
-      if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
-        if (type=="isSpecie" && !is.null(compartment) && (unittype=="amount" || unittype=="concentration"))
-          informationText <- paste(" {",type,":",compartment,":",unittype,"}",sep="")
-        if (type=="isParameter" && is.null(compartment) && is.null(unittype))
-          informationText <- paste(" {",type,"}",sep="")
-        if (type=="isCompartment" && is.null(unittype))
-          informationText <- paste(" {",type,":",compartment,"}",sep="")
-        if (informationText=="") {
-          stop(paste("exportTxtAZRmodel: Type information for variable ",model$variables[[k]]$name," seems to be wrong."),sep="")
-        }
+    if (!is.null(type) || !is.null(compartment) || !is.null(unittype)) {
+      if (type=="isSpecie" && !is.null(compartment) && (unittype=="amount" || unittype=="concentration"))
+        informationText <- paste(" {",type,":",compartment,":",unittype,"}",sep="")
+      if (type=="isParameter" && is.null(compartment) && is.null(unittype))
+        informationText <- paste(" {",type,"}",sep="")
+      if (type=="isCompartment" && is.null(unittype))
+        informationText <- paste(" {",type,":",compartment,"}",sep="")
+      if (informationText=="") {
+        stop(paste("exportTxtAZRmodel: Type information for variable ",model$variables[[k]]$name," seems to be wrong."),sep="")
       }
-
-      VARtext <- strtrimM(paste(VARtext,informationText,sep=""))
-      if (!is.null(model$variables[[k]]$notes))
-        VARtext <- strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
-      FILETEXT <- paste(FILETEXT,VARtext,"\n",sep="")
     }
+
+    VARtext <- strtrimM(paste(VARtext,informationText,sep=""))
+    if (!is.null(model$variables[[k]]$notes))
+      VARtext <- strtrimM(paste(VARtext,"%",model$variables[[k]]$notes,sep=" "))
+    FILETEXT <- paste(FILETEXT,VARtext,"\n",sep="")
   }
   FILETEXT <- paste(FILETEXT," \n",sep="")
 
@@ -210,15 +202,13 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL REACTIONS\n\n",sep="")
 
-  if (getNumberOfReactionsAZRmodel(model) > 0) {
-    for (k in 1:length(model$reactions)) {
-      REAtext <- paste(model$reactions[[k]]$name," = ",model$reactions[[k]]$formula,sep="")
-      if (model$reactions[[k]]$reversible) REAtext <- paste(REAtext,"{reversible}")
-      if (model$reactions[[k]]$fast) REAtext <- paste(REAtext,"{fast}")
-      if (!is.null(model$reactions[[k]]$notes))
-        REAtext <- strtrimM(paste(REAtext,"%",model$reactions[[k]]$notes,sep=" "))
-      FILETEXT <- paste(FILETEXT,REAtext,"\n",sep="")
-    }
+  for (k in seq_along(model$reactions)) {
+    REAtext <- paste(model$reactions[[k]]$name," = ",model$reactions[[k]]$formula,sep="")
+    if (model$reactions[[k]]$reversible) REAtext <- paste(REAtext,"{reversible}")
+    if (model$reactions[[k]]$fast) REAtext <- paste(REAtext,"{fast}")
+    if (!is.null(model$reactions[[k]]$notes))
+      REAtext <- strtrimM(paste(REAtext,"%",model$reactions[[k]]$notes,sep=" "))
+    FILETEXT <- paste(FILETEXT,REAtext,"\n",sep="")
   }
   FILETEXT <- paste(FILETEXT," \n",sep="")
 
@@ -228,13 +218,12 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL FUNCTIONS\n\n",sep="")
 
-  if (getNumberOfFunctionsAZRmodel(model) > 0) {
-    for (k in 1:length(model$functions)) {
-      FUNtext <- paste(model$functions[[k]]$name,"(",model$functions[[k]]$arguments,") = ",model$functions[[k]]$formula,sep="")
-      if (!is.null(model$functions[[k]]$notes))
-        FUNtext <- strtrimM(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
-      FILETEXT <- paste(FILETEXT,FUNtext,"\n",sep="")
-    }
+  for (k in seq_along(model$functions)) {
+    FUNtext <- paste(model$functions[[k]]$name,"(",model$functions[[k]]$arguments,
+                     ") = ",model$functions[[k]]$formula,sep="")
+    if (!is.null(model$functions[[k]]$notes))
+      FUNtext <- strtrimM(paste(FUNtext,"%",model$functions[[k]]$notes,sep=" "))
+    FILETEXT <- paste(FILETEXT,FUNtext,"\n",sep="")
   }
   FILETEXT <- paste(FILETEXT," \n",sep="")
 
@@ -244,17 +233,16 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL EVENTS\n\n",sep="")
 
-  if (getNumberOfEventsAZRmodel(model) > 0) {
-    for (k in 1:length(model$events)) {
-      EVEtext <- paste(model$events[[k]]$name," = ",model$events[[k]]$trigger,sep="")
-      if (getNumberOfEventassignmentsAZRmodel(model,k) > 0) {
-        for (k2 in 1:length(model$events[[k]]$assignment))
-          EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,",",model$events[[k]]$assignment[[k2]]$formula,sep="")
-      }
-      if (!is.null(model$events[[k]]$notes))
-        EVEtext <- strtrimM(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
-      FILETEXT <- paste(FILETEXT,EVEtext,"\n",sep="")
+  for (k in seq_along(model$events)) {
+    EVEtext <- paste(model$events[[k]]$name," = ",model$events[[k]]$trigger,sep="")
+    if (getNumberOfEventassignmentsAZRmodel(model,k) > 0) {
+      for (k2 in 1:length(model$events[[k]]$assignment))
+        EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,
+                         ",",model$events[[k]]$assignment[[k2]]$formula,sep="")
     }
+    if (!is.null(model$events[[k]]$notes))
+      EVEtext <- strtrimM(paste(EVEtext,"%",model$events[[k]]$notes,sep=" "))
+    FILETEXT <- paste(FILETEXT,EVEtext,"\n",sep="")
   }
   FILETEXT <- paste(FILETEXT," ",sep="")
 

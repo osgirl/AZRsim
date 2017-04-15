@@ -101,58 +101,56 @@ checkGetSBMLinfo <- function(textString,fctname,elementname) {
 getParameters <- function(model,model_parameters) {
 
   # run through the variables and process them
-  if (!is.null(model_parameters)) {
-    for (k in 1:length(model_parameters)) {
-      parameterString <- strtrimM(model_parameters[k])
+  for (k in seq_along(model_parameters)) {
+    parameterString <- strtrimM(model_parameters[k])
 
-      # Parse comments / notes
-      commentInfo     <- checkgetNotes(parameterString)
-      parameterString <- commentInfo$main
-      notesk          <- commentInfo$comment
+    # Parse comments / notes
+    commentInfo     <- checkgetNotes(parameterString)
+    parameterString <- commentInfo$main
+    notesk          <- commentInfo$comment
 
-      # check if the "<estimate>" identifier is present.
-      flagInfo        <- checkGetFlag(parameterString,"<estimate>")
-      parameterString <- flagInfo$textString
-      estimateFlag    <- flagInfo$flagPresent
+    # check if the "<estimate>" identifier is present.
+    flagInfo        <- checkGetFlag(parameterString,"<estimate>")
+    parameterString <- flagInfo$textString
+    estimateFlag    <- flagInfo$flagPresent
 
-      # check if the "<regressor>" identifier is present.
-      flagInfo        <- checkGetFlag(parameterString,"<regressor>")
-      parameterString <- flagInfo$textString
-      regressorFlag   <- flagInfo$flagPresent
+    # check if the "<regressor>" identifier is present.
+    flagInfo        <- checkGetFlag(parameterString,"<regressor>")
+    parameterString <- flagInfo$textString
+    regressorFlag   <- flagInfo$flagPresent
 
-      # Check if both estimate and regressor flag given
-      if (estimateFlag && regressorFlag)
-        stop("getParameters: parameter with both <estimate> and <regressor> flag")
+    # Check if both estimate and regressor flag given
+    if (estimateFlag && regressorFlag)
+      stop("getParameters: parameter with both <estimate> and <regressor> flag")
 
-      # Parse SBML related information
-      SBMLinfo        <- checkGetSBMLinfo(parameterString,"getParameters","parameter")
-      typek           <- SBMLinfo$type
-      compartmentk    <- SBMLinfo$compartment
-      unittypek       <- SBMLinfo$unittype
-      parameterString <- SBMLinfo$textString
+    # Parse SBML related information
+    SBMLinfo        <- checkGetSBMLinfo(parameterString,"getParameters","parameter")
+    typek           <- SBMLinfo$type
+    compartmentk    <- SBMLinfo$compartment
+    unittypek       <- SBMLinfo$unittype
+    parameterString <- SBMLinfo$textString
 
-      # extract the parameter name
-      temp <- regexpr("=", parameterString)
-      test <- strtrimM(substr(parameterString,1,(temp[1]-1)))
-      # check if parameter name given
-      if (nchar(test) == 0) {
-        stop("getParameters: At least one parameter name not given.")
-      }
-      namek <- strremWhite(test)
-
-      # extract the parameter value
-      valuek = strtrimM(substr(parameterString,(temp+1),nchar(parameterString)))
-
-      # check if parameter value given
-      if (nchar(valuek) == 0) {
-        stop("getParameters: At least one parameter definition not given.")
-      }
-
-      # add parameter to model
-      model <- addParameterAZRmodel(model,name=namek,value=as.numeric(valuek),
-                                    notes=notesk,type=typek,compartment=compartmentk,
-                                    unittype=unittypek,estimate=estimateFlag,regressor=regressorFlag)
+    # extract the parameter name
+    temp <- regexpr("=", parameterString)
+    test <- strtrimM(substr(parameterString,1,(temp[1]-1)))
+    # check if parameter name given
+    if (nchar(test) == 0) {
+      stop("getParameters: At least one parameter name not given.")
     }
+    namek <- strremWhite(test)
+
+    # extract the parameter value
+    valuek = strtrimM(substr(parameterString,(temp+1),nchar(parameterString)))
+
+    # check if parameter value given
+    if (nchar(valuek) == 0) {
+      stop("getParameters: At least one parameter definition not given.")
+    }
+
+    # add parameter to model
+    model <- addParameterAZRmodel(model,name=namek,value=as.numeric(valuek),
+                                  notes=notesk,type=typek,compartment=compartmentk,
+                                  unittype=unittypek,estimate=estimateFlag,regressor=regressorFlag)
   }
   return(model)
 }
@@ -164,42 +162,41 @@ getParameters <- function(model,model_parameters) {
 getVariables <- function(model,model_variables) {
 
   # run through the variables and process them
-  if (!is.null(model_variables)) {
-    for (k in 1:length(model_variables)) {
-      variableString <- strtrimM(model_variables[k])
+  for (k in seq_along(model_variables)) {
+    variableString <- strtrimM(model_variables[k])
 
-      # Parse comments / notes
-      commentInfo    <- checkgetNotes(variableString)
-      variableString <- commentInfo$main
-      notesk         <- commentInfo$comment
+    # Parse comments / notes
+    commentInfo    <- checkgetNotes(variableString)
+    variableString <- commentInfo$main
+    notesk         <- commentInfo$comment
 
-      # Parse SBML related information
-      SBMLinfo        <- checkGetSBMLinfo(variableString,"getVariables","variable")
-      typek           <- SBMLinfo$type
-      compartmentk    <- SBMLinfo$compartment
-      unittypek       <- SBMLinfo$unittype
-      variableString  <- SBMLinfo$textString
+    # Parse SBML related information
+    SBMLinfo        <- checkGetSBMLinfo(variableString,"getVariables","variable")
+    typek           <- SBMLinfo$type
+    compartmentk    <- SBMLinfo$compartment
+    unittypek       <- SBMLinfo$unittype
+    variableString  <- SBMLinfo$textString
 
-      # extract the variable name
-      temp <- regexpr("=", variableString)
-      test <- strtrimM(substr(variableString,1,(temp[1]-1)))
-      # check if variable name given
-      if (nchar(test) == 0) {
-        stop("getVariables: At least one variable name not given.")
-      }
-      namek <- strremWhite(test)
-
-      # extract the variable expression
-      formulak = strtrimM(substr(variableString,(temp+1),nchar(variableString)))
-
-      # check if variable expression given
-      if (nchar(formulak) == 0) {
-        stop("getVariables: At least one variable definition not given.")
-      }
-
-      # add variable to model
-      model <- addVariableAZRmodel(model,name=namek,formula=formulak,notes=notesk,type=typek,compartment=compartmentk,unittype=unittypek)
+    # extract the variable name
+    temp <- regexpr("=", variableString)
+    test <- strtrimM(substr(variableString,1,(temp[1]-1)))
+    # check if variable name given
+    if (nchar(test) == 0) {
+      stop("getVariables: At least one variable name not given.")
     }
+    namek <- strremWhite(test)
+
+    # extract the variable expression
+    formulak = strtrimM(substr(variableString,(temp+1),nchar(variableString)))
+
+    # check if variable expression given
+    if (nchar(formulak) == 0) {
+      stop("getVariables: At least one variable definition not given.")
+    }
+
+    # add variable to model
+    model <- addVariableAZRmodel(model, name=namek, formula=formulak, notes=notesk,
+                                 type=typek, compartment=compartmentk, unittype=unittypek)
   }
   return(model)
 }
@@ -209,48 +206,47 @@ getVariables <- function(model,model_variables) {
 ###############################################################################
 getFunctions <- function(model,model_functions) {
 
-  if (!is.null(model_functions)) {
-    # run through the functions and process them
-    for (k in 1:length(model_functions)) {
+  # run through the functions and process them
+  for (k in seq_along(model_functions)) {
 
-      functionString = strtrimM(model_functions[k])
+    functionString = strtrimM(model_functions[k])
 
-      # Parse comments / notes
-      commentInfo    <- checkgetNotes(functionString)
-      functionString <- commentInfo$main
-      notesk         <- commentInfo$comment
+    # Parse comments / notes
+    commentInfo    <- checkgetNotes(functionString)
+    functionString <- commentInfo$main
+    notesk         <- commentInfo$comment
 
-      # function name
-      temp <- regexpr("\\(", functionString)
-      namek <- strtrimM(substr(functionString,1,(temp[1]-1)))
+    # function name
+    temp <- regexpr("\\(", functionString)
+    namek <- strtrimM(substr(functionString,1,(temp[1]-1)))
 
-      # check if function name given
-      if (nchar(namek) == 0) {
-        stop("getFunctions: At least one function name not given.")
-      }
-      namek <- strremWhite(namek)
-
-      # function arguments
-      temp2 <- regexpr("\\)", functionString)
-      test <- strtrimM(substr(functionString,(temp[1]+1),(temp2[1]-1)))
-      # check if function arguments are given
-      if (nchar(test) == 0) {
-        stop("getFunctions: At least for one function no arguments given.")
-      }
-      argumentsk <- strremWhite(test)
-
-      # extract the formula
-      temp3 <- regexpr("=", functionString)
-      formulak <- strtrimM(substr(functionString,(temp3[1]+1),nchar(functionString)))
-
-      # check if function formula given
-      if(nchar(formulak) == 0) {
-        stop("getFunctions: At least for one function no formula given.")
-      }
-
-      # add info about the function parts for kth function into the function lists
-      model <- addFunctionAZRmodel(model,name=namek,arguments=argumentsk,formula=formulak,notes=notesk)
+    # check if function name given
+    if (nchar(namek) == 0) {
+      stop("getFunctions: At least one function name not given.")
     }
+    namek <- strremWhite(namek)
+
+    # function arguments
+    temp2 <- regexpr("\\)", functionString)
+    test <- strtrimM(substr(functionString,(temp[1]+1),(temp2[1]-1)))
+    # check if function arguments are given
+    if (nchar(test) == 0) {
+      stop("getFunctions: At least for one function no arguments given.")
+    }
+    argumentsk <- strremWhite(test)
+
+    # extract the formula
+    temp3 <- regexpr("=", functionString)
+    formulak <- strtrimM(substr(functionString,(temp3[1]+1),nchar(functionString)))
+
+    # check if function formula given
+    if(nchar(formulak) == 0) {
+      stop("getFunctions: At least for one function no formula given.")
+    }
+
+    # add info about the function parts for kth function into the function lists
+    model <- addFunctionAZRmodel(model, name=namek, arguments=argumentsk,
+                                 formula=formulak ,notes=notesk)
   }
   return(model)
 }
@@ -261,39 +257,39 @@ getFunctions <- function(model,model_functions) {
 getEvents <- function(model,model_events) {
 
   # run through the events and process them
-  if (!is.null(model_events)) {
-    for (k in 1:length(model_events)) {
-      eventString <- strtrimM(model_events[k])
+  for (k in seq_along(model_events)) {
+    eventString <- strtrimM(model_events[k])
 
-      # Parse comments / notes
-      commentInfo <- checkgetNotes(eventString)
-      eventString <- commentInfo$main
-      notesk      <- commentInfo$comment
+    # Parse comments / notes
+    commentInfo <- checkgetNotes(eventString)
+    eventString <- commentInfo$main
+    notesk      <- commentInfo$comment
 
-      # extract the event name
-      temp <- regexpr("=", eventString)
-      namek <- strtrimM(substr(eventString,1,(temp[1]-1)))
-      # check if event name given
-      if (nchar(namek) == 0) {
-        stop("getEvents: At least one event name not given.")
-      }
-      # get the right hand side
-      eventRHS <- strtrimM(substr(eventString,temp[1]+1,nchar(eventString)))
-      # decompose the eventRHS into its comma separated elements
-      # taking into account parentheses
-      elementsRHS <- strexplodePC(eventRHS)
-      # check number of elements
-      if ((length(elementsRHS) < 3) | ((length(elementsRHS) %% 2) == 0)) {
-        stop("getEvents: At least one event has no full information given.")
-      }
-      # first element is assumed to be the trigger function
-      triggerk <- strremWhite(elementsRHS[1])
-      # Add event to the model
-      model <- addEventAZRmodel(model,name=namek,trigger=strremWhite(triggerk),notes=notesk)
-      # Add event assignments
-      for (k2 in seq(2,length(elementsRHS),2)) {
-        model <- addEventAssignmentAZRmodel(model,eventindex=k,variable=strremWhite(elementsRHS[k2]),formula=strremWhite(elementsRHS[k2+1]))
-      }
+    # extract the event name
+    temp <- regexpr("=", eventString)
+    namek <- strtrimM(substr(eventString,1,(temp[1]-1)))
+    # check if event name given
+    if (nchar(namek) == 0) {
+      stop("getEvents: At least one event name not given.")
+    }
+    # get the right hand side
+    eventRHS <- strtrimM(substr(eventString,temp[1]+1,nchar(eventString)))
+    # decompose the eventRHS into its comma separated elements
+    # taking into account parentheses
+    elementsRHS <- strexplodePC(eventRHS)
+    # check number of elements
+    if ((length(elementsRHS) < 3) | ((length(elementsRHS) %% 2) == 0)) {
+      stop("getEvents: At least one event has no full information given.")
+    }
+    # first element is assumed to be the trigger function
+    triggerk <- strremWhite(elementsRHS[1])
+    # Add event to the model
+    model <- addEventAZRmodel(model,name=namek,trigger=strremWhite(triggerk),notes=notesk)
+    # Add event assignments
+    for (k2 in seq(2,length(elementsRHS),2)) {
+      model <- addEventAssignmentAZRmodel(model, eventindex=k,
+                                          variable=strremWhite(elementsRHS[k2]),
+                                          formula=strremWhite(elementsRHS[k2+1]))
     }
   }
   return(model)

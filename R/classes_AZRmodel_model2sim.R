@@ -176,54 +176,54 @@ nnICsim <- function (model) {
 
   nnICfctText <- "function () {\n"
 
-  if (length(model$functions)>0) {
-    for (k in 1:length(model$functions)) {
-      nnICfctText <- paste(nnICfctText,"  ",model$functions[[k]]$name," <- function(",model$functions[[k]]$arguments,") { ",model$functions[[k]]$formula," }\n",sep="")
-    }
-    nnICfctText <- paste(nnICfctText,"\n",sep="")
-  }
-
-  for (k in 1:length(model$states)) {
-    nnICfctText <- paste(nnICfctText,"  try(",model$states[[k]]$name," <- ",model$states[[k]]$IC,", silent=TRUE)\n",sep="")
+  for (k in seq_along(model$functions)) {
+    nnICfctText <- paste(nnICfctText, "  ", model$functions[[k]]$name,
+                         " <- function(", model$functions[[k]]$arguments,
+                         ") { ",model$functions[[k]]$formula," }\n",sep="")
   }
   nnICfctText <- paste(nnICfctText,"\n",sep="")
 
-  if (length(model$parameters)>0) {
-    for (k in 1:length(model$parameters)) {
-      nnICfctText <- paste(nnICfctText,"  try(",model$parameters[[k]]$name," <- ",model$parameters[[k]]$value,", silent=TRUE)\n",sep="")
-    }
-    nnICfctText <- paste(nnICfctText,"\n",sep="")
+  for (k in seq_along(model$states)) {
+    nnICfctText <- paste(nnICfctText, "  try(", model$states[[k]]$name,
+                         " <- ",model$states[[k]]$IC,
+                         ", silent=TRUE)\n",sep="")
   }
+  nnICfctText <- paste(nnICfctText,"\n",sep="")
 
-  if (length(model$variables)>0) {
-    for (k in 1:length(model$variables)) {
-      nnICfctText <- paste(nnICfctText,"  try(",model$variables[[k]]$name," <- ",model$variables[[k]]$formula,", silent=TRUE)\n",sep="")
-    }
-    nnICfctText <- paste(nnICfctText,"\n",sep="")
+  for (k in seq_along(model$parameters)) {
+    nnICfctText <- paste(nnICfctText, "  try(", model$parameters[[k]]$name,
+                         " <- ",model$parameters[[k]]$value, ", silent=TRUE)\n", sep="")
   }
+  nnICfctText <- paste(nnICfctText,"\n",sep="")
 
-  if (length(model$reactions)>0) {
-    for (k in 1:length(model$reactions)) {
-      nnICfctText <- paste(nnICfctText,"  try(",model$reactions[[k]]$name," <- ",model$reactions[[k]]$formula,", silent=TRUE)\n",sep="")
-    }
-    nnICfctText <- paste(nnICfctText,"\n",sep="")
+  for (k in seq_along(model$variables)) {
+    nnICfctText <- paste(nnICfctText, "  try(", model$variables[[k]]$name,
+                         " <- ", model$variables[[k]]$formula, ", silent=TRUE)\n", sep="")
   }
+  nnICfctText <- paste(nnICfctText,"\n",sep="")
+
+  for (k in seq_along(model$reactions)) {
+    nnICfctText <- paste(nnICfctText, "  try(",model$reactions[[k]]$name,
+                         " <- ", model$reactions[[k]]$formula, ", silent=TRUE)\n", sep="")
+  }
+  nnICfctText <- paste(nnICfctText,"\n",sep="")
 
   nnICfctText <- paste(nnICfctText,"  out = c()\n",sep="")
 
-  for (k in 1:length(model$states)) {
-    nnICfctText <- paste(nnICfctText,"  out['",model$states[[k]]$name,"'] <- tryCatch(",model$states[[k]]$IC,",error=function(cond) return(NA))\n",sep="")
+  for (k in seq_along(model$states)) {
+    nnICfctText <- paste(nnICfctText, "  out['", model$states[[k]]$name, "'] <- tryCatch(",
+                         model$states[[k]]$IC, ",error=function(cond) return(NA))\n", sep="")
   }
 
   nnICfctText <- paste(nnICfctText,"\n",sep="")
 
-  nnICfctText <- paste(nnICfctText,"  if (length(which(is.na(out)))>0)\n",sep="")
-  nnICfctText <- paste(nnICfctText,"    stop('nnICsim: problem in evaluation of non-numerical initial conditions')\n",sep="")
+  nnICfctText <- paste(nnICfctText, "  if (length(which(is.na(out)))>0)\n", sep="")
+  nnICfctText <- paste(nnICfctText, "    stop('nnICsim: problem in evaluation of non-numerical initial conditions')\n", sep="")
 
-  nnICfctText <- paste(nnICfctText,"\n",sep="")
-  nnICfctText <- paste(nnICfctText,"  return(out)\n",sep="")
+  nnICfctText <- paste(nnICfctText, "\n", sep="")
+  nnICfctText <- paste(nnICfctText, "  return(out)\n", sep="")
 
-  nnICfctText <- paste(nnICfctText,"}\n",sep="")
+  nnICfctText <- paste(nnICfctText, "}\n", sep="")
 
   outFunc <- eval(parse(text=nnICfctText))
 }
@@ -259,40 +259,33 @@ getODEtext <- function(model) {
 
   ODEtext <- ""
 
-  for (k in 1:length(model$states)) {
-    ODEtext <- paste(ODEtext,"  ",model$states[[k]]$name," = states[",k,"]\n",sep="")
+  for (k in seq_along(model$states)) {
+    ODEtext <- paste(ODEtext, "  ", model$states[[k]]$name, " = states[", k, "]\n", sep="")
   }
   ODEtext <- paste(ODEtext,"\n",sep="")
 
-  if (length(model$parameters)>0) {
-    for (k in 1:length(model$parameters)) {
-      ODEtext <- paste(ODEtext,"  ",model$parameters[[k]]$name," = paramvalues[",k,"]\n",sep="")
-    }
-    ODEtext <- paste(ODEtext,"\n",sep="")
+  for (k in seq_along(model$parameters)) {
+    ODEtext <- paste(ODEtext, "  " ,model$parameters[[k]]$name, " = paramvalues[", k, "]\n", sep="")
   }
+  ODEtext <- paste(ODEtext, "\n", sep="")
 
-  if (length(model$functions)>0) {
-    for (k in 1:length(model$functions)) {
-      ODEtext <- paste(ODEtext,"  ",model$functions[[k]]$name," <- function(",model$functions[[k]]$arguments,") { ",model$functions[[k]]$formula," }\n",sep="")
-    }
-    ODEtext <- paste(ODEtext,"\n",sep="")
+  for (k in seq_along(model$functions)) {
+    ODEtext <- paste(ODEtext, "  ", model$functions[[k]]$name, " <- function(",
+                     model$functions[[k]]$arguments, ") { ", model$functions[[k]]$formula, " }\n", sep="")
   }
+  ODEtext <- paste(ODEtext,"\n",sep="")
 
-  if (length(model$variables)>0) {
-    for (k in 1:length(model$variables)) {
-      ODEtext <- paste(ODEtext,"  ",model$variables[[k]]$name," = ",model$variables[[k]]$formula,"\n",sep="")
-    }
-    ODEtext <- paste(ODEtext,"\n",sep="")
+  for (k in seq_along(model$variables)) {
+    ODEtext <- paste(ODEtext, "  ", model$variables[[k]]$name, " = ", model$variables[[k]]$formula, "\n", sep="")
   }
+  ODEtext <- paste(ODEtext, "\n", sep="")
 
-  if (length(model$reactions)>0) {
-    for (k in 1:length(model$reactions)) {
-      ODEtext <- paste(ODEtext,"  ",model$reactions[[k]]$name," = ",model$reactions[[k]]$formula,"\n",sep="")
-    }
-    ODEtext <- paste(ODEtext,"\n",sep="")
+  for (k in seq_along(model$reactions)) {
+    ODEtext <- paste(ODEtext, "  ", model$reactions[[k]]$name, " = ", model$reactions[[k]]$formula, "\n", sep="")
   }
+  ODEtext <- paste(ODEtext, "\n", sep="")
 
-  for (k in 1:length(model$states)) {
+  for (k in seq_along(model$states)) {
     ODEtext <- paste(ODEtext,"  ddt_",model$states[[k]]$name," = ",model$states[[k]]$ODE,"\n",sep="")
   }
   ODEtext <- paste(ODEtext,"\n",sep="")
@@ -314,46 +307,40 @@ genVARsim <- function (model) {
 
     VARfctText <- paste(VARfctText,"    time = simresODE[ksimresODE,1]\n",sep="")
 
-    for (k in 1:length(model$states)) {
-      VARfctText <- paste(VARfctText,"    ",model$states[[k]]$name," = simresODE[ksimresODE,",k+1,"]\n",sep="")
+    for (k in seq_along(model$states)) {
+      VARfctText <- paste(VARfctText, "    ", model$states[[k]]$name,
+                          " = simresODE[ksimresODE,", k+1,"]\n", sep="")
     }
 
-    if (length(model$parameters)>0) {
-      for (k in 1:length(model$parameters)) {
-        VARfctText <- paste(VARfctText,"    ",model$parameters[[k]]$name," = paramvalues[",k,"]\n",sep="")
-      }
+    for (k in seq_along(model$parameters)) {
+      VARfctText <- paste(VARfctText, "    ", model$parameters[[k]]$name,
+                          " = paramvalues[", k, "]\n", sep="")
     }
 
-    if (length(model$functions)>0) {
-      for (k in 1:length(model$functions)) {
-        VARfctText <- paste(VARfctText,"  ",model$functions[[k]]$name," <- function(",model$functions[[k]]$arguments,") { ",model$functions[[k]]$formula," }\n",sep="")
-      }
-      VARfctText <- paste(VARfctText,"\n",sep="")
+    for (k in seq_along(model$functions)) {
+      VARfctText <- paste(VARfctText, "  ", model$functions[[k]]$name, " <- function(",
+                          model$functions[[k]]$arguments, ") { ", model$functions[[k]]$formula,
+                          " }\n", sep="")
+    }
+    VARfctText <- paste(VARfctText,"\n",sep="")
+
+    for (k in seq_along(model$variables)) {
+      VARfctText <- paste(VARfctText, "    ", model$variables[[k]]$name,
+                          " = ", model$variables[[k]]$formula, "\n", sep="")
     }
 
-    if (length(model$variables)>0) {
-      for (k in 1:length(model$variables)) {
-        VARfctText <- paste(VARfctText,"    ",model$variables[[k]]$name," = ",model$variables[[k]]$formula,"\n",sep="")
-      }
-    }
-
-    if (length(model$reactions)>0) {
-      for (k in 1:length(model$reactions)) {
-        VARfctText <- paste(VARfctText,"    ",model$reactions[[k]]$name," = ",model$reactions[[k]]$formula,"\n",sep="")
-      }
+    for (k in seq_along(model$reactions)) {
+      VARfctText <- paste(VARfctText, "    ", model$reactions[[k]]$name,
+                          " = ", model$reactions[[k]]$formula, "\n", sep="")
     }
 
     VARfctText <- paste(VARfctText,"    simresVAR <- rbind(simresVAR,c(\n",sep="")
 
-    if (length(model$variables) > 0) {
-      for (k in 1:(length(model$variables))) {
-        VARfctText <- paste(VARfctText,"      ",model$variables[[k]]$name,"=unname(",model$variables[[k]]$name,"),\n",sep="")
-      }
+    for (k in seq_along(model$variables)) {
+      VARfctText <- paste(VARfctText,"      ",model$variables[[k]]$name,"=unname(",model$variables[[k]]$name,"),\n",sep="")
     }
-    if (length(model$reactions) > 0) {
-      for (k in 1:(length(model$reactions))) {
-        VARfctText <- paste(VARfctText,"      ",model$reactions[[k]]$name,"=unname(",model$reactions[[k]]$name,"),\n",sep="")
-      }
+    for (k in seq_along(model$reactions)) {
+      VARfctText <- paste(VARfctText,"      ",model$reactions[[k]]$name,"=unname(",model$reactions[[k]]$name,"),\n",sep="")
     }
     VARfctText <- substr(VARfctText,1,nchar(VARfctText)-2)
     VARfctText <- paste(VARfctText,"))\n",sep="")
@@ -487,7 +474,7 @@ implementInputMath <- function(model,inputindex) {
   model <- addVariableAZRmodel(model,varDoseName,formula=varDoseFormulaTimingRate)
 
   # Add distribution information to the ODEs
-  for (k in 1:length(stateindex)) {
+  for (k in seq_along(stateindex)) {
     # Add variable to state
     ODE <- model$states[[stateindex[k]]]$ODE
     if (substr(factors[k],1,1) =="+")
