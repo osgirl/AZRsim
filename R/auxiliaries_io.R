@@ -94,28 +94,22 @@ fileread <- function(filename,collapserows=TRUE) {
   return(text)
 }
 
-###############################################################################
-# mkdir: Creates a folder if it does not yet exist
-###############################################################################
 #' Creates a folder if it does not yet exist
 #'
 #' @param pathdir String with folder path
 #' @return None
 #' @examples
 #' \dontrun{
-#' mkdir("test/test")
-#' mkdir("../test")
+#' mkdirp("test/test")
+#' mkdirp("../test")
 #' }
 #' @export
 
-mkdir <- function(pathdir) {
+mkdirp <- function(pathdir) {
   if (!file.exists(pathdir)) dir.create(pathdir,recursive='TRUE')
 }
 
 
-###############################################################################
-# rmdir: Removes a folder
-###############################################################################
 #' Removes a folder
 #'
 #' @param pathdir String with folder path
