@@ -16,10 +16,16 @@
 #' such as "TAD" and "AMT", ... Lets start simple for now.
 #' Only numeric columns in the dataframe are considered.
 #'
-#' @param data A dataframe
+#' @param data An object of class azr_simulate.
+#' @return Launches an interactive Shiny interface of all the parameters in the
+#' default web browser.
+#' @examples
+#' model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
+#' x <- simulate(model,400)
+#' shiny_plot(x)
 #' @export
 
-AZRplot <- function(data) {
+shiny_plot <- function(data) {
 
   # Check dataframe
   if (!is.data.frame(data))
