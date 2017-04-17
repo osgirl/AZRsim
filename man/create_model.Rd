@@ -17,7 +17,7 @@ you want to simulate. In cases were the model structure and the information
 about inputs is important, then choose "FALSE".}
 }
 \value{
-An AZRmodel object. If input is NULL, an empty object is returned.
+An object of class azr_model. If input is NULL, an empty object is returned.
 }
 \description{
 AZRmodel objects represent dynamic, ODE based models that can be simulated.
@@ -26,7 +26,7 @@ text file descriptions of these models. If no input argument is provided,
 an empty AZRmodel object is returned.
 }
 \examples{
-AZRmodel()
+create_model()
 filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
-AZRmodel(filename)
+create_model(filename)
 }

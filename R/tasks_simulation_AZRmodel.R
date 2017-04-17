@@ -12,7 +12,7 @@
 #'
 #' Simulation function for AZRmodels. Able to handle dosing events etc.
 #'
-#' @param model An AZRmodel
+#' @param a model object created using AZRsim::create_model
 #'
 #' @param simtime Simulation time vector. If scalar provided then 1001 simulation
 #'        steps will be used. If not provided (20) seq(0,20,1000) will be used if
@@ -62,9 +62,9 @@
 #'
 #' @return Dataframe with simulation results
 #' @examples
-#' model <- AZRmodel(system.file("examples/NovakTyson.txt", package="AZRsim"))
-#' x <- AZRsimulate(model,400)
-#' x <- AZRsimulate(model,400,parameters=c(k1=0.5))
+#' model <- check_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
+#' x <- simulate(model,400)
+#' x <- simulate(model,400,parameters=c(k1=0.5))
 #' @export
 
 simulate <- function (model,

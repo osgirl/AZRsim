@@ -7,7 +7,11 @@
 shiny_plot(data)
 }
 \arguments{
-\item{data}{A dataframe}
+\item{data}{An object of class azr_simulate.}
+}
+\value{
+Launches an interactive Shiny interface of all the parameters in the
+default web browser.
 }
 \description{
 As input data frames are used and the columns plotted.
@@ -15,4 +19,9 @@ By default it looks for a "time" to be used as X-axis.
 In the future it might handle "ID" columns in some way and others,
 such as "TAD" and "AMT", ... Lets start simple for now.
 Only numeric columns in the dataframe are considered.
+}
+\examples{
+model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
+x <- simulate(model,400)
+shiny_plot(x)
 }

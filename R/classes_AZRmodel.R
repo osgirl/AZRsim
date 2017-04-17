@@ -22,11 +22,11 @@
 #'   be generated and added to the AZRmodel attributes. Choose this option when
 #'   you want to simulate. In cases were the model structure and the information
 #'   about inputs is important, then choose "FALSE".
-#' @return An AZRmodel object. If input is NULL, an empty object is returned.
+#' @return An object of class azr_model. If input is NULL, an empty object is returned.
 #' @examples
-#' AZRmodel()
+#' create_model()
 #' filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
-#' AZRmodel(filename)
+#' create_model(filename)
 #' @export
 
 create_model <- function (input=NULL,simFlag=TRUE) {
