@@ -226,7 +226,7 @@ exportCcodeAZRmodel <- function (model, filename=NULL) {
   FILETEXT <- paste(FILETEXT,' ');
 
   # Write the file
-  filewrite(FILETEXT,filenameC)
+  readr::write_file(FILETEXT,filenameC)
 }
 
 ##########################################################################

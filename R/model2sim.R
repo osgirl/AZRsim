@@ -97,7 +97,7 @@ compileAZRmodelAZR <- function(model) {
     includesLocDef <- paste(includesLocDef,' -I"',includesPaths[k],'/AZRsim/solver/include/"',sep="")
   includesLocDef <- paste(includesLocDef, "\nPKG_LIBS=  -lm")
 
-  filewrite(text=includesLocDef,filename="Makevars")
+  readr::write_file(includesLocDef, "Makevars")
 
   # Compile model to DLL - stdout to xxx
   system(paste("R CMD SHLIB ",modelCfilename,".c",sep=""))

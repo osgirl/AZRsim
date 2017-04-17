@@ -247,5 +247,5 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
   FILETEXT <- paste(FILETEXT," ",sep="")
 
   # Write the file
-  filewrite(FILETEXT,filename)
+  readr::write_file(FILETEXT,filename)
 }
