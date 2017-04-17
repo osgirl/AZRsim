@@ -25,7 +25,7 @@ importTxtAZRmodel <- function(model,filename) {
   ################################################################
 
   # Read model file row by row (already split by row)
-  modelText <- fileread(filename,collapserows=FALSE)
+  modelText <- readr::read_lines(filename)
 
   # Remove empty rows
   modelText <- gsub("^\\s+$", "", modelText)
