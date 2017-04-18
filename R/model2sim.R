@@ -275,7 +275,7 @@ implementInputMath <- function(model,inputindex) {
   model <- addVariableAZRmodel(model,varDoseName,formula=varDoseFormulaTimingRate)
 
   # Add distribution information to the ODEs
-  for (k in 1:length(stateindex)) {
+  for (k in seq_along(stateindex)) {
     # Add variable to state
     ODE <- model$states[[stateindex[k]]]$ODE
     if (substr(factors[k],1,1) =="+")

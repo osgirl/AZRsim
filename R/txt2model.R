@@ -213,7 +213,7 @@ getStatesTxt <- function(model,model_states) {
   ###################
   # run through the ARs and process them
   if (length(ARtest) > 0) {
-    for (k in 1:length(ARtest)) {
+    for (k in seq_along(ARtest)) {
       # get each single AR
       ARk <- strtrimM(model_states[ARtest[k]])
 
@@ -260,7 +260,7 @@ getStatesTxt <- function(model,model_states) {
   # condition is not defined for a certain state then it is set to zero by default
   # First check if any initial conditions are given - if not then don't execute this part!
   if (length(ICtest) > 0) {
-    for (k1 in 1:length(ICtest)) {
+    for (k1 in seq_along(ICtest)) {
       ICString <- strremWhite(model_states[ICtest[k1]])
       # extract the state name
       temp <- regexpr("\\(0\\)", ICString)
@@ -306,45 +306,43 @@ getStatesTxt <- function(model,model_states) {
 getReactionsTxt <- function(model,model_reactions) {
 
   # run through the reactions and process them
-  if (!is.null(model_reactions)) {
-    for (k in 1:length(model_reactions)) {
-      reactionString <- strtrimM(model_reactions[k])
+  for (k in seq_along(model_reactions)) {
+    reactionString <- strtrimM(model_reactions[k])
 
-      # Parse comments / notes
-      commentInfo    <- checkgetNotes(reactionString)
-      reactionString <- commentInfo$main
-      notesk         <- commentInfo$comment
+    # Parse comments / notes
+    commentInfo    <- checkgetNotes(reactionString)
+    reactionString <- commentInfo$main
+    notesk         <- commentInfo$comment
 
-      # extract the reaction name
-      temp <- regexpr("=", reactionString)
-      test <- strtrimM(substr(reactionString,1,(temp[1]-1)))
-      # check if reaction name given
-      if (nchar(test) == 0) {
-        stop("getReactionsTxt: At least one reaction name not given.")
-      }
-      namek <- strremWhite(test)
-
-      # extract the reaction expression
-      formulak = strtrimM(substr(reactionString,(temp+1),nchar(reactionString)))
-
-      # check if the "{reversible}" identifier is present.
-      flagInfo       <- checkGetFlag(formulak,"{reversible}")
-      formulak       <- flagInfo$textString
-      reversibleFlag <- flagInfo$flagPresent
-
-      # check if the "{fast}" identifier is present.
-      flagInfo <- checkGetFlag(formulak,"{fast}")
-      formulak <- flagInfo$textString
-      fastFlag <- flagInfo$flagPresent
-
-      # check if variable expression given
-      if (nchar(formulak) == 0) {
-        stop("getReactionsTxt: At least one reaction definition not given.")
-      }
-
-      # Add reaction to model
-      model <- addReactionAZRmodel(model,name=namek,formula=formulak,notes=notesk,reversible=reversibleFlag,fast=fastFlag)
+    # extract the reaction name
+    temp <- regexpr("=", reactionString)
+    test <- strtrimM(substr(reactionString,1,(temp[1]-1)))
+    # check if reaction name given
+    if (nchar(test) == 0) {
+      stop("getReactionsTxt: At least one reaction name not given.")
     }
+    namek <- strremWhite(test)
+
+    # extract the reaction expression
+    formulak = strtrimM(substr(reactionString,(temp+1),nchar(reactionString)))
+
+    # check if the "{reversible}" identifier is present.
+    flagInfo       <- checkGetFlag(formulak,"{reversible}")
+    formulak       <- flagInfo$textString
+    reversibleFlag <- flagInfo$flagPresent
+
+    # check if the "{fast}" identifier is present.
+    flagInfo <- checkGetFlag(formulak,"{fast}")
+    formulak <- flagInfo$textString
+    fastFlag <- flagInfo$flagPresent
+
+    # check if variable expression given
+    if (nchar(formulak) == 0) {
+      stop("getReactionsTxt: At least one reaction definition not given.")
+    }
+
+    # Add reaction to model
+    model <- addReactionAZRmodel(model,name=namek,formula=formulak,notes=notesk,reversible=reversibleFlag,fast=fastFlag)
   }
   return(model)
 }
