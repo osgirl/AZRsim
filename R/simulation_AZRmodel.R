@@ -1189,7 +1189,7 @@ indivSimulation <- function(NR_ICS,
   }
 
   # Simulate individual
-  simresIndiv <- AZRsimulate(model                 = model,
+  simresIndiv <- simulate(model                 = model,
                              simtime               = simtime,
                              IC                    = icIndiv,
                              parameters            = parametersIndiv,

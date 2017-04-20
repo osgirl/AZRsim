@@ -1,5 +1,4 @@
 library(AZRsim)
-library(AZRaux)
 library(microbenchmark)
 
 rm(list = ls())
@@ -8,12 +7,12 @@ rm(list = ls())
 # Simple PK model with single dose
 #########################
 
-model       <- AZRmodel("modelPKtest.txt")
+model       <- create_model("modelPKtest.txt")
 simtime     <- seq(0,200,1)
 
 dosingTable <- data.frame(TIME=0,DOSE=400,DURATION=2,INPUT=1)
 
-results     <- AZRsimulate(model,simtime=simtime,dosingTable=dosingTable)
+results     <- simulate(model,simtime=simtime,dosingTable=dosingTable)
 
 plot(results$TIME,results$Cc,type="l")
 
@@ -21,7 +20,7 @@ plot(results$TIME,results$Cc,type="l")
 # Simple PK model with more complex dosing
 #########################
 
-model        <- AZRmodel("modelPKtest.txt")
+model        <- create_model("modelPKtest.txt")
 simtime      <- seq(0,200,1)
 
 dosing_INPUT1 <- data.frame(
@@ -40,7 +39,7 @@ dosing_INPUT2 <- data.frame(
 
 dosingTable <- rbind(dosing_INPUT1,dosing_INPUT2)
 
-results     <- AZRsimulate(model,simtime=simtime,dosingTable=dosingTable)
+results     <- simulate(model,simtime=simtime,dosingTable=dosingTable)
 
 plot(results$TIME,results$Cc,type="l")
 
@@ -58,7 +57,7 @@ microbenchmark(
 # Population simulation
 ################
 
-model <- AZRmodel("modelPKtest.txt")
+model <- create_model("modelPKtest.txt")
 
 dosing_INPUT1 <- data.frame(
   TIME     = c(12.5,seq(24,120,24)),
@@ -77,10 +76,12 @@ dosing_INPUT2 <- data.frame(
 dosingTable <- rbind(dosing_INPUT1,dosing_INPUT2)
 
 # Determine individual parameters by sampling
-Nsubjects     <- 1000
+Nsubjects     <- 50
 center        <- c(ka=0.3, CL=0.4, Vc=12)
 centerTrans   <- log(center)
 indivParam    <- exp(t(replicate(n=Nsubjects,centerTrans + rnorm(mean=0,sd=0.5,n=length(centerTrans)))))
+
+  results <- AZRsimpop(model,ncores=1,simtime=seq(0,200),parameterTable=indivParam,dosingTable=dosingTable)
 
 microbenchmark(
   results <- AZRsimpop(model,ncores=1,simtime=seq(0,200),parameterTable=indivParam,dosingTable=dosingTable)

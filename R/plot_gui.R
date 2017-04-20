@@ -19,12 +19,12 @@
 #' @param data An object of class azr_simulate.
 #' @return Launches an interactive Shiny interface of all the parameters in the
 #' default web browser.
-#' @examples
+#' @examples \dontrun{
 #' model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
 #' x <- simulate(model,400)
 #' shiny_plot(x)
+#' }
 #' @export
-
 shiny_plot <- function(data) {
 
   # Check dataframe
