@@ -21,7 +21,9 @@ such as "TAD" and "AMT", ... Lets start simple for now.
 Only numeric columns in the dataframe are considered.
 }
 \examples{
+\dontrun{
 model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
 x <- simulate(model,400)
 shiny_plot(x)
+}
 }

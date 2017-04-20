@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Converts a vector of elements to numeric elements — as_numeric â€¢ AZRsim</title>
+<title>AZRmodel class — create_model â€¢ AZRsim</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,28 +74,53 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Converts a vector of elements to numeric elements</h1>
+    <h1>AZRmodel class</h1>
     </div>
 
     
-    <p>Converts a vector of elements to numeric elements</p>
+    <p>AZRmodel objects represent dynamic, ODE based models that can be simulated.
+The class constructor function AZRmodel() can create such objects from
+text file descriptions of these models. If no input argument is provided,
+an empty AZRmodel object is returned.</p>
     
 
-    <pre><span class='fu'>as_numeric</span>(<span class='no'>input</span>)</pre>
+    <pre><span class='fu'>create_model</span>(<span class='kw'>input</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>simFlag</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>input</dt>
-      <dd>A vector</dd>
+      <dd>A string with the full filename (including absolute or
+relative path) to a text file, describing an AZRmodel.</dd>
+      <dt>simFlag</dt>
+      <dd>If set to TRUE (default) then the model will be prepared for
+simulations (dosing, constraints, etc.) and all required sim functions will
+be generated and added to the AZRmodel attributes. Choose this option when
+you want to simulate. In cases were the model structure and the information
+about inputs is important, then choose &quot;FALSE&quot;.</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector where the numeric elements are numeric and the non-numeric ones are NA</p>
+    <p>An object of class azr_model. If input is NULL, an empty object is returned.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>as_numeric</span>(<span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>))</div><div class='output co'>#&gt; [1] 1 2 3</div><div class='input'><span class='fu'>as_numeric</span>(<span class='fu'>c</span>(<span class='st'>'1'</span>,<span class='fl'>2</span>,<span class='fl'>3</span>))</div><div class='output co'>#&gt; [1] 1 2 3</div><div class='input'><span class='fu'>as_numeric</span>(<span class='fu'>c</span>(<span class='st'>'1'</span>,<span class='st'>'a'</span>,<span class='fl'>3</span>))</div><div class='output co'>#&gt; [1]  1 NA  3</div><div class='input'><span class='fu'>as_numeric</span>(<span class='fu'>c</span>(<span class='st'>'1'</span>,<span class='st'>'2'</span>,<span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1]  1  2 NA</div><div class='input'><span class='fu'>as_numeric</span>(<span class='fu'>factor</span>(<span class='fu'>c</span>(<span class='fl'>1</span>, <span class='st'>"4"</span>, <span class='fl'>3</span>)))</div><div class='output co'>#&gt; [1] 1 4 3</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>create_model</span>()</div><div class='output co'>#&gt; 	AZRmodel
+#&gt; 	========
+#&gt; 	Name:                       unnamed_model 
+#&gt; 	Number States:              0 
+#&gt; 	Number Parameters:          0 
+#&gt; 	Number Variables:           0 
+#&gt; 	Number Reactions:           0 
+#&gt; 	Number Functions:           0 </div><div class='input'><span class='no'>filename</span> <span class='kw'>&lt;-</span> <span class='fu'>system.file</span>(<span class='kw'>package</span><span class='kw'>=</span><span class='st'>"AZRsim"</span>,<span class='st'>"examples"</span>,<span class='st'>"NovakTyson.txt"</span>)
+<span class='fu'>create_model</span>(<span class='no'>filename</span>)</div><div class='output co'>#&gt; 	AZRmodel
+#&gt; 	========
+#&gt; 	Name:                       Novak-Tyson Model 
+#&gt; 	Number States:              9 
+#&gt; 	Number Parameters:          26 
+#&gt; 	Number Variables:           3 
+#&gt; 	Number Reactions:           19 
+#&gt; 	Number Functions:           0 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
