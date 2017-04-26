@@ -22,7 +22,7 @@ exportCcodeAZRmodel <- function (model, filename=NULL) {
   ###############################################
   # Check input arguments
   ###############################################
-  if (!AZRsim::is.AZRmodel(model))
+  if (!AZRsim::is_azrmod(model))
     stop("exportCcodeAZRmodel: input argument is not an AZRmodel")
 
   if (is.null(filename))

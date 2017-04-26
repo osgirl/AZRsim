@@ -129,7 +129,7 @@ getInputs <- function(model) {
     inputParindex <- grep(paste("\\b",inputName,"\\b",sep=""),parameters$paramnames)
     if (length(inputParindex)==0) {
       # Parameter not yet present - add it
-      model <- addParameterAZRmodel(model,name=inputName,value=0)
+      model <- add_parameter(model,name=inputName,value=0)
       inputParindex <- getNumberOfParametersAZRmodel(model)
     }
 
@@ -341,7 +341,7 @@ handleINPUTreactions <- function(model) {
     # find index
     reactions  <- getAllReactionsAZRmodel(model)
     ixReacInputs <- grep(paste("\\b",reacNamesDelete[k],"\\b",sep=""),reactions$reacnames)
-    model <- delReactionAZRmodel(model,ixReacInputs)
+    model <- del_reaction(model,ixReacInputs)
   }
   return(model)
 }

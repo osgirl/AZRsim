@@ -204,7 +204,7 @@ getStatesTxt <- function(model,model_states) {
     ODEk <- strtrimM(test)
 
     # Add state in model with default IC
-    model <- addStateAZRmodel(model,name=namek,IC=0,ODE=ODEk,lowConstraint=stateConstraints[1],highConstraint=stateConstraints[2],type=typek,
+    model <- add_state(model,name=namek,IC=0,ODE=ODEk,lowConstraint=stateConstraints[1],highConstraint=stateConstraints[2],type=typek,
                               compartment=compartmentk,unittype=unittypek,notes=notesk)
   }
 
@@ -272,7 +272,7 @@ getStatesTxt <- function(model,model_states) {
       # add state ic into model
       ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
       if (length(ix) != 0) {
-        model <- setStateAZRmodel(model,ix,IC=stateIC)
+        model <- set_state(model,ix,IC=stateIC)
         found <- TRUE
       }
       # add algebraic ic into model
@@ -342,7 +342,7 @@ getReactionsTxt <- function(model,model_reactions) {
     }
 
     # Add reaction to model
-    model <- addReactionAZRmodel(model,name=namek,formula=formulak,notes=notesk,reversible=reversibleFlag,fast=fastFlag)
+    model <- add_reaction(model,name=namek,formula=formulak,notes=notesk,reversible=reversibleFlag,fast=fastFlag)
   }
   return(model)
 }

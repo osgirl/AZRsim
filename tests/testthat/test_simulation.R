@@ -3,14 +3,14 @@
 library(deSolve)
 context("SHO Test")
 
-test_that("AZRmodel runs", {
-  model <- AZRmodel(system.file("examples/sho.txt", package="AZRsim"))
-  AZRmodel_sho <- AZRsimulate(model,100)
+test_that("create_model runs", {
+  model <- create_model(system.file("examples/sho.txt", package="AZRsim"))
+  sho <- simulate(model,100)
 })
 
-test_that("AZRmodel and deSolve return the same simulation for a SHO model", {
-  model <- AZRmodel(system.file("examples/sho.txt", package="AZRsim"))
-  AZRmodel_sho <- AZRsimulate(model,100)
+test_that("create_model and deSolve return the same simulation for a SHO model", {
+  model <- create_model(system.file("examples/sho.txt", package="AZRsim"))
+  azr_sho <- simulate(model,100)
   sho <- function(t, y, parms) {
     with(as.list(c(y,parms)), {
       dy2_dt = y2
@@ -20,6 +20,6 @@ test_that("AZRmodel and deSolve return the same simulation for a SHO model", {
   }
   pars <- c("theta" = 0.15)
   yini <- c("y1" = 1, "y2" = 0)
-  deSolve_sho <- deSolve::ode(y = yini, times = AZRmodel_sho$TIME, func = sho, parms = pars)
-  expect_equal(AZRmodel_sho$y1, deSolve_sho[,2], tolerance = 1e-3)
+  deSolve_sho <- deSolve::ode(y = yini, times = azr_sho$TIME, func = sho, parms = pars)
+  expect_equal(azr_sho$y1, deSolve_sho[,2], tolerance = 1e-3)
 })

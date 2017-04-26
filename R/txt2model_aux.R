@@ -148,7 +148,7 @@ getParameters <- function(model,model_parameters) {
     }
 
     # add parameter to model
-    model <- addParameterAZRmodel(model,name=namek,value=as.numeric(valuek),
+    model <- add_parameter(model,name=namek,value=as.numeric(valuek),
                                   notes=notesk,type=typek,compartment=compartmentk,
                                   unittype=unittypek,estimate=estimateFlag,regressor=regressorFlag)
   }
@@ -195,7 +195,7 @@ getVariables <- function(model,model_variables) {
     }
 
     # add variable to model
-    model <- addVariableAZRmodel(model, name=namek, formula=formulak, notes=notesk,
+    model <- add_variable(model, name=namek, formula=formulak, notes=notesk,
                                  type=typek, compartment=compartmentk, unittype=unittypek)
   }
   return(model)
@@ -245,7 +245,7 @@ getFunctions <- function(model,model_functions) {
     }
 
     # add info about the function parts for kth function into the function lists
-    model <- addFunctionAZRmodel(model, name=namek, arguments=argumentsk,
+    model <- add_function(model, name=namek, arguments=argumentsk,
                                  formula=formulak ,notes=notesk)
   }
   return(model)

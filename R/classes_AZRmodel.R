@@ -1,32 +1,32 @@
 ###############################################################################
 ###############################################################################
-# This file contains the AZRmodel function and simple methods for handling AZRmodels
+# This file contains the create_model function and simple methods for handling azrmod objects
 ###############################################################################
 ###############################################################################
 
 
 ###############################################################################
-# AZRmodel: function returing S3 object "AZRmodel"
+# azrmod: function returing S3 object "azrmod"
 ###############################################################################
-#' AZRmodel class
+#' azrmod class
 #'
-#' AZRmodel objects represent dynamic, ODE based models that can be simulated.
-#' The class constructor function AZRmodel() can create such objects from
-#' text file descriptions of these models. If no input argument is provided,
-#' an empty AZRmodel object is returned.
+#' This function creates an object of class \code{azrmod} which represents dynamic,
+#' ODE based models that can be simulated. The class constructor function
+#' \code{azrmod} creates such objects from specifc text file descriptions of
+#' these models. If no input argument is provided, an empty azrmod object is returned.
 #'
 #' @param input A string with the full filename (including absolute or
-#'   relative path) to a text file, describing an AZRmodel.
-#' @param simFlag If set to TRUE (default) then the model will be prepared for
+#'   relative path) to a text file, describing an azrmod.
+#' @param simFlag If set to \code{TRUE} (default) then the model will be prepared for
 #'   simulations (dosing, constraints, etc.) and all required sim functions will
-#'   be generated and added to the AZRmodel attributes. Choose this option when
+#'   be generated and added to the azrmod attributes. Choose this option when
 #'   you want to simulate. In cases were the model structure and the information
-#'   about inputs is important, then choose "FALSE".
+#'   about inputs is important, then choose \code{FALSE}.
 #' @return An object of class azr_model. If input is NULL, an empty object is returned.
 #' @examples
-#' create_model()
+#' empty_mod <- create_model()
 #' filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
-#' create_model(filename)
+#' mod <- create_model(filename)
 #' @export
 
 create_model <- function (input=NULL,simFlag=TRUE) {
@@ -41,13 +41,13 @@ create_model <- function (input=NULL,simFlag=TRUE) {
   #################################
   if(!is.null(input) && !file.exists(input)) {
     # input does not point to an existing file on the file system => error
-    stop("AZRmodel: Provided input argument does not point to a file on the filesystem.")
+    stop("Provided path argument does not point to a file on the filesystem.")
   }
 
   #################################
   # Initialize empty AZRmodel
   #################################
-  model <- createEmptyAZRmodel()
+  model <- azrmod_template()
 
   #################################
   # Return since no input model file defined
@@ -81,7 +81,7 @@ create_model <- function (input=NULL,simFlag=TRUE) {
   #################################
   # Check names of components
   #################################
-  checkNamesAZRmodel(model)
+  check_azrmod(model)
 
   #################################
   # Add the original model as attribute (before generation of simulation functions
@@ -103,13 +103,13 @@ create_model <- function (input=NULL,simFlag=TRUE) {
   # Return model
   #################################
   # construct the model object
-  class(model) <- "AZRmodel"
+  class(model) <- "azrmod"
   return(model)
 }
 
 
 ###############################################################################
-# AZRexportAZRmodel: exports an AZRmodel as .txt or .txtbc file
+# export_azrmod: exports an AZRmodel as .txt or .txtbc file
 ###############################################################################
 #' Export of AZRmodel
 #'
@@ -125,17 +125,17 @@ create_model <- function (input=NULL,simFlag=TRUE) {
 #' @return None
 #' @examples
 #' model <- AZRmodel()
-#' AZRexportAZRmodel(model)
+#' export_azrmod(model)
 #' filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
 #' model <- AZRmodel(filename)
-#' AZRexportAZRmodel(model,"filename")
-#' AZRexportAZRmodel(model,'filename',useBC=TRUE)
+#' export_azrmod(model,"filename")
+#' export_azrmod(model,'filename',useBC=TRUE)
 #' @export
 
-AZRexportAZRmodel <- function (model, filename=NULL, useBC=FALSE, useSIM=FALSE) {
+export_azrmod <- function (model, filename=NULL, useBC=FALSE, useSIM=FALSE) {
 
-  if (!is.AZRmodel(model))
-    stop("AZRexportAZRmodel: input argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("export_azrmod: input argument is not an AZRmodel")
 
   if (!useSIM && !is.null(attr(model,"originalModel"))) model <- attr(model,"originalModel")
 
@@ -148,15 +148,15 @@ AZRexportAZRmodel <- function (model, filename=NULL, useBC=FALSE, useSIM=FALSE) 
 
 
 ###############################################################################
-# createEmptyAZRmodel
+# azrmod_template
 ###############################################################################
 # Creates an empty AZRmodel object
 #
 # @return An empty AZRmodel object.
 # @examples
-# createEmptyAZRmodel()
+# azrmod_template()
 
-createEmptyAZRmodel <- function () {
+azrmod_template <- function () {
 
   model                     <- list()
   model$name                <- "unnamed_model"
@@ -172,7 +172,7 @@ createEmptyAZRmodel <- function () {
   model$outputs             <- list()
 
   # construct the model object
-  class(model) <- "AZRmodel"
+  class(model) <- "azrmod"
   return(model)
 }
 
@@ -180,15 +180,15 @@ createEmptyAZRmodel <- function () {
 ###############################################################################
 # Generic function overload (is) - need to be exported
 ###############################################################################
-#' Check function if it is an AZRmodel
+#' Check function if it is an azrmod
 #'
-#' @param input AZRmodel object
+#' @param input azrmod object
 #' @return TRUE or FALSE
 #' @examples
-#'   is.AZRmodel(AZRmodel())
+#'   is_azrmod(AZRmodel())
 #' @export
-is.AZRmodel <- function(input) {
-  methods::is(input,"AZRmodel")
+is_azrmod <- function(input) {
+  methods::is(input,"azrmod")
 }
 
 ###############################################################################
@@ -196,12 +196,12 @@ is.AZRmodel <- function(input) {
 ###############################################################################
 #' Generic print function for AZRmodels
 #'
-#' @param x AZRmodel object
+#' @param x azrmod object
 #' @param ... Additional unused arguments
 #' @examples
-#'   print(AZRmodel())
+#'   print(azrmod())
 #' @export
-print.AZRmodel <- function(x, ...) {
+print.azrmod <- function(x, ...) {
   cat("\tAZRmodel\n\t========\n")
   cat("\tName:                      ", x$name,"\n")
   cat("\tNumber States:             ", getNumberOfStatesAZRmodel(x),"\n")
@@ -225,9 +225,9 @@ print.AZRmodel <- function(x, ...) {
         variables. If you still need them, contact us (info@intiquan.com
         and we will see what we can do! In the meantime, consider the use
         of IQM Tools (http://www.intiquan.com/iqm-tools/)\n")
-  if (!hasonlynumericICsAZRmodel(x))
+  if (!has_only_numeric_ic(x))
     cat("\tNon-numeric initial conditions are present in the model.\n")
-  if (hasfastreactionsAZRmodel(x))
+  if (has_fast_reactions(x))
     cat("\tFast reactions defined in the model. Such reactions can not be
         handled by other functions. Please check if these reactions
         are really required. If you need them, contact us (info@intiquan.com
@@ -237,10 +237,10 @@ print.AZRmodel <- function(x, ...) {
 
 
 ###############################################################################
-# checkNamesAZRmodel
+# check_azrmod
 ###############################################################################
 # Checks names of model components and issues warnings or errors
-checkNamesAZRmodel <- function(model) {
+check_azrmod <- function(model) {
   stateNames <- toupper(getAllStatesAZRmodel(model)$statenames)
   paramNames <- toupper(getAllParametersAZRmodel(model)$paramnames)
   varNames   <- toupper(getAllVariablesAZRmodel(model)$varnames)
@@ -248,13 +248,13 @@ checkNamesAZRmodel <- function(model) {
 
   # Check for single char name (should be avoided)
   if (sum(as.numeric(nchar(stateNames) == 1)) > 0)
-    warning("checkNamesAZRmodel: AZRmodel contains state names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
+    warning("check_azrmod: AZRmodel contains state names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
   if (sum(as.numeric(nchar(paramNames) == 1)) > 0)
-    warning("checkNamesAZRmodel: AZRmodel contains parameter names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
+    warning("check_azrmod: AZRmodel contains parameter names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
   if (sum(as.numeric(nchar(varNames) == 1)) > 0)
-    warning("checkNamesAZRmodel: AZRmodel contains variable names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
+    warning("check_azrmod: AZRmodel contains variable names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
   if (sum(as.numeric(nchar(reacNames) == 1)) > 0)
-    warning("checkNamesAZRmodel: AZRmodel contains reaction names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
+    warning("check_azrmod: AZRmodel contains reaction names with a single character name. Try to avoid that if you plan to use NONMEM or MONOLIX")
 
   # Define reserved words - case insensitive
   reservedWords <- toupper(c("F","G","H","gt","ge","lt","le","mod","and","or","multiply",
@@ -262,18 +262,18 @@ checkNamesAZRmodel <- function(model) {
 
   # Check if model contains elements with names matching reserved words
   if (length(intersect(stateNames,reservedWords)) > 0)
-    stop(paste("checkNamesAZRmodel: model contains the following state name(s) that is(are) reserved word(s): ",intersect(stateNames,reservedWords),sep=""))
+    stop(paste("check_azrmod: model contains the following state name(s) that is(are) reserved word(s): ",intersect(stateNames,reservedWords),sep=""))
   if (length(intersect(paramNames,reservedWords)) > 0)
-    stop(paste("checkNamesAZRmodel: model contains the following parameter name(s) that is(are) reserved word(s): ",intersect(paramNames,reservedWords),sep=""))
+    stop(paste("check_azrmod: model contains the following parameter name(s) that is(are) reserved word(s): ",intersect(paramNames,reservedWords),sep=""))
   if (length(intersect(varNames,reservedWords)) > 0)
-    stop(paste("checkNamesAZRmodel: model contains the following variable name(s) that is(are) reserved word(s): ",intersect(varNames,reservedWords),sep=""))
+    stop(paste("check_azrmod: model contains the following variable name(s) that is(are) reserved word(s): ",intersect(varNames,reservedWords),sep=""))
   if (length(intersect(reacNames,reservedWords)) > 0)
-    stop(paste("checkNamesAZRmodel: model contains the following reaction name(s) that is(are) reserved word(s): ",intersect(reacNames,reservedWords),sep=""))
+    stop(paste("check_azrmod: model contains the following reaction name(s) that is(are) reserved word(s): ",intersect(reacNames,reservedWords),sep=""))
 }
 
 
 ###############################################################################
-# hasonlynumericICsAZRmodel
+# has_only_numeric_ic
 ###############################################################################
 # Checks if the model contains only numeric initial conditions
 #
@@ -281,11 +281,11 @@ checkNamesAZRmodel <- function(model) {
 # @return TRUE if model contains non-numerical initial conditions, FALSE otherwise
 # @examples
 # model <- exNovakTyson
-# hasonlynumericICsAZRmodel(model)
-hasonlynumericICsAZRmodel <- function(model) {
+# has_only_numeric_ic(model)
+has_only_numeric_ic <- function(model) {
 
-  if (!is.AZRmodel(model))
-    stop("hasonlynumericICsAZRmodel: input argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("has_only_numeric_ic: input argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model) < 1) return(TRUE)
 
@@ -297,7 +297,7 @@ hasonlynumericICsAZRmodel <- function(model) {
 }
 
 ###############################################################################
-# hasfastreactionsAZRmodel
+# has_fast_reactions
 ###############################################################################
 # Checks if the model contains fast reactions
 #
@@ -305,11 +305,11 @@ hasonlynumericICsAZRmodel <- function(model) {
 # @return TRUE if model contains fast reactions, FALSE otherwise
 # @examples
 # model <- exNovakTyson
-# hasfastreactionsAZRmodel(model)
-hasfastreactionsAZRmodel <- function(model) {
+# has_fast_reactions(model)
+has_fast_reactions <- function(model) {
 
-  if (!is.AZRmodel(model))
-    stop("hasfastreactionsAZRmodel: input argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("has_fast_reactions: input argument is not an AZRmodel")
 
   if (getNumberOfReactionsAZRmodel(model) < 1) return(FALSE)
 
@@ -321,7 +321,7 @@ hasfastreactionsAZRmodel <- function(model) {
 }
 
 ###############################################################################
-# hasalgebraicAZRmodel
+# has_algebraic
 ###############################################################################
 # Checks if the model contains algebraic states
 #
@@ -329,11 +329,11 @@ hasfastreactionsAZRmodel <- function(model) {
 # @return TRUE if model contains algebraic states, FALSE otherwise
 # @examples
 # model <- exNovakTyson
-# hasalgebraicAZRmodel(model)
-hasalgebraicAZRmodel <- function(model) {
+# has_algebraic(model)
+has_algebraic <- function(model) {
 
-  if (!is.AZRmodel(model))
-    stop("hasalgebraicAZRmodel: input argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("has_algebraic: input argument is not an AZRmodel")
 
   if (getNumberOfAlgebraicAZRmodel(model) < 1) return(FALSE)
 
@@ -341,17 +341,17 @@ hasalgebraicAZRmodel <- function(model) {
 }
 
 ###############################################################################
-# hasconstraintsAZRmodel
+# has_constraints
 ###############################################################################
 # Checks if the model contains state constraints
 #
 # @param model An AZRmodel object
 # @return TRUE if model contains state constraints, FALSE otherwise
 # @examples
-hasconstraintsAZRmodel <- function(model) {
+has_constraints <- function(model) {
 
-  if (!is.AZRmodel(model))
-    stop("hasconstraintsAZRmodel: input argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("has_constraints: input argument is not an AZRmodel")
 
   if (!is.null(attr(model,"originalModel")))
     model <- attr(model,"originalModel")
@@ -466,10 +466,10 @@ getNumberOfEventassignmentsAZRmodel <- function(model,eventindex) {
 
 ###############################################################################
 # State handling functions
-# addStateAZRmodel
-# getStateAZRmodel
-# setStateAZRmodel
-# delStateAZRmodel
+# add_state
+# get_state
+# set_state
+# delete_state
 ###############################################################################
 
 # Add a new state to an AZRmodel
@@ -487,10 +487,10 @@ getNumberOfEventassignmentsAZRmodel <- function(model,eventindex) {
 # @return An AZRmodel object with appended state variable
 # @examples
 # model <- AZRmodel()
-# model <- addStateAZRmodel(model,'Cyclin',IC=0.3,'Re1-Re2')
-# model <- addStateAZRmodel(model,'Parasites',IC=1e9,'(GR-KR)*Paasites')
+# model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
+# model <- add_state(model,'Parasites',IC=1e9,'(GR-KR)*Paasites')
 # @export
-addStateAZRmodel <- function(model,
+add_state <- function(model,
                              name = NULL,
                              IC = NULL,
                              ODE = NULL,
@@ -501,29 +501,29 @@ addStateAZRmodel <- function(model,
                              unittype = NULL,
                              notes = NULL) {
 
-  if (!is.AZRmodel(model))
-    stop("addStateAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("add_state: model argument is not an AZRmodel")
 
   if (is.null(name))
-    stop("addStateAZRmodel: name is a required input argument")
+    stop("add_state: name is a required input argument")
 
   if (is.null(IC))
-    stop("addStateAZRmodel: IC is a required input argument")
+    stop("add_state: IC is a required input argument")
 
   if (is.null(ODE))
-    stop("addStateAZRmodel: ODE is a required input argument")
+    stop("add_state: ODE is a required input argument")
 
   if (is.null(lowConstraint) && !is.null(highConstraint))
-    stop("addStateAZRmodel: If highConstraint is defined also lowConstraint needs to be defined")
+    stop("add_state: If highConstraint is defined also lowConstraint needs to be defined")
 
   if (!is.null(lowConstraint) && is.null(highConstraint))
-    stop("addStateAZRmodel: If lowConstraint is defined also highConstraint needs to be defined")
+    stop("add_state: If lowConstraint is defined also highConstraint needs to be defined")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("addStateAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("add_state: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("addStateAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("add_state: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   stateInfo = list(name = name, IC = IC, ODE = ODE,
                    lowConstraint = lowConstraint,
@@ -545,18 +545,18 @@ addStateAZRmodel <- function(model,
 # @return A list with the state information
 # @examples
 # model <- exNovakTyson
-# getStateAZRmodel(model,1)
+# get_state(model,1)
 # @export
-getStateAZRmodel <- function(model, index) {
+get_state <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("getStateAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("get_state: model argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model) < index)
-    stop("getStateAZRmodel: value of index larger than number of states.")
+    stop("get_state: value of index larger than number of states.")
 
   if (index < 1)
-    stop("getStateAZRmodel: value of index should be larger than 0.")
+    stop("get_state: value of index should be larger than 0.")
 
   return(model$states[[index]])
 }
@@ -580,9 +580,9 @@ getStateAZRmodel <- function(model, index) {
 # @return An AZRmodel object with updated state variable
 # @examples
 # model <- exNovakTyson
-# model <- setStateAZRmodel(model,1,IC=0.5)
+# model <- set_state(model,1,IC=0.5)
 # @export
-setStateAZRmodel <- function(model, index,
+set_state <- function(model, index,
                              name = NULL,
                              IC = NULL,
                              ODE = NULL,
@@ -593,20 +593,20 @@ setStateAZRmodel <- function(model, index,
                              unittype = NULL,
                              notes = NULL) {
 
-  if (!is.AZRmodel(model))
-    stop("setStateAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("set_state: model argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model) < index)
-    stop("setStateAZRmodel: value of index larger than number of states.")
+    stop("set_state: value of index larger than number of states.")
 
   if (index < 1)
-    stop("setStateAZRmodel: value of index should be larger than 0.")
+    stop("set_state: value of index should be larger than 0.")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("setStateAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("set_state: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("setStateAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("set_state: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   if (!is.null(name))           model$states[[index]]$name           <- name
   if (!is.null(IC))             model$states[[index]]$IC             <- IC
@@ -629,25 +629,25 @@ setStateAZRmodel <- function(model, index,
 # @return An AZRmodel with the indexed state removed
 # @examples
 # model <- exNovakTyson
-# delStateAZRmodel(model,1)
+# delete_state(model,1)
 # @export
-delStateAZRmodel <- function(model, index) {
+delete_state <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("delStateAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("delete_state: model argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model) < index)
-    stop("delStateAZRmodel: value of index larger than number of states.")
+    stop("delete_state: value of index larger than number of states.")
 
   if (index < 1)
-    stop("delStateAZRmodel: value of index should be larger than 0.")
+    stop("delete_state: value of index should be larger than 0.")
 
   # check if state has inputs
   if (getNumberOfInputsAZRmodel(model) > 0) {
     inputstates = c()
     for (k in 1:getNumberOfInputsAZRmodel(model)) inputstates = c(inputstates,model$inputs[[k]]$stateindex)
     if (index %in% inputstates)
-      stop("delStateAZRmodel: The state contains inputs. Please delete them first and then the state.")
+      stop("delete_state: The state contains inputs. Please delete them first and then the state.")
   }
 
   model$states[[index]] <- NULL
@@ -658,10 +658,10 @@ delStateAZRmodel <- function(model, index) {
 
 ###############################################################################
 # Parameter handling functions
-# addParameterAZRmodel
-# getParameterAZRmodel
-# setParameterAZRmodel
-# delParameterAZRmodel
+# add_parameter
+# get_parameter
+# set_parameter
+# delete_parameter
 ###############################################################################
 
 # Add a new parameter to an AZRmodel
@@ -678,10 +678,10 @@ delStateAZRmodel <- function(model, index) {
 # @return An AZRmodel object with appended parameter
 # @examples
 # model <- AZRmodel()
-# addParameterAZRmodel(model,'ka',2,notes="Hello World")
-# addParameterAZRmodel(model,'F',value=0.5)
+# add_parameter(model,'ka',2,notes="Hello World")
+# add_parameter(model,'F',value=0.5)
 # @export
-addParameterAZRmodel <- function(model,
+add_parameter <- function(model,
                              name = NULL,
                              value = NULL,
                              type = NULL,
@@ -691,23 +691,23 @@ addParameterAZRmodel <- function(model,
                              estimate = FALSE,
                              regressor = FALSE) {
 
-  if (!is.AZRmodel(model))
-    stop("addParameterAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("add_parameter: model argument is not an AZRmodel")
 
   if (is.null(name))
-    stop("addParameterAZRmodel: name is a required input argument")
+    stop("add_parameter: name is a required input argument")
 
   if (is.null(value))
-    stop("addParameterAZRmodel: value is a required input argument")
+    stop("add_parameter: value is a required input argument")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("addParameterAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("add_parameter: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("addParameterAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("add_parameter: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   if (estimate && regressor)
-    stop("addStateAZRmodel: estimate and regressor can not be TRUE at the same time")
+    stop("add_state: estimate and regressor can not be TRUE at the same time")
 
   paramInfo <- list(name=name, value=value,
                    type = type,
@@ -729,18 +729,18 @@ addParameterAZRmodel <- function(model,
 # @return A list with the parameter information
 # @examples
 # model <- exNovakTyson
-# getParameterAZRmodel(model,1)
+# get_parameter(model,1)
 # @export
-getParameterAZRmodel <- function(model, index) {
+get_parameter <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("getParameterAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("get_parameter: model argument is not an AZRmodel")
 
   if (getNumberOfParametersAZRmodel(model) < index)
-    stop("getParameterAZRmodel: value of index larger than number of states.")
+    stop("get_parameter: value of index larger than number of states.")
 
   if (index < 1)
-    stop("getParameterAZRmodel: value of index should be larger than 0.")
+    stop("get_parameter: value of index should be larger than 0.")
 
   return(model$parameters[[index]])
 }
@@ -763,9 +763,9 @@ getParameterAZRmodel <- function(model, index) {
 # @return An AZRmodel object with updated parameter
 # @examples
 # model <- exNovakTyson
-# setParameterAZRmodel(model,1,value=0.14)
+# set_parameter(model,1,value=0.14)
 # @export
-setParameterAZRmodel <- function(model, index,
+set_parameter <- function(model, index,
                                  name = NULL,
                                  value = NULL,
                                  type = NULL,
@@ -775,23 +775,23 @@ setParameterAZRmodel <- function(model, index,
                                  estimate = FALSE,
                                  regressor = FALSE) {
 
-  if (!is.AZRmodel(model))
-    stop("setParameterAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("set_parameter: model argument is not an AZRmodel")
 
   if (getNumberOfParametersAZRmodel(model) < index)
-    stop("setParameterAZRmodel: value of index larger than number of parameters.")
+    stop("set_parameter: value of index larger than number of parameters.")
 
   if (index < 1)
-    stop("setParameterAZRmodel: value of index should be larger than 0.")
+    stop("set_parameter: value of index should be larger than 0.")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("setParameterAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("set_parameter: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("setParameterAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("set_parameter: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   if (!is.null(estimate) && !is.null(regressor) && estimate && regressor)
-    stop("addStateAZRmodel: estimate and regressor can not be TRUE at the same time")
+    stop("add_state: estimate and regressor can not be TRUE at the same time")
 
   if (!is.null(name))           model$parameters[[index]]$name           <- name
   if (!is.null(value))          model$parameters[[index]]$value          <- value
@@ -813,18 +813,18 @@ setParameterAZRmodel <- function(model, index,
 # @return An AZRmodel with the indexed parameter removed
 # @examples
 # model <- exNovakTyson
-# delParameterAZRmodel(model,1)
+# delete_parameter(model,1)
 # @export
-delParameterAZRmodel <- function(model, index) {
+delete_parameter <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("delParameterAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("delete_parameter: model argument is not an AZRmodel")
 
   if (getNumberOfParametersAZRmodel(model) < index)
-    stop("delParameterAZRmodel: value of index larger than number of parameters.")
+    stop("delete_parameter: value of index larger than number of parameters.")
 
   if (index < 1)
-    stop("delParameterAZRmodel: value of index should be larger than 0.")
+    stop("delete_parameter: value of index should be larger than 0.")
 
   model$parameters[[index]] <- NULL
 
@@ -842,10 +842,10 @@ delParameterAZRmodel <- function(model, index) {
 
 ###############################################################################
 # Variable handling functions
-# addVariableAZRmodel
-# getVariableAZRmodel
-# setVariableAZRmodel
-# delVariableAZRmodel
+# add_variable
+# get_variable
+# set_variable
+# delete_variable
 ###############################################################################
 
 # Add a new variable to an AZRmodel
@@ -860,10 +860,10 @@ delParameterAZRmodel <- function(model, index) {
 # @return An AZRmodel object with appended variable
 # @examples
 # model <- AZRmodel()
-# addVariableAZRmodel(model,'abc','a+b',notes="hello")
-# addVariableAZRmodel(model,'F',formula='a+b')
+# add_variable(model,'abc','a+b',notes="hello")
+# add_variable(model,'F',formula='a+b')
 # @export
-addVariableAZRmodel <- function(model,
+add_variable <- function(model,
                                  name = NULL,
                                  formula = NULL,
                                  type = NULL,
@@ -871,20 +871,20 @@ addVariableAZRmodel <- function(model,
                                  unittype = NULL,
                                  notes = NULL) {
 
-  if (!is.AZRmodel(model))
-    stop("addVariableAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("add_variable: model argument is not an AZRmodel")
 
   if (is.null(name))
-    stop("addVariableAZRmodel: name is a required input argument")
+    stop("add_variable: name is a required input argument")
 
   if (is.null(formula))
-    stop("addVariableAZRmodel: formula is a required input argument")
+    stop("add_variable: formula is a required input argument")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("addVariableAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("add_variable: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("addVariableAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("add_variable: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   varInfo <- list(name=name, formula=formula,
                    type = type,
@@ -904,18 +904,18 @@ addVariableAZRmodel <- function(model,
 # @return A list with the variable information
 # @examples
 # model <- exNovakTyson
-# getVariableAZRmodel(model,1)
+# get_variable(model,1)
 # @export
-getVariableAZRmodel <- function(model, index) {
+get_variable <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("getVariableAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("get_variable: model argument is not an AZRmodel")
 
   if (getNumberOfVariablesAZRmodel(model) < index)
-    stop("getVariableAZRmodel: value of index larger than number of variables.")
+    stop("get_variable: value of index larger than number of variables.")
 
   if (index < 1)
-    stop("getVariableAZRmodel: value of index should be larger than 0.")
+    stop("get_variable: value of index should be larger than 0.")
 
   return(model$variables[[index]])
 }
@@ -936,9 +936,9 @@ getVariableAZRmodel <- function(model, index) {
 # @return An AZRmodel object with updated variable
 # @examples
 # model <- exNovakTyson
-# model <- setVariableAZRmodel(model,1,formula='Cyclin')
+# model <- set_variable(model,1,formula='Cyclin')
 # @export
-setVariableAZRmodel <- function(model, index,
+set_variable <- function(model, index,
                                  name = NULL,
                                  formula = NULL,
                                  type = NULL,
@@ -946,20 +946,20 @@ setVariableAZRmodel <- function(model, index,
                                  unittype = NULL,
                                  notes = NULL) {
 
-  if (!is.AZRmodel(model))
-    stop("setVariableAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("set_variable: model argument is not an AZRmodel")
 
   if (getNumberOfVariablesAZRmodel(model) < index)
-    stop("setVariableAZRmodel: value of index larger than number of variables.")
+    stop("set_variable: value of index larger than number of variables.")
 
   if (index < 1)
-    stop("setVariableAZRmodel: value of index should be larger than 0.")
+    stop("set_variable: value of index should be larger than 0.")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("setVariableAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("set_variable: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("setVariableAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("set_variable: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   if (!is.null(name))           model$variables[[index]]$name           <- name
   if (!is.null(formula))        model$variables[[index]]$formula        <- formula
@@ -979,18 +979,18 @@ setVariableAZRmodel <- function(model, index,
 # @return An AZRmodel with the indexed variable removed
 # @examples
 # model <- exNovakTyson
-# delVariableAZRmodel(model,1)
+# delete_variable(model,1)
 # @export
-delVariableAZRmodel <- function(model, index) {
+delete_variable <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("delVariableAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("delete_variable: model argument is not an AZRmodel")
 
   if (getNumberOfVariablesAZRmodel(model) < index)
-    stop("delVariableAZRmodel: value of index larger than number of variables.")
+    stop("delete_variable: value of index larger than number of variables.")
 
   if (index < 1)
-    stop("delVariableAZRmodel: value of index should be larger than 0.")
+    stop("delete_variable: value of index should be larger than 0.")
 
   # Delete variable
   model$variables[[index]] <- NULL
@@ -1009,10 +1009,10 @@ delVariableAZRmodel <- function(model, index) {
 
 ###############################################################################
 # Reaction handling functions
-# addReactionAZRmodel
-# getReactionAZRmodel
-# setReactionAZRmodel
-# delReactionAZRmodel
+# add_reaction
+# get_reaction
+# set_reaction
+# delete_reaction
 ###############################################################################
 
 # Add a new reaction to an AZRmodel
@@ -1026,24 +1026,24 @@ delVariableAZRmodel <- function(model, index) {
 # @return An AZRmodel object with appended reaction
 # @examples
 # model <- AZRmodel()
-# addReactionAZRmodel(model,'R1','hello',notes='hello notes',reversible=TRUE)
-# addReactionAZRmodel(model,'R2',formula='a+b')
+# add_reaction(model,'R1','hello',notes='hello notes',reversible=TRUE)
+# add_reaction(model,'R2',formula='a+b')
 # @export
-addReactionAZRmodel <- function(model,
+add_reaction <- function(model,
                                 name = NULL,
                                 formula = NULL,
                                 notes = NULL,
                                 reversible = FALSE,
                                 fast = FALSE) {
 
-  if (!is.AZRmodel(model))
-    stop("addReactionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("add_reaction: model argument is not an AZRmodel")
 
   if (is.null(name))
-    stop("addReactionAZRmodel: name is a required input argument")
+    stop("add_reaction: name is a required input argument")
 
   if (is.null(formula))
-    stop("addReactionAZRmodel: formula is a required input argument")
+    stop("add_reaction: formula is a required input argument")
 
   reacInfo <- list(name=name, formula=formula,
                  notes = notes,
@@ -1062,18 +1062,18 @@ addReactionAZRmodel <- function(model,
 # @return A list with the reaction information
 # @examples
 # model <- exNovakTyson
-# getReactionAZRmodel(model,19)
+# get_reaction(model,19)
 # @export
-getReactionAZRmodel <- function(model, index) {
+get_reaction <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("getReactionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("get_reaction: model argument is not an AZRmodel")
 
   if (getNumberOfReactionsAZRmodel(model) < index)
-    stop("getReactionAZRmodel: value of index larger than number of reactions.")
+    stop("get_reaction: value of index larger than number of reactions.")
 
   if (index < 1)
-    stop("getReactionAZRmodel: value of index should be larger than 0.")
+    stop("get_reaction: value of index should be larger than 0.")
 
   return(model$reactions[[index]])
 }
@@ -1093,23 +1093,23 @@ getReactionAZRmodel <- function(model, index) {
 # @return An AZRmodel object with updated reaction
 # @examples
 # model <- exNovakTyson
-# model <- setReactionAZRmodel(model,19,formula='R1')
+# model <- set_reaction(model,19,formula='R1')
 # @export
-setReactionAZRmodel <- function(model, index,
+set_reaction <- function(model, index,
                                 name = NULL,
                                 formula = NULL,
                                 notes = NULL,
                                 reversible = NULL,
                                 fast = NULL) {
 
-  if (!is.AZRmodel(model))
-    stop("setReactionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("set_reaction: model argument is not an AZRmodel")
 
   if (getNumberOfReactionsAZRmodel(model) < index)
-    stop("setReactionAZRmodel: value of index larger than number of reactions.")
+    stop("set_reaction: value of index larger than number of reactions.")
 
   if (index < 1)
-    stop("setReactionAZRmodel: value of index should be larger than 0.")
+    stop("set_reaction: value of index should be larger than 0.")
 
   if (!is.null(name))           model$reactions[[index]]$name           <- name
   if (!is.null(formula))        model$reactions[[index]]$formula        <- formula
@@ -1128,18 +1128,18 @@ setReactionAZRmodel <- function(model, index,
 # @return An AZRmodel with the indexed reaction removed
 # @examples
 # model <- exNovakTyson
-# delReactionAZRmodel(model,1)
+# delete_reaction(model,1)
 # @export
-delReactionAZRmodel <- function(model, index) {
+delete_reaction <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("delReactionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("delete_reaction: model argument is not an AZRmodel")
 
   if (getNumberOfReactionsAZRmodel(model) < index)
-    stop("delReactionAZRmodel: value of index larger than number of reactions.")
+    stop("delete_reaction: value of index larger than number of reactions.")
 
   if (index < 1)
-    stop("delReactionAZRmodel: value of index should be larger than 0.")
+    stop("delete_reaction: value of index should be larger than 0.")
 
   model$reactions[[index]] <- NULL
 
@@ -1149,10 +1149,10 @@ delReactionAZRmodel <- function(model, index) {
 
 ###############################################################################
 # Function handling functions
-# addFunctionAZRmodel
-# getFunctionAZRmodel
-# setFunctionAZRmodel
-# delFunctionAZRmodel
+# add_function
+# get_function
+# set_function
+# del_function
 ###############################################################################
 
 # Add a new function to an AZRmodel
@@ -1165,26 +1165,26 @@ delReactionAZRmodel <- function(model, index) {
 # @return An AZRmodel object with appended function
 # @examples
 # model <- AZRmodel()
-# addFunctionAZRmodel(model,'ADD',arguments="x,y",formula="x+y")
-# addFunctionAZRmodel(model,'MM',arguments='X,VMAX,KM',formula='VMAX*X/(X+KM)')
+# add_function(model,'ADD',arguments="x,y",formula="x+y")
+# add_function(model,'MM',arguments='X,VMAX,KM',formula='VMAX*X/(X+KM)')
 # @export
-addFunctionAZRmodel <- function(model,
+add_function <- function(model,
                                 name = NULL,
                                 arguments = NULL,
                                 formula = NULL,
                                 notes = NULL) {
 
-  if (!is.AZRmodel(model))
-    stop("addFunctionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("add_function: model argument is not an AZRmodel")
 
   if (is.null(name))
-    stop("addFunctionAZRmodel: name is a required input argument")
+    stop("add_function: name is a required input argument")
 
   if (is.null(arguments))
-    stop("addFunctionAZRmodel: arguments is a required input argument")
+    stop("add_function: arguments is a required input argument")
 
   if (is.null(formula))
-    stop("addFunctionAZRmodel: formula is a required input argument")
+    stop("add_function: formula is a required input argument")
 
   funInfo <- list(name=name, arguments=arguments, formula=formula, notes = notes)
 
@@ -1200,19 +1200,19 @@ addFunctionAZRmodel <- function(model,
 # @return A list with the function information
 # @examples
 # model <- AZRmodel()
-# model <- addFunctionAZRmodel(model,'ADD',arguments="x,y",formula="x+y")
-# getFunctionAZRmodel(model,1)
+# model <- add_function(model,'ADD',arguments="x,y",formula="x+y")
+# get_function(model,1)
 # @export
-getFunctionAZRmodel <- function(model, index) {
+get_function <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("getFunctionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("get_function: model argument is not an AZRmodel")
 
   if (getNumberOfFunctionsAZRmodel(model) < index)
-    stop("getFunctionAZRmodel: value of index larger than number of functions.")
+    stop("get_function: value of index larger than number of functions.")
 
   if (index < 1)
-    stop("getFunctionAZRmodel: value of index should be larger than 0.")
+    stop("get_function: value of index should be larger than 0.")
 
   return(model$functions[[index]])
 }
@@ -1231,23 +1231,23 @@ getFunctionAZRmodel <- function(model, index) {
 # @return An AZRmodel object with updated function
 # @examples
 # model <- AZRmodel()
-# model <- addFunctionAZRmodel(model,'ADD',arguments="x,y",formula="x+y")
-# setFunctionAZRmodel(model,1,formula='x*y')
+# model <- add_function(model,'ADD',arguments="x,y",formula="x+y")
+# set_function(model,1,formula='x*y')
 # @export
-setFunctionAZRmodel <- function(model, index,
+set_function <- function(model, index,
                                 name = NULL,
                                 arguments = NULL,
                                 formula = NULL,
                                 notes = NULL) {
 
-  if (!is.AZRmodel(model))
-    stop("setFunctionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("set_function: model argument is not an AZRmodel")
 
   if (getNumberOfFunctionsAZRmodel(model) < index)
-    stop("setFunctionAZRmodel: value of index larger than number of functions.")
+    stop("set_function: value of index larger than number of functions.")
 
   if (index < 1)
-    stop("setFunctionAZRmodel: value of index should be larger than 0.")
+    stop("set_function: value of index should be larger than 0.")
 
   if (!is.null(name))           model$functions[[index]]$name           <- name
   if (!is.null(arguments))      model$functions[[index]]$arguments      <- arguments
@@ -1265,19 +1265,19 @@ setFunctionAZRmodel <- function(model, index,
 # @return An AZRmodel with the indexed function removed
 # @examples
 # model <- AZRmodel()
-# model <- addFunctionAZRmodel(model,'ADD',arguments="x,y",formula="x+y")
-# delFunctionAZRmodel(model,1)
+# model <- add_function(model,'ADD',arguments="x,y",formula="x+y")
+# del_function(model,1)
 # @export
-delFunctionAZRmodel <- function(model, index) {
+del_function <- function(model, index) {
 
-  if (!is.AZRmodel(model))
-    stop("delFunctionAZRmodel: model argument is not an AZRmodel")
+  if (!is_azrmod(model))
+    stop("del_function: model argument is not an AZRmodel")
 
   if (getNumberOfFunctionsAZRmodel(model) < index)
-    stop("delFunctionAZRmodel: value of index larger than number of functions.")
+    stop("del_function: value of index larger than number of functions.")
 
   if (index < 1)
-    stop("delFunctionAZRmodel: value of index should be larger than 0.")
+    stop("del_function: value of index should be larger than 0.")
 
   model$functions[[index]] <- NULL
 
@@ -1318,7 +1318,7 @@ addAlgebraicAZRmodel <- function(model,
                              unittype = NULL,
                              notes = NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("addAlgebraicAZRmodel: model argument is not an AZRmodel")
 
   if (is.null(name) && !is.null(IC))
@@ -1359,7 +1359,7 @@ addAlgebraicAZRmodel <- function(model,
 # @export
 getAlgebraicAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getAlgebraicAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfAlgebraicAZRmodel(model) < index)
@@ -1400,7 +1400,7 @@ setAlgebraicAZRmodel <- function(model, index,
                              unittype = NULL,
                              notes = NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("setAlgebraicAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfAlgebraicAZRmodel(model) < index)
@@ -1439,7 +1439,7 @@ setAlgebraicAZRmodel <- function(model, index,
 # @export
 delAlgebraicAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("delAlgebraicAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfAlgebraicAZRmodel(model) < index)
@@ -1482,7 +1482,7 @@ addEventAZRmodel <- function(model,
                                  trigger = NULL,
                                  notes = NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("addEventAZRmodel: model argument is not an AZRmodel")
 
   if (is.null(name))
@@ -1510,7 +1510,7 @@ addEventAZRmodel <- function(model,
 # @export
 getEventAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getEventAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < index)
@@ -1543,7 +1543,7 @@ setEventAZRmodel <- function(model, index,
                                  trigger = NULL,
                                  notes = NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("setEventAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < index)
@@ -1572,7 +1572,7 @@ setEventAZRmodel <- function(model, index,
 # @export
 delEventAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("delEventAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < index)
@@ -1615,7 +1615,7 @@ addEventAssignmentAZRmodel <- function(model,
                                        variable = NULL,
                                        formula = NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("addEventAssignmentAZRmodel: model argument is not an AZRmodel")
 
   if (is.null(eventindex))
@@ -1648,7 +1648,7 @@ addEventAssignmentAZRmodel <- function(model,
 # @export
 getEventAssignmentAZRmodel <- function(model, eventindex, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getEventAssignmentAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < eventindex)
@@ -1687,7 +1687,7 @@ setEventAssignmentAZRmodel <- function(model, eventindex, index,
                              variable = NULL,
                              formula = NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("setEventAssignmentAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < eventindex)
@@ -1723,7 +1723,7 @@ setEventAssignmentAZRmodel <- function(model, eventindex, index,
 # @export
 delEventAssignmentAZRmodel <- function(model, eventindex, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("delEventAssignmentAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < eventindex)
@@ -1773,8 +1773,8 @@ delEventAssignmentAZRmodel <- function(model, eventindex, index) {
 # @return An AZRmodel object with appended input
 # @examples
 # model <- AZRmodel()
-# model <- addStateAZRmodel(model,'Cyclin',IC=0.3,'Re1-Re2')
-# model <- addStateAZRmodel(model,'Cyclin2',IC=0.3,'Re2-Re3')
+# model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
+# model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
 # model <- addInputAZRmodel(model,stateindex=2)
 # model <- addInputAZRmodel(model,factors='F',stateindex=2)
 # model <- addInputAZRmodel(model,factors=c('+F','(1-F)'),stateindex=c(1,2))
@@ -1783,7 +1783,7 @@ addInputAZRmodel <- function(model,
                              stateindex = NULL,
                              factors = "+1") {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("addInputAZRmodel: model argument is not an AZRmodel")
 
   if (is.null(stateindex))
@@ -1806,7 +1806,7 @@ addInputAZRmodel <- function(model,
 
   terms <- factors
   for (k in 1:length(terms)) terms[k] <- paste(strremWhite(factors[k]),"*",name, sep="")
-  model <- addParameterAZRmodel(model,name=name,value=0)
+  model <- add_parameter(model,name=name,value=0)
   parindex <- getNumberOfParametersAZRmodel(model)
   for (k in 1:length(stateindex))
     model$states[[stateindex[k]]]$ODE <- paste(model$states[[stateindex[k]]]$ODE,terms[k],sep="")
@@ -1825,14 +1825,14 @@ addInputAZRmodel <- function(model,
 # @return A list with the input information
 # @examples
 # model <- AZRmodel()
-# model <- addStateAZRmodel(model,'Cyclin',IC=0.3,'Re1-Re2')
-# model <- addStateAZRmodel(model,'Cyclin2',IC=0.3,'Re2-Re3')
+# model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
+# model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
 # model <- addInputAZRmodel(model,stateindex=2)
 # getInputAZRmodel(model,1)
 # @export
 getInputAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getInputAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfInputsAZRmodel(model) < index)
@@ -1851,14 +1851,14 @@ getInputAZRmodel <- function(model, index) {
 # @return An AZRmodel with the indexed input removed (parameter will be removed as well)
 # @examples
 # model <- AZRmodel()
-# model <- addStateAZRmodel(model,'Cyclin',IC=0.3,'Re1-Re2')
-# model <- addStateAZRmodel(model,'Cyclin2',IC=0.3,'Re2-Re3')
+# model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
+# model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
 # model <- addInputAZRmodel(model,stateindex=2)
 # delInputAZRmodel(model,1)
 # @export
 delInputAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("delInputAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfInputsAZRmodel(model) < index)
@@ -1879,7 +1879,7 @@ delInputAZRmodel <- function(model, index) {
   model$inputs[[index]] <- NULL
 
   # Remove INPUT parameter
-  model <- delParameterAZRmodel(model,parindex)
+  model <- delete_parameter(model,parindex)
 
   return(model)
 }
@@ -1910,7 +1910,7 @@ addOutputAZRmodel <- function(model,
                               formula = NULL,
                               notes = NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("addOutputAZRmodel: model argument is not an AZRmodel")
 
   if (is.null(formula))
@@ -1918,7 +1918,7 @@ addOutputAZRmodel <- function(model,
 
   name <- paste("OUTPUT", getNumberOfOutputsAZRmodel(model)+1, sep="")
 
-  model <- addVariableAZRmodel(model,name,formula,notes=notes)
+  model <- add_variable(model,name,formula,notes=notes)
 
   varindex <- getNumberOfVariablesAZRmodel(model)
 
@@ -1941,7 +1941,7 @@ addOutputAZRmodel <- function(model,
 # @export
 getOutputAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getOutputAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfOutputsAZRmodel(model) < index)
@@ -1965,7 +1965,7 @@ getOutputAZRmodel <- function(model, index) {
 # @export
 delOutputAZRmodel <- function(model, index) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("delOutputAZRmodel: model argument is not an AZRmodel")
 
   if (getNumberOfOutputsAZRmodel(model) < index)
@@ -1981,7 +1981,7 @@ delOutputAZRmodel <- function(model, index) {
   model$outputs[[index]] <- NULL
 
   # Then delete variable related to the output
-  model <- delVariableAZRmodel(model,varindex)
+  model <- delete_variable(model,varindex)
 
   return(model)
 }
@@ -2008,7 +2008,7 @@ delOutputAZRmodel <- function(model, index) {
 # @export
 getAllStatesAZRmodel <- function(model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getAllStatesAZRmodel: model argument is not an AZRmodel")
 
   statenames <- c()
@@ -2016,7 +2016,7 @@ getAllStatesAZRmodel <- function(model) {
   stateODEs <- c()
   if (getNumberOfStatesAZRmodel(model) > 0) {
     for (k in 1:getNumberOfStatesAZRmodel(model)) {
-      x <- getStateAZRmodel(model,k)
+      x <- get_state(model,k)
       statenames[k] <- x$name
       stateICs[k] <- x$IC
       stateODEs[k] <- x$ODE
@@ -2043,7 +2043,7 @@ getAllStatesAZRmodel <- function(model) {
 # @export
 getAllParametersAZRmodel <- function(model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getAllParametersAZRmodel: model argument is not an AZRmodel")
 
   paramnames <- c()
@@ -2052,7 +2052,7 @@ getAllParametersAZRmodel <- function(model) {
   paramregressor <- c()
   if (getNumberOfParametersAZRmodel(model) > 0) {
     for (k in 1:getNumberOfParametersAZRmodel(model)) {
-      x <- getParameterAZRmodel(model,k)
+      x <- get_parameter(model,k)
       paramnames[k] <- x$name
       paramvalues[k] <- x$value
       paramestimate[k] <- x$estimate
@@ -2079,14 +2079,14 @@ getAllParametersAZRmodel <- function(model) {
 # @export
 getAllVariablesAZRmodel <- function(model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getAllVariablesAZRmodel: model argument is not an AZRmodel")
 
   varnames <- c()
   varformulas <- c()
   if (getNumberOfVariablesAZRmodel(model) > 0) {
     for (k in 1:getNumberOfVariablesAZRmodel(model)) {
-      x <- getVariableAZRmodel(model,k)
+      x <- get_variable(model,k)
       varnames[k] <- x$name
       varformulas[k] <- x$formula
     }
@@ -2111,7 +2111,7 @@ getAllVariablesAZRmodel <- function(model) {
 # @export
 getAllReactionsAZRmodel <- function(model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getAllReactionsAZRmodel: model argument is not an AZRmodel")
 
   reacnames <- c()
@@ -2120,7 +2120,7 @@ getAllReactionsAZRmodel <- function(model) {
   reacreversible <- c()
   if (getNumberOfReactionsAZRmodel(model) > 0) {
     for (k in 1:getNumberOfReactionsAZRmodel(model)) {
-      x <- getReactionAZRmodel(model,k)
+      x <- get_reaction(model,k)
       reacnames[k] <- x$name
       reacformulas[k] <- x$formula
       reacfast[k] <- x$fast
@@ -2145,7 +2145,7 @@ getAllReactionsAZRmodel <- function(model) {
 # @export
 getAllFunctionsAZRmodel <- function(model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getAllFunctionsAZRmodel: model argument is not an AZRmodel")
 
   funcnames <- c()
@@ -2153,7 +2153,7 @@ getAllFunctionsAZRmodel <- function(model) {
   funcarguments <- c()
   if (getNumberOfFunctionsAZRmodel(model) > 0) {
     for (k in 1:getNumberOfFunctionsAZRmodel(model)) {
-      x <- getFunctionAZRmodel(model,k)
+      x <- get_function(model,k)
       funcnames[k] <- x$name
       funcformulas[k] <- x$formula
       funcarguments[k] <- x$arguments
@@ -2177,7 +2177,7 @@ getAllFunctionsAZRmodel <- function(model) {
 # @export
 getAllEventsAZRmodel <- function(model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("getAllEventsAZRmodel: model argument is not an AZRmodel")
 
   evenames <- c()

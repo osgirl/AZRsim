@@ -1,7 +1,7 @@
 ###############################################################################
 ###############################################################################
 # This file contains the export functions for AZRmodels to TXTBC files
-# These are not exported and called from AZRexportAZRmodel
+# These are not exported and called from export_azrmod
 ###############################################################################
 ###############################################################################
 
@@ -19,7 +19,7 @@
 
 exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("exportTxtBcAZRmodel: input argument is not an AZRmodel")
 
   if (is.null(filename))

@@ -99,16 +99,16 @@ simulate <- function (model,
   # Basic AZRmodel checks
   ##############################################################################
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("AZRsimulate: provided model argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model) == 0)
     stop("AZRsimulate: provided model has no dynamic states")
 
-  if (hasalgebraicAZRmodel(model))
+  if (has_algebraic(model))
     stop("AZRsimulate: provided model has algebraic states. This is not supported in AZRsim at the moment")
 
-  if (hasfastreactionsAZRmodel(model))
+  if (has_fast_reactions(model))
     stop("AZRsimulate: provided model has fast reactions. This is not supported in AZRsim at the moment")
 
   ##############################################################################
@@ -582,16 +582,16 @@ AZRxdotcalc <- function (model,
   # Basic AZRmodel checks
   ##############################################################################
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("AZRxdotcalc: provided model argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model) == 0)
     stop("AZRxdotcalc: provided model has no dynamic states")
 
-  if (hasalgebraicAZRmodel(model))
+  if (has_algebraic(model))
     stop("AZRxdotcalc: provided model has algebraic states. This is not supported in AZRsim at the moment")
 
-  if (hasfastreactionsAZRmodel(model))
+  if (has_fast_reactions(model))
     stop("AZRxdotcalc: provided model has fast reactions. This is not supported in AZRsim at the moment")
 
   ##############################################################################
@@ -712,7 +712,7 @@ calcNNic <- function(model,parametersSim) {
 
   # Check if model contains non-numerical initial conditions ... if not just return the
   # numerical ones
-  if (hasonlynumericICsAZRmodel(model)) return(getAllStatesAZRmodel(model)$stateICs)
+  if (has_only_numeric_ic(model)) return(getAllStatesAZRmodel(model)$stateICs)
 
   # Model contains non-numerical initial conditions => evaluate them - taking into account
   # potential changes in the parameters
@@ -848,16 +848,16 @@ AZRsimpop <- function (model,
   # Basic AZRmodel checks
   ##############################################################################
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("AZRsimpop: provided model argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model) == 0)
     stop("AZRsimpop: provided model has no dynamic states")
 
-  if (hasalgebraicAZRmodel(model))
+  if (has_algebraic(model))
     stop("AZRsimpop: provided model has algebraic states. This is not supported in AZRsim at the moment")
 
-  if (hasfastreactionsAZRmodel(model))
+  if (has_fast_reactions(model))
     stop("AZRsimpop: provided model has fast reactions. This is not supported in AZRsim at the moment")
 
   ##############################################################################

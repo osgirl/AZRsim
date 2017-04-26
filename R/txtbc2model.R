@@ -213,7 +213,7 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
     }
 
     # Generate model reaction information
-    model <- addReactionAZRmodel(model,name=reacName,formula=reacFormula,notes=reacNotes,
+    model <- add_reaction(model,name=reacName,formula=reacFormula,notes=reacNotes,
                                  reversible=reacReversible,fast=reacFast)
 
     # Get substrate and product information - needed for ODE construction
@@ -345,7 +345,7 @@ getStatesTxtBc <- function(model,model_states) {
     ODEk <- strtrimM(test)
 
     # Add state in model with default IC
-    model <- addStateAZRmodel(model,name=namek,IC=0,ODE=ODEk)
+    model <- add_state(model,name=namek,IC=0,ODE=ODEk)
   }
 
   ###################
@@ -441,7 +441,7 @@ getStatesTxtBc <- function(model,model_states) {
       stop("getStatesTxtBc: error in model definition - a state appears more than once.")
 
     if (length(ix) != 0) {
-      model <- setStateAZRmodel(model,ix,IC=stateIC,lowConstraint=stateConstraints[1],
+      model <- set_state(model,ix,IC=stateIC,lowConstraint=stateConstraints[1],
                                 highConstraint=stateConstraints[2],type=typek,
                                 compartment=compartmentk,unittype=unittypek,notes=notesk)
       found <- TRUE

@@ -56,7 +56,7 @@
 
 stoichiometryAZRmodel <- function (model,raw=TRUE) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("stoichiometryAZRmodel: model argument is not an AZRmodel")
 
   # Get state, parameter, reaction information

@@ -11,7 +11,7 @@
 ###############################################################################
 genSimFunctions <- function (model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("genSimFunctions: input argument is not an AZRmodel")
 
   if (getNumberOfStatesAZRmodel(model)==0)
@@ -68,7 +68,7 @@ genSimFunctions <- function (model) {
 
 compileAZRmodelAZR <- function(model) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("compileAZRmodelAZR: input argument is not an AZRmodel")
 
   # Check if model was already compiled and in this case unload DLL and
@@ -196,16 +196,16 @@ handleConstraintsSim <- function (model) {
 
   # Cycle through states and check for constraints
   for (k in 1:getNumberOfStatesAZRmodel(model)) {
-    si <- getStateAZRmodel(model,k)
+    si <- get_state(model,k)
     if (!is.null(si$lowConstraint) && !is.null(si$highConstraint)) {
       # Add switch condition variable
       varswitchname <- paste("switchConstraint_",si$name,sep="")
       varswitchcon <- paste("and(ge(",si$name,",",si$lowConstraint,"),le(",si$name,",",si$highConstraint,"))",sep="")
       varswitchformula <- paste("piecewise(1,",varswitchcon,",0)",sep="")
-      model <- addVariableAZRmodel(model,name = varswitchname,formula=varswitchformula)
+      model <- add_variable(model,name = varswitchname,formula=varswitchformula)
       # Update RHS of ODE and remove constraint information
       ODEswitch <- paste(varswitchname,"*(",si$ODE,")",sep="")
-      model <- setStateAZRmodel(model,k,ODE=ODEswitch)
+      model <- set_state(model,k,ODE=ODEswitch)
       model$states[[k]]$lowConstraint <- NULL
       model$states[[k]]$highConstraint <- NULL
     }
@@ -257,10 +257,10 @@ implementInputMath <- function(model,inputindex) {
   paramDoseDurationName <- paste(name,"duration",sep="")
   paramDoseTlagName <- paste(name,"lagtime",sep="")
   # Add parameters to model with default values
-  model <- addParameterAZRmodel(model,paramDoseAmountName,0)
-  model <- addParameterAZRmodel(model,paramDoseTimeName,0)
-  model <- addParameterAZRmodel(model,paramDoseDurationName,1e-10) # To avoid division by zero
-  model <- addParameterAZRmodel(model,paramDoseTlagName,0)
+  model <- add_parameter(model,paramDoseAmountName,0)
+  model <- add_parameter(model,paramDoseTimeName,0)
+  model <- add_parameter(model,paramDoseDurationName,1e-10) # To avoid division by zero
+  model <- add_parameter(model,paramDoseTlagName,0)
 
   # Define timing and rate variable
   varDoseName <- tolower(name)
@@ -272,7 +272,7 @@ implementInputMath <- function(model,inputindex) {
           "lt(time,",paramDoseTimeName,"+",paramDoseTlagName,"+",paramDoseDurationName,"))",
       ",0)",sep="")
   # Add timing and rate variable to the model
-  model <- addVariableAZRmodel(model,varDoseName,formula=varDoseFormulaTimingRate)
+  model <- add_variable(model,varDoseName,formula=varDoseFormulaTimingRate)
 
   # Add distribution information to the ODEs
   for (k in seq_along(stateindex)) {

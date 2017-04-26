@@ -1,7 +1,7 @@
 ###############################################################################
 ###############################################################################
 # This file contains the export functions for AZRmodels to TXT files
-# These are not exported and called from AZRexportAZRmodel
+# These are not exported and called from export_azrmod
 ###############################################################################
 ###############################################################################
 
@@ -21,7 +21,7 @@
 
 exportTxtAZRmodel <- function (model, filename=NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("exportTxtAZRmodel: input argument is not an AZRmodel")
 
   if (is.null(filename))
