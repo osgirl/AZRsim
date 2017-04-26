@@ -284,10 +284,10 @@ getEvents <- function(model,model_events) {
     # first element is assumed to be the trigger function
     triggerk <- strremWhite(elementsRHS[1])
     # Add event to the model
-    model <- addEventAZRmodel(model,name=namek,trigger=strremWhite(triggerk),notes=notesk)
+    model <- add_event(model,name=namek,trigger=strremWhite(triggerk),notes=notesk)
     # Add event assignments
     for (k2 in seq(2,length(elementsRHS),2)) {
-      model <- addEventAssignmentAZRmodel(model, eventindex=k,
+      model <- add_event_assign(model, eventindex=k,
                                           variable=strremWhite(elementsRHS[k2]),
                                           formula=strremWhite(elementsRHS[k2+1]))
     }

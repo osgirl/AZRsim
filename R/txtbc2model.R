@@ -375,7 +375,7 @@ getStatesTxtBc <- function(model,model_states) {
     ARformulak <- strtrimM(terms[2])
 
     # add algebraic state to the model
-    model <- addAlgebraicAZRmodel(model,name=ARnamek,IC=ARick,formula=ARformulak)
+    model <- add_algebraic(model,name=ARnamek,IC=ARick,formula=ARformulak)
   }
 
   ###################
@@ -459,7 +459,7 @@ getStatesTxtBc <- function(model,model_states) {
       }
       ix <- unname(which(algebraic_names==stateName))
       if (length(ix) != 0) {
-        model <- setAlgebraicAZRmodel(model,ix,IC=stateIC,type=typek,compartment=compartmentk,unittype=unittypek,
+        model <- set_algebraic(model,ix,IC=stateIC,type=typek,compartment=compartmentk,unittype=unittypek,
                                       notes=notesk)
         found <- TRUE
       }

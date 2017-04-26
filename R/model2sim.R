@@ -227,7 +227,7 @@ implementALLinputMath <- function(model) {
     # Remove each input from model
     for (k in 1:getNumberOfInputsAZRmodel(model)) {
       # index always 1!
-      model <- delInputAZRmodel(model,1)
+      model <- delete_input(model,1)
     }
   }
   return(model)

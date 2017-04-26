@@ -1287,10 +1287,10 @@ del_function <- function(model, index) {
 
 ###############################################################################
 # Algebraic handling functions
-# addAlgebraicAZRmodel
-# getAlgebraicAZRmodel
-# setAlgebraicAZRmodel
-# delAlgebraicAZRmodel
+# add_algebraic
+# get_algebraic
+# set_algebraic
+# del_algebraic
 ###############################################################################
 
 # Add a new algebraic state to an AZRmodel
@@ -1306,10 +1306,10 @@ del_function <- function(model, index) {
 # @return An AZRmodel object with appended algebraic state variable
 # @examples
 # model <- AZRmodel()
-# model <- addAlgebraicAZRmodel(model,'X',IC=2,'A+B+X')
-# model <- addAlgebraicAZRmodel(model,formula="A+B+X")
+# model <- add_algebraic(model,'X',IC=2,'A+B+X')
+# model <- add_algebraic(model,formula="A+B+X")
 # @export
-addAlgebraicAZRmodel <- function(model,
+add_algebraic <- function(model,
                              name = NULL,
                              IC = NULL,
                              formula = NULL,
@@ -1319,22 +1319,22 @@ addAlgebraicAZRmodel <- function(model,
                              notes = NULL) {
 
   if (!is_azrmod(model))
-    stop("addAlgebraicAZRmodel: model argument is not an AZRmodel")
+    stop("add_algebraic: model argument is not an AZRmodel")
 
   if (is.null(name) && !is.null(IC))
-    stop("addAlgebraicAZRmodel: name is a required input argument if an IC is defined")
+    stop("add_algebraic: name is a required input argument if an IC is defined")
 
   if (is.null(IC) && !is.null(name))
-    stop("addAlgebraicAZRmodel: IC is a required input argument if a name is defined")
+    stop("add_algebraic: IC is a required input argument if a name is defined")
 
   if (is.null(formula))
-    stop("addAlgebraicAZRmodel: formula is a required input argument")
+    stop("add_algebraic: formula is a required input argument")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("addAlgebraicAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("add_algebraic: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("addAlgebraicAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("add_algebraic: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   algebraicInfo <- list(name=name, IC=IC, formula=formula,
                    type = type,
@@ -1354,19 +1354,19 @@ addAlgebraicAZRmodel <- function(model,
 # @return A list with the algebraic state information
 # @examples
 # model <- AZRmodel()
-# model <- addAlgebraicAZRmodel(model,'X',IC=2,'A+B+X')
-# getAlgebraicAZRmodel(model,1)
+# model <- add_algebraic(model,'X',IC=2,'A+B+X')
+# get_algebraic(model,1)
 # @export
-getAlgebraicAZRmodel <- function(model, index) {
+get_algebraic <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("getAlgebraicAZRmodel: model argument is not an AZRmodel")
+    stop("get_algebraic: model argument is not an AZRmodel")
 
   if (getNumberOfAlgebraicAZRmodel(model) < index)
-    stop("getAlgebraicAZRmodel: value of index larger than number of algebraic states.")
+    stop("get_algebraic: value of index larger than number of algebraic states.")
 
   if (index < 1)
-    stop("getAlgebraicAZRmodel: value of index should be larger than 0.")
+    stop("get_algebraic: value of index should be larger than 0.")
 
   return(model$algebraic[[index]])
 }
@@ -1388,10 +1388,10 @@ getAlgebraicAZRmodel <- function(model, index) {
 # @return An AZRmodel object with updated algebraic state variable
 # @examples
 # model <- AZRmodel()
-# model <- addAlgebraicAZRmodel(model,'X',IC=2,'A+B+X')
-# setAlgebraicAZRmodel(model,1,IC=0.14)
+# model <- add_algebraic(model,'X',IC=2,'A+B+X')
+# set_algebraic(model,1,IC=0.14)
 # @export
-setAlgebraicAZRmodel <- function(model, index,
+set_algebraic <- function(model, index,
                              name = NULL,
                              IC = NULL,
                              formula = NULL,
@@ -1401,19 +1401,19 @@ setAlgebraicAZRmodel <- function(model, index,
                              notes = NULL) {
 
   if (!is_azrmod(model))
-    stop("setAlgebraicAZRmodel: model argument is not an AZRmodel")
+    stop("set_algebraic: model argument is not an AZRmodel")
 
   if (getNumberOfAlgebraicAZRmodel(model) < index)
-    stop("setAlgebraicAZRmodel: value of index larger than number of algebraic states.")
+    stop("set_algebraic: value of index larger than number of algebraic states.")
 
   if (index < 1)
-    stop("setAlgebraicAZRmodel: value of index should be larger than 0.")
+    stop("set_algebraic: value of index should be larger than 0.")
 
   if (!is.null(type) && !(type %in% c("isSpecie", "isCompartment", "isParameter")))
-    stop("setAlgebraicAZRmodel: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
+    stop("set_algebraic: wrong definition of 'type'. Needs to be 'isSpecie', 'isCompartment', or 'isParameter'")
 
   if (!is.null(unittype) && !(unittype %in% c("amount", "concentration")))
-    stop("setAlgebraicAZRmodel: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
+    stop("set_algebraic: wrong definition of 'unittype'. Needs to be 'amount' or 'concentration'")
 
   if (!is.null(name))           model$algebraic[[index]]$name           <- name
   if (!is.null(IC))             model$algebraic[[index]]$IC             <- IC
@@ -1434,19 +1434,19 @@ setAlgebraicAZRmodel <- function(model, index,
 # @return An AZRmodel with the indexed algebraic state removed
 # @examples
 # model <- AZRmodel()
-# model <- addAlgebraicAZRmodel(model,'X',IC=2,'A+B+X')
-# delAlgebraicAZRmodel(model,1)
+# model <- add_algebraic(model,'X',IC=2,'A+B+X')
+# del_algebraic(model,1)
 # @export
-delAlgebraicAZRmodel <- function(model, index) {
+del_algebraic <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("delAlgebraicAZRmodel: model argument is not an AZRmodel")
+    stop("del_algebraic: model argument is not an AZRmodel")
 
   if (getNumberOfAlgebraicAZRmodel(model) < index)
-    stop("delAlgebraicAZRmodel: value of index larger than number of algebraic states.")
+    stop("del_algebraic: value of index larger than number of algebraic states.")
 
   if (index < 1)
-    stop("delAlgebraicAZRmodel: value of index should be larger than 0.")
+    stop("del_algebraic: value of index should be larger than 0.")
 
   model$algebraic[[index]] <- NULL
 
@@ -1456,10 +1456,10 @@ delAlgebraicAZRmodel <- function(model, index) {
 
 ###############################################################################
 # Event handling functions
-# addEventAZRmodel
-# getEventAZRmodel
-# setEventAZRmodel
-# delEventAZRmodel
+# add_event
+# get_event
+# set_event
+# delete_event
 ###############################################################################
 
 # Add a new event to an AZRmodel
@@ -1474,22 +1474,22 @@ delAlgebraicAZRmodel <- function(model, index) {
 # @return An AZRmodel object with appended event
 # @examples
 # model <- AZRmodel()
-# addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# addEventAZRmodel(model,'event2',trigger="gt(time,10)")
+# add_event(model,'event1',trigger="lt(X,2)")
+# add_event(model,'event2',trigger="gt(time,10)")
 # @export
-addEventAZRmodel <- function(model,
+add_event <- function(model,
                                  name = NULL,
                                  trigger = NULL,
                                  notes = NULL) {
 
   if (!is_azrmod(model))
-    stop("addEventAZRmodel: model argument is not an AZRmodel")
+    stop("add_event: model argument is not an AZRmodel")
 
   if (is.null(name))
-    stop("addEventAZRmodel: name is a required input argument")
+    stop("add_event: name is a required input argument")
 
   if (is.null(trigger))
-    stop("addEventAZRmodel: trigger is a required input argument")
+    stop("add_event: trigger is a required input argument")
 
   eventInfo <- list(name=name, trigger=trigger, assignment=NULL, notes=notes)
 
@@ -1505,19 +1505,19 @@ addEventAZRmodel <- function(model,
 # @return A list with the event information
 # @examples
 # model <- AZRmodel()
-# model <- addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# getEventAZRmodel(model,1)
+# model <- add_event(model,'event1',trigger="lt(X,2)")
+# get_event(model,1)
 # @export
-getEventAZRmodel <- function(model, index) {
+get_event <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("getEventAZRmodel: model argument is not an AZRmodel")
+    stop("get_event: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < index)
-    stop("getEventAZRmodel: value of index larger than number of events.")
+    stop("get_event: value of index larger than number of events.")
 
   if (index < 1)
-    stop("getEventAZRmodel: value of index should be larger than 0.")
+    stop("get_event: value of index should be larger than 0.")
 
   return(model$events[[index]])
 }
@@ -1535,22 +1535,22 @@ getEventAZRmodel <- function(model, index) {
 # @return An AZRmodel object with updated event variable
 # @examples
 # model <- AZRmodel()
-# model <- addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# setEventAZRmodel(model,1,name='myEvent')
+# model <- add_event(model,'event1',trigger="lt(X,2)")
+# set_event(model,1,name='myEvent')
 # @export
-setEventAZRmodel <- function(model, index,
+set_event <- function(model, index,
                                  name = NULL,
                                  trigger = NULL,
                                  notes = NULL) {
 
   if (!is_azrmod(model))
-    stop("setEventAZRmodel: model argument is not an AZRmodel")
+    stop("set_event: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < index)
-    stop("setEventAZRmodel: value of index larger than number of events.")
+    stop("set_event: value of index larger than number of events.")
 
   if (index < 1)
-    stop("setEventAZRmodel: value of index should be larger than 0.")
+    stop("set_event: value of index should be larger than 0.")
 
   if (!is.null(name))           model$events[[index]]$name           <- name
   if (!is.null(trigger))        model$events[[index]]$trigger        <- trigger
@@ -1567,19 +1567,19 @@ setEventAZRmodel <- function(model, index,
 # @return An AZRmodel with the indexed event removed
 # @examples
 # model <- AZRmodel()
-# model <- addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# delEventAZRmodel(model,1)
+# model <- add_event(model,'event1',trigger="lt(X,2)")
+# delete_event(model,1)
 # @export
-delEventAZRmodel <- function(model, index) {
+delete_event <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("delEventAZRmodel: model argument is not an AZRmodel")
+    stop("delete_event: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < index)
-    stop("delEventAZRmodel: value of index larger than number of events.")
+    stop("delete_event: value of index larger than number of events.")
 
   if (index < 1)
-    stop("delEventAZRmodel: value of index should be larger than 0.")
+    stop("delete_event: value of index should be larger than 0.")
 
   model$events[[index]] <- NULL
 
@@ -1589,10 +1589,10 @@ delEventAZRmodel <- function(model, index) {
 
 ###############################################################################
 # Event Assignment handling functions
-# addEventAssignmentAZRmodel
-# getEventAssignmentAZRmodel
-# setEventAssignmentAZRmodel
-# delEventAssignmentAZRmodel
+# add_event_assign
+# get_event_assign
+# set_event_assign
+# del_event_assign
 ###############################################################################
 
 # Add a new event assignment to an event in an AZRmodel
@@ -1607,25 +1607,25 @@ delEventAZRmodel <- function(model, index) {
 # @return An AZRmodel object with appended event assignment to the specified event
 # @examples
 # model <- AZRmodel()
-# model <- addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# model <- addEventAssignmentAZRmodel(model,eventindex=1,'A','A+5')
+# model <- add_event(model,'event1',trigger="lt(X,2)")
+# model <- add_event_assign(model,eventindex=1,'A','A+5')
 # @export
-addEventAssignmentAZRmodel <- function(model,
+add_event_assign <- function(model,
                                        eventindex = NULL,
                                        variable = NULL,
                                        formula = NULL) {
 
   if (!is_azrmod(model))
-    stop("addEventAssignmentAZRmodel: model argument is not an AZRmodel")
+    stop("add_event_assign: model argument is not an AZRmodel")
 
   if (is.null(eventindex))
-    stop("addEventAssignmentAZRmodel: eventindex is a required input argument")
+    stop("add_event_assign: eventindex is a required input argument")
 
   if (is.null(variable))
-    stop("addEventAssignmentAZRmodel: variable is a required input argument")
+    stop("add_event_assign: variable is a required input argument")
 
   if (is.null(formula))
-    stop("addEventAssignmentAZRmodel: formula is a required input argument")
+    stop("add_event_assign: formula is a required input argument")
 
   eventAssignmentInfo <- list(variable=variable, formula=formula)
 
@@ -1642,26 +1642,26 @@ addEventAssignmentAZRmodel <- function(model,
 # @return A list with the event information
 # @examples
 # model <- AZRmodel()
-# model <- addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# model <- addEventAssignmentAZRmodel(model,eventindex=1,'A','A+5')
-# getEventAssignmentAZRmodel(model,1,1)
+# model <- add_event(model,'event1',trigger="lt(X,2)")
+# model <- add_event_assign(model,eventindex=1,'A','A+5')
+# get_event_assign(model,1,1)
 # @export
-getEventAssignmentAZRmodel <- function(model, eventindex, index) {
+get_event_assign <- function(model, eventindex, index) {
 
   if (!is_azrmod(model))
-    stop("getEventAssignmentAZRmodel: model argument is not an AZRmodel")
+    stop("get_event_assign: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < eventindex)
-    stop("getEventAssignmentAZRmodel: value of eventindex larger than number of events.")
+    stop("get_event_assign: value of eventindex larger than number of events.")
 
   if (eventindex < 1)
-    stop("getEventAssignmentAZRmodel: value of eventindex should be larger than 0.")
+    stop("get_event_assign: value of eventindex should be larger than 0.")
 
   if (getNumberOfEventassignmentsAZRmodel(model,eventindex) < index)
-    stop("getEventAssignmentAZRmodel: value of index larger than number of event assignments in selected event.")
+    stop("get_event_assign: value of index larger than number of event assignments in selected event.")
 
   if (index < 1)
-    stop("getEventAssignmentAZRmodel: value of index should be larger than 0.")
+    stop("get_event_assign: value of index should be larger than 0.")
 
   return(model$events[[eventindex]]$assignment[[index]])
 }
@@ -1679,28 +1679,28 @@ getEventAssignmentAZRmodel <- function(model, eventindex, index) {
 # @return An AZRmodel object with updated event assignment
 # @examples
 # model <- AZRmodel()
-# model <- addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# model <- addEventAssignmentAZRmodel(model,eventindex=1,'A','A+5')
-# setEventAssignmentAZRmodel(model,1,1,variable='b')
+# model <- add_event(model,'event1',trigger="lt(X,2)")
+# model <- add_event_assign(model,eventindex=1,'A','A+5')
+# set_event_assign(model,1,1,variable='b')
 # @export
-setEventAssignmentAZRmodel <- function(model, eventindex, index,
+set_event_assign <- function(model, eventindex, index,
                              variable = NULL,
                              formula = NULL) {
 
   if (!is_azrmod(model))
-    stop("setEventAssignmentAZRmodel: model argument is not an AZRmodel")
+    stop("set_event_assign: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < eventindex)
-    stop("setEventAssignmentAZRmodel: value of eventindex larger than number of events.")
+    stop("set_event_assign: value of eventindex larger than number of events.")
 
   if (eventindex < 1)
-    stop("setEventAssignmentAZRmodel: value of eventindex should be larger than 0.")
+    stop("set_event_assign: value of eventindex should be larger than 0.")
 
   if (getNumberOfEventassignmentsAZRmodel(model,eventindex) < index)
-    stop("setEventAssignmentAZRmodel: value of index larger than number of event assignments in selected event.")
+    stop("set_event_assign: value of index larger than number of event assignments in selected event.")
 
   if (index < 1)
-    stop("setEventAssignmentAZRmodel: value of index should be larger than 0.")
+    stop("set_event_assign: value of index should be larger than 0.")
 
   if (!is.null(variable))       model$events[[eventindex]]$assignment[[index]]$variable       <- variable
   if (!is.null(formula))        model$events[[eventindex]]$assignment[[index]]$formula        <- formula
@@ -1717,26 +1717,26 @@ setEventAssignmentAZRmodel <- function(model, eventindex, index,
 # @return An AZRmodel with the indexed event assignment removed
 # @examples
 # model <- AZRmodel()
-# model <- addEventAZRmodel(model,'event1',trigger="lt(X,2)")
-# model <- addEventAssignmentAZRmodel(model,eventindex=1,'A','A+5')
-# delEventAssignmentAZRmodel(model,1,1)
+# model <- add_event(model,'event1',trigger="lt(X,2)")
+# model <- add_event_assign(model,eventindex=1,'A','A+5')
+# del_event_assign(model,1,1)
 # @export
-delEventAssignmentAZRmodel <- function(model, eventindex, index) {
+del_event_assign <- function(model, eventindex, index) {
 
   if (!is_azrmod(model))
-    stop("delEventAssignmentAZRmodel: model argument is not an AZRmodel")
+    stop("del_event_assign: model argument is not an AZRmodel")
 
   if (getNumberOfEventsAZRmodel(model) < eventindex)
-    stop("delEventAssignmentAZRmodel: value of eventindex larger than number of events.")
+    stop("del_event_assign: value of eventindex larger than number of events.")
 
   if (eventindex < 1)
-    stop("delEventAssignmentAZRmodel: value of eventindex should be larger than 0.")
+    stop("del_event_assign: value of eventindex should be larger than 0.")
 
   if (getNumberOfEventassignmentsAZRmodel(model,eventindex) < index)
-    stop("delEventAssignmentAZRmodel: value of index larger than number of event assignments in selected event.")
+    stop("del_event_assign: value of index larger than number of event assignments in selected event.")
 
   if (index < 1)
-    stop("delEventAssignmentAZRmodel: value of index should be larger than 0.")
+    stop("del_event_assign: value of index should be larger than 0.")
 
   model$events[[eventindex]]$assignment[[index]] <- NULL
 
@@ -1746,9 +1746,9 @@ delEventAssignmentAZRmodel <- function(model, eventindex, index) {
 
 ###############################################################################
 # Input handling functions
-# addInputAZRmodel
-# getInputAZRmodel
-# delInputAZRmodel
+# add_input
+# get_input
+# delete_input
 ###############################################################################
 
 # Add a new input to an AZRmodel
@@ -1775,28 +1775,28 @@ delEventAssignmentAZRmodel <- function(model, eventindex, index) {
 # model <- AZRmodel()
 # model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
 # model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
-# model <- addInputAZRmodel(model,stateindex=2)
-# model <- addInputAZRmodel(model,factors='F',stateindex=2)
-# model <- addInputAZRmodel(model,factors=c('+F','(1-F)'),stateindex=c(1,2))
+# model <- add_input(model,stateindex=2)
+# model <- add_input(model,factors='F',stateindex=2)
+# model <- add_input(model,factors=c('+F','(1-F)'),stateindex=c(1,2))
 # @export
-addInputAZRmodel <- function(model,
+add_input <- function(model,
                              stateindex = NULL,
                              factors = "+1") {
 
   if (!is_azrmod(model))
-    stop("addInputAZRmodel: model argument is not an AZRmodel")
+    stop("add_input: model argument is not an AZRmodel")
 
   if (is.null(stateindex))
-    stop("addInputAZRmodel: stateindex is a required input argument")
+    stop("add_input: stateindex is a required input argument")
 
   if (length(factors) != length(stateindex))
-    stop("addInputAZRmodel: stateindex and factors need to have same number of elements")
+    stop("add_input: stateindex and factors need to have same number of elements")
 
   if (max(stateindex) > getNumberOfStatesAZRmodel(model))
-    stop("addInputAZRmodel: values of stateindices exceed number of states in the model")
+    stop("add_input: values of stateindices exceed number of states in the model")
 
   if (min(stateindex) < 1)
-    stop("addInputAZRmodel: values of stateindices need to be larger than 0")
+    stop("add_input: values of stateindices need to be larger than 0")
 
   name <- paste("INPUT", getNumberOfInputsAZRmodel(model)+1, sep="")
   for (k in 1:length(factors)) {
@@ -1827,19 +1827,19 @@ addInputAZRmodel <- function(model,
 # model <- AZRmodel()
 # model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
 # model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
-# model <- addInputAZRmodel(model,stateindex=2)
-# getInputAZRmodel(model,1)
+# model <- add_input(model,stateindex=2)
+# get_input(model,1)
 # @export
-getInputAZRmodel <- function(model, index) {
+get_input <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("getInputAZRmodel: model argument is not an AZRmodel")
+    stop("get_input: model argument is not an AZRmodel")
 
   if (getNumberOfInputsAZRmodel(model) < index)
-    stop("getInputAZRmodel: value of index larger than number of inputs.")
+    stop("get_input: value of index larger than number of inputs.")
 
   if (index < 1)
-    stop("getInputAZRmodel: value of index should be larger than 0.")
+    stop("get_input: value of index should be larger than 0.")
 
   return(model$input[[index]])
 }
@@ -1853,19 +1853,19 @@ getInputAZRmodel <- function(model, index) {
 # model <- AZRmodel()
 # model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
 # model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
-# model <- addInputAZRmodel(model,stateindex=2)
-# delInputAZRmodel(model,1)
+# model <- add_input(model,stateindex=2)
+# delete_input(model,1)
 # @export
-delInputAZRmodel <- function(model, index) {
+delete_input <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("delInputAZRmodel: model argument is not an AZRmodel")
+    stop("delete_input: model argument is not an AZRmodel")
 
   if (getNumberOfInputsAZRmodel(model) < index)
-    stop("delInputAZRmodel: value of index larger than number of inputs.")
+    stop("delete_input: value of index larger than number of inputs.")
 
   if (index < 1)
-    stop("delInputAZRmodel: value of index should be larger than 0.")
+    stop("delete_input: value of index should be larger than 0.")
 
   # Remove INPUT term in ODE
   si <- model$inputs[[index]]$stateindex
@@ -1886,9 +1886,9 @@ delInputAZRmodel <- function(model, index) {
 
 ###############################################################################
 # Output handling functions
-# addOutputAZRmodel
-# getOutputAZRmodel
-# delOutputAZRmodel
+# add_output
+# get_output
+# delete_output
 ###############################################################################
 
 # Add a new output to an AZRmodel
@@ -1904,17 +1904,17 @@ delInputAZRmodel <- function(model, index) {
 # @return An AZRmodel object with appended input
 # @examples
 # model <- AZRmodel()
-# addOutputAZRmodel(model,formula='Ac/Vc')
+# add_output(model,formula='Ac/Vc')
 # @export
-addOutputAZRmodel <- function(model,
+add_output <- function(model,
                               formula = NULL,
                               notes = NULL) {
 
   if (!is_azrmod(model))
-    stop("addOutputAZRmodel: model argument is not an AZRmodel")
+    stop("add_output: model argument is not an AZRmodel")
 
   if (is.null(formula))
-    stop("addOutputAZRmodel: formula is a required input argument")
+    stop("add_output: formula is a required input argument")
 
   name <- paste("OUTPUT", getNumberOfOutputsAZRmodel(model)+1, sep="")
 
@@ -1936,19 +1936,19 @@ addOutputAZRmodel <- function(model,
 # @return A list with the output information
 # @examples
 # model <- AZRmodel()
-# model <- addOutputAZRmodel(model,formula='Ac/Vc')
-# getOutputAZRmodel(model,1)
+# model <- add_output(model,formula='Ac/Vc')
+# get_output(model,1)
 # @export
-getOutputAZRmodel <- function(model, index) {
+get_output <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("getOutputAZRmodel: model argument is not an AZRmodel")
+    stop("get_output: model argument is not an AZRmodel")
 
   if (getNumberOfOutputsAZRmodel(model) < index)
-    stop("getOutputAZRmodel: value of index larger than number of outputs.")
+    stop("get_output: value of index larger than number of outputs.")
 
   if (index < 1)
-    stop("getOutputAZRmodel: value of index should be larger than 0.")
+    stop("get_output: value of index should be larger than 0.")
 
   return(model$output[[index]])
 }
@@ -1960,19 +1960,19 @@ getOutputAZRmodel <- function(model, index) {
 # @return An AZRmodel with the indexed output removed (variable will be removed as well)
 # @examples
 # model <- AZRmodel()
-# model <- addOutputAZRmodel(model,formula='Ac/Vc')
-# delOutputAZRmodel(model,1)
+# model <- add_output(model,formula='Ac/Vc')
+# delete_output(model,1)
 # @export
-delOutputAZRmodel <- function(model, index) {
+delete_output <- function(model, index) {
 
   if (!is_azrmod(model))
-    stop("delOutputAZRmodel: model argument is not an AZRmodel")
+    stop("delete_output: model argument is not an AZRmodel")
 
   if (getNumberOfOutputsAZRmodel(model) < index)
-    stop("delOutputAZRmodel: value of index larger than number of outputs.")
+    stop("delete_output: value of index larger than number of outputs.")
 
   if (index < 1)
-    stop("delOutputAZRmodel: value of index should be larger than 0.")
+    stop("delete_output: value of index should be larger than 0.")
 
   # Get variable index related with output
   varindex = model$outputs[[index]]$varindex
@@ -2186,7 +2186,7 @@ getAllEventsAZRmodel <- function(model) {
   eveformulas <- c()
   if (getNumberOfEventsAZRmodel(model) > 0) {
     for (k in 1:getNumberOfEventsAZRmodel(model)) {
-      x <- getEventAZRmodel(model,k)
+      x <- get_event(model,k)
       evenames[k] <- x$name
       evetriggers[k] <- x$trigger
       # unlist assignments
