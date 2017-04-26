@@ -62,37 +62,37 @@
 #'
 #' @return Dataframe with simulation results
 #' @examples
-#' model <- check_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
+#' model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
 #' x <- simulate(model,400)
 #' x <- simulate(model,400,parameters=c(k1=0.5))
 #' @export
 
-simulate <- function (model,
-                      # Simulation time vector
-                      simtime               = NULL,
-                      # Initial conditions
-                      IC                    = NULL,
-                      # Parameter information
-                      parameters            = NULL,
-                      # Dosing / Event information
-                      dosingTable           = NULL,
-                      FLAGdosOut            = FALSE,
-                      # Output definitions
-                      outputs               = NULL,
-                      # Define integrator etc. options
-                      opt_method_stiff      = TRUE,
-                      opt_abstol            = 1.0e-6,
-                      opt_reltol            = 1.0e-6,
-                      opt_minstep           = 0.0,
-                      opt_maxstep           = 0.0,
-                      opt_initstep          = 0.0,
-                      opt_maxnumsteps       = 100000,
-                      opt_maxerrtestfails   = 50,
-                      opt_maxorder_stiff    = 5,
-                      opt_maxorder_nonstiff = 12,
-                      opt_maxconvfails      = 10,
-                      opt_maxnonlineariter  = 3,
-                      verbose               = FALSE
+simulate.azrmod <- function (model,
+                             # Simulation time vector
+                             simtime               = NULL,
+                             # Initial conditions
+                             IC                    = NULL,
+                             # Parameter information
+                             parameters            = NULL,
+                             # Dosing / Event information
+                             dosingTable           = NULL,
+                             FLAGdosOut            = FALSE,
+                             # Output definitions
+                             outputs               = NULL,
+                             # Define integrator etc. options
+                             opt_method_stiff      = TRUE,
+                             opt_abstol            = 1.0e-6,
+                             opt_reltol            = 1.0e-6,
+                             opt_minstep           = 0.0,
+                             opt_maxstep           = 0.0,
+                             opt_initstep          = 0.0,
+                             opt_maxnumsteps       = 100000,
+                             opt_maxerrtestfails   = 50,
+                             opt_maxorder_stiff    = 5,
+                             opt_maxorder_nonstiff = 12,
+                             opt_maxconvfails      = 10,
+                             opt_maxnonlineariter  = 3,
+                             verbose               = FALSE
 ) {
 
   ##############################################################################
@@ -314,7 +314,7 @@ simulate <- function (model,
     }
     simresALL    <- y
   }
-
+  class(simresALL) <- "azrsim"
   return(simresALL)
 }
 
