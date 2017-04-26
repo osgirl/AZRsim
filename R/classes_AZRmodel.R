@@ -204,20 +204,20 @@ is_azrmod <- function(input) {
 print.azrmod <- function(x, ...) {
   cat("\tAZRmodel\n\t========\n")
   cat("\tName:                      ", x$name,"\n")
-  cat("\tNumber States:             ", getNumberOfStatesAZRmodel(x),"\n")
-  if (getNumberOfAlgebraicAZRmodel(x)>0)
-    cat("\tNumber Algebraic States:   ", getNumberOfAlgebraicAZRmodel(x),"\n")
-  cat("\tNumber Parameters:         ", getNumberOfParametersAZRmodel(x),"\n")
-  cat("\tNumber Variables:          ", getNumberOfVariablesAZRmodel(x),"\n")
-  cat("\tNumber Reactions:          ", getNumberOfReactionsAZRmodel(x),"\n")
-  cat("\tNumber Functions:          ", getNumberOfFunctionsAZRmodel(x),"\n")
-  if (getNumberOfEventsAZRmodel(x)>0)
-    cat("\tNumber Events:             ", getNumberOfEventsAZRmodel(x),"\n")
-  if (getNumberOfInputsAZRmodel(x)>0)
-    cat("\tNumber Inputs:             ", getNumberOfInputsAZRmodel(x),"\n")
-  if (getNumberOfOutputsAZRmodel(x)>0)
-    cat("\tNumber Outputs:            ", getNumberOfOutputsAZRmodel(x),"\n")
-  if (getNumberOfAlgebraicAZRmodel(x) > 0)
+  cat("\tNumber States:             ", len_states(x),"\n")
+  if (len_algebraic(x)>0)
+    cat("\tNumber Algebraic States:   ", len_algebraic(x),"\n")
+  cat("\tNumber Parameters:         ", len_parameters(x),"\n")
+  cat("\tNumber Variables:          ", len_variables(x),"\n")
+  cat("\tNumber Reactions:          ", len_reactions(x),"\n")
+  cat("\tNumber Functions:          ", len_functions(x),"\n")
+  if (len_events(x)>0)
+    cat("\tNumber Events:             ", len_events(x),"\n")
+  if (len_inputs(x)>0)
+    cat("\tNumber Inputs:             ", len_inputs(x),"\n")
+  if (len_outputs(x)>0)
+    cat("\tNumber Outputs:            ", len_outputs(x),"\n")
+  if (len_algebraic(x) > 0)
     cat("\tAlgebraic definitions of states present in the model. Such states
         can not be handled by other functions. Please check if these states
         are really required. Many modeling tools (e.g. simbiology) add these
@@ -287,9 +287,9 @@ has_only_numeric_ic <- function(model) {
   if (!is_azrmod(model))
     stop("has_only_numeric_ic: input argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) < 1) return(TRUE)
+  if (len_states(model) < 1) return(TRUE)
 
-  for (k in 1:getNumberOfStatesAZRmodel(model))
+  for (k in 1:len_states(model))
     if (!isnumericVector(model$state[[k]]$IC))
       return(FALSE)
 
@@ -311,9 +311,9 @@ has_fast_reactions <- function(model) {
   if (!is_azrmod(model))
     stop("has_fast_reactions: input argument is not an AZRmodel")
 
-  if (getNumberOfReactionsAZRmodel(model) < 1) return(FALSE)
+  if (len_reactions(model) < 1) return(FALSE)
 
-  for (k in 1:getNumberOfReactionsAZRmodel(model))
+  for (k in 1:len_reactions(model))
     if (model$reactions[[k]]$fast)
       return(TRUE)
 
@@ -335,7 +335,7 @@ has_algebraic <- function(model) {
   if (!is_azrmod(model))
     stop("has_algebraic: input argument is not an AZRmodel")
 
-  if (getNumberOfAlgebraicAZRmodel(model) < 1) return(FALSE)
+  if (len_algebraic(model) < 1) return(FALSE)
 
   return(TRUE)
 }
@@ -356,7 +356,7 @@ has_constraints <- function(model) {
   if (!is.null(attr(model,"originalModel")))
     model <- attr(model,"originalModel")
 
-  for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  for (k in 1:len_states(model)) {
     if (!is.null(model$states[[k]]$lowConstraint))
       return(TRUE)
     if (!is.null(model$states[[k]]$highConstraint))
@@ -375,7 +375,7 @@ has_constraints <- function(model) {
 # @param model An AZRmodel object
 # @return Number of states
 # @export
-getNumberOfStatesAZRmodel <- function(model) {
+len_states <- function(model) {
   length(model$states)
 }
 
@@ -384,7 +384,7 @@ getNumberOfStatesAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of algebraic states
 # @export
-getNumberOfAlgebraicAZRmodel <- function(model) {
+len_algebraic <- function(model) {
   length(model$algebraic)
 }
 
@@ -393,7 +393,7 @@ getNumberOfAlgebraicAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of parameters
 # @export
-getNumberOfParametersAZRmodel <- function(model) {
+len_parameters <- function(model) {
   length(model$parameters)
 }
 
@@ -402,7 +402,7 @@ getNumberOfParametersAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of variables
 # @export
-getNumberOfVariablesAZRmodel <- function(model) {
+len_variables <- function(model) {
   length(model$variables)
 }
 
@@ -411,7 +411,7 @@ getNumberOfVariablesAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of reactions
 # @export
-getNumberOfReactionsAZRmodel <- function(model) {
+len_reactions <- function(model) {
   length(model$reactions)
 }
 
@@ -420,7 +420,7 @@ getNumberOfReactionsAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of functions
 # @export
-getNumberOfFunctionsAZRmodel <- function(model) {
+len_functions <- function(model) {
   length(model$functions)
 }
 
@@ -429,7 +429,7 @@ getNumberOfFunctionsAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of events
 # @export
-getNumberOfEventsAZRmodel <- function(model) {
+len_events <- function(model) {
   length(model$events)
 }
 
@@ -438,7 +438,7 @@ getNumberOfEventsAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of inputs
 # @export
-getNumberOfInputsAZRmodel <- function(model) {
+len_inputs <- function(model) {
   length(model$inputs)
 }
 
@@ -447,7 +447,7 @@ getNumberOfInputsAZRmodel <- function(model) {
 # @param model An AZRmodel object
 # @return Number of outputs
 # @export
-getNumberOfOutputsAZRmodel <- function(model) {
+len_outputs <- function(model) {
   length(model$outputs)
 }
 
@@ -457,9 +457,9 @@ getNumberOfOutputsAZRmodel <- function(model) {
 # @param eventindex Index of the event to check
 # @return Number of event assignments
 # @export
-getNumberOfEventassignmentsAZRmodel <- function(model,eventindex) {
-  if (eventindex > getNumberOfEventsAZRmodel(model))
-    stop("getNumberOfEventassignmentsAZRmodel: eventindex larger than the number of events in the model.")
+len_event_assign <- function(model,eventindex) {
+  if (eventindex > len_events(model))
+    stop("len_event_assign: eventindex larger than the number of events in the model.")
  length(model$events[[eventindex]]$assignment)
 }
 
@@ -552,7 +552,7 @@ get_state <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_state: model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) < index)
+  if (len_states(model) < index)
     stop("get_state: value of index larger than number of states.")
 
   if (index < 1)
@@ -596,7 +596,7 @@ set_state <- function(model, index,
   if (!is_azrmod(model))
     stop("set_state: model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) < index)
+  if (len_states(model) < index)
     stop("set_state: value of index larger than number of states.")
 
   if (index < 1)
@@ -636,16 +636,16 @@ delete_state <- function(model, index) {
   if (!is_azrmod(model))
     stop("delete_state: model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) < index)
+  if (len_states(model) < index)
     stop("delete_state: value of index larger than number of states.")
 
   if (index < 1)
     stop("delete_state: value of index should be larger than 0.")
 
   # check if state has inputs
-  if (getNumberOfInputsAZRmodel(model) > 0) {
+  if (len_inputs(model) > 0) {
     inputstates = c()
-    for (k in 1:getNumberOfInputsAZRmodel(model)) inputstates = c(inputstates,model$inputs[[k]]$stateindex)
+    for (k in 1:len_inputs(model)) inputstates = c(inputstates,model$inputs[[k]]$stateindex)
     if (index %in% inputstates)
       stop("delete_state: The state contains inputs. Please delete them first and then the state.")
   }
@@ -736,7 +736,7 @@ get_parameter <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_parameter: model argument is not an AZRmodel")
 
-  if (getNumberOfParametersAZRmodel(model) < index)
+  if (len_parameters(model) < index)
     stop("get_parameter: value of index larger than number of states.")
 
   if (index < 1)
@@ -778,7 +778,7 @@ set_parameter <- function(model, index,
   if (!is_azrmod(model))
     stop("set_parameter: model argument is not an AZRmodel")
 
-  if (getNumberOfParametersAZRmodel(model) < index)
+  if (len_parameters(model) < index)
     stop("set_parameter: value of index larger than number of parameters.")
 
   if (index < 1)
@@ -820,7 +820,7 @@ delete_parameter <- function(model, index) {
   if (!is_azrmod(model))
     stop("delete_parameter: model argument is not an AZRmodel")
 
-  if (getNumberOfParametersAZRmodel(model) < index)
+  if (len_parameters(model) < index)
     stop("delete_parameter: value of index larger than number of parameters.")
 
   if (index < 1)
@@ -829,9 +829,9 @@ delete_parameter <- function(model, index) {
   model$parameters[[index]] <- NULL
 
   # Need to update the parindex fields in potentially available inputs
-  if (getNumberOfInputsAZRmodel(model) > 0) {
+  if (len_inputs(model) > 0) {
     paramnames <- get_all_parameters(model)$paramnames
-    for (k in 1:getNumberOfInputsAZRmodel(model)) {
+    for (k in 1:len_inputs(model)) {
       model$inputs[[k]]$parindex = strmatch(paramnames,model$inputs[[k]]$name)
     }
   }
@@ -911,7 +911,7 @@ get_variable <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_variable: model argument is not an AZRmodel")
 
-  if (getNumberOfVariablesAZRmodel(model) < index)
+  if (len_variables(model) < index)
     stop("get_variable: value of index larger than number of variables.")
 
   if (index < 1)
@@ -949,7 +949,7 @@ set_variable <- function(model, index,
   if (!is_azrmod(model))
     stop("set_variable: model argument is not an AZRmodel")
 
-  if (getNumberOfVariablesAZRmodel(model) < index)
+  if (len_variables(model) < index)
     stop("set_variable: value of index larger than number of variables.")
 
   if (index < 1)
@@ -986,7 +986,7 @@ delete_variable <- function(model, index) {
   if (!is_azrmod(model))
     stop("delete_variable: model argument is not an AZRmodel")
 
-  if (getNumberOfVariablesAZRmodel(model) < index)
+  if (len_variables(model) < index)
     stop("delete_variable: value of index larger than number of variables.")
 
   if (index < 1)
@@ -996,9 +996,9 @@ delete_variable <- function(model, index) {
   model$variables[[index]] <- NULL
 
   # Need to update the varindex fields in potentially available outputs
-  if (getNumberOfOutputsAZRmodel(model) > 0) {
+  if (len_outputs(model) > 0) {
     varnames <- get_all_variables(model)$varnames
-    for (k in 1:getNumberOfOutputsAZRmodel(model)) {
+    for (k in 1:len_outputs(model)) {
       model$outputs[[k]]$varindex = strmatch(varnames,model$outputs[[k]]$name)
     }
   }
@@ -1069,7 +1069,7 @@ get_reaction <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_reaction: model argument is not an AZRmodel")
 
-  if (getNumberOfReactionsAZRmodel(model) < index)
+  if (len_reactions(model) < index)
     stop("get_reaction: value of index larger than number of reactions.")
 
   if (index < 1)
@@ -1105,7 +1105,7 @@ set_reaction <- function(model, index,
   if (!is_azrmod(model))
     stop("set_reaction: model argument is not an AZRmodel")
 
-  if (getNumberOfReactionsAZRmodel(model) < index)
+  if (len_reactions(model) < index)
     stop("set_reaction: value of index larger than number of reactions.")
 
   if (index < 1)
@@ -1135,7 +1135,7 @@ delete_reaction <- function(model, index) {
   if (!is_azrmod(model))
     stop("delete_reaction: model argument is not an AZRmodel")
 
-  if (getNumberOfReactionsAZRmodel(model) < index)
+  if (len_reactions(model) < index)
     stop("delete_reaction: value of index larger than number of reactions.")
 
   if (index < 1)
@@ -1208,7 +1208,7 @@ get_function <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_function: model argument is not an AZRmodel")
 
-  if (getNumberOfFunctionsAZRmodel(model) < index)
+  if (len_functions(model) < index)
     stop("get_function: value of index larger than number of functions.")
 
   if (index < 1)
@@ -1243,7 +1243,7 @@ set_function <- function(model, index,
   if (!is_azrmod(model))
     stop("set_function: model argument is not an AZRmodel")
 
-  if (getNumberOfFunctionsAZRmodel(model) < index)
+  if (len_functions(model) < index)
     stop("set_function: value of index larger than number of functions.")
 
   if (index < 1)
@@ -1273,7 +1273,7 @@ del_function <- function(model, index) {
   if (!is_azrmod(model))
     stop("del_function: model argument is not an AZRmodel")
 
-  if (getNumberOfFunctionsAZRmodel(model) < index)
+  if (len_functions(model) < index)
     stop("del_function: value of index larger than number of functions.")
 
   if (index < 1)
@@ -1362,7 +1362,7 @@ get_algebraic <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_algebraic: model argument is not an AZRmodel")
 
-  if (getNumberOfAlgebraicAZRmodel(model) < index)
+  if (len_algebraic(model) < index)
     stop("get_algebraic: value of index larger than number of algebraic states.")
 
   if (index < 1)
@@ -1403,7 +1403,7 @@ set_algebraic <- function(model, index,
   if (!is_azrmod(model))
     stop("set_algebraic: model argument is not an AZRmodel")
 
-  if (getNumberOfAlgebraicAZRmodel(model) < index)
+  if (len_algebraic(model) < index)
     stop("set_algebraic: value of index larger than number of algebraic states.")
 
   if (index < 1)
@@ -1442,7 +1442,7 @@ del_algebraic <- function(model, index) {
   if (!is_azrmod(model))
     stop("del_algebraic: model argument is not an AZRmodel")
 
-  if (getNumberOfAlgebraicAZRmodel(model) < index)
+  if (len_algebraic(model) < index)
     stop("del_algebraic: value of index larger than number of algebraic states.")
 
   if (index < 1)
@@ -1513,7 +1513,7 @@ get_event <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_event: model argument is not an AZRmodel")
 
-  if (getNumberOfEventsAZRmodel(model) < index)
+  if (len_events(model) < index)
     stop("get_event: value of index larger than number of events.")
 
   if (index < 1)
@@ -1546,7 +1546,7 @@ set_event <- function(model, index,
   if (!is_azrmod(model))
     stop("set_event: model argument is not an AZRmodel")
 
-  if (getNumberOfEventsAZRmodel(model) < index)
+  if (len_events(model) < index)
     stop("set_event: value of index larger than number of events.")
 
   if (index < 1)
@@ -1575,7 +1575,7 @@ delete_event <- function(model, index) {
   if (!is_azrmod(model))
     stop("delete_event: model argument is not an AZRmodel")
 
-  if (getNumberOfEventsAZRmodel(model) < index)
+  if (len_events(model) < index)
     stop("delete_event: value of index larger than number of events.")
 
   if (index < 1)
@@ -1651,13 +1651,13 @@ get_event_assign <- function(model, eventindex, index) {
   if (!is_azrmod(model))
     stop("get_event_assign: model argument is not an AZRmodel")
 
-  if (getNumberOfEventsAZRmodel(model) < eventindex)
+  if (len_events(model) < eventindex)
     stop("get_event_assign: value of eventindex larger than number of events.")
 
   if (eventindex < 1)
     stop("get_event_assign: value of eventindex should be larger than 0.")
 
-  if (getNumberOfEventassignmentsAZRmodel(model,eventindex) < index)
+  if (len_event_assign(model,eventindex) < index)
     stop("get_event_assign: value of index larger than number of event assignments in selected event.")
 
   if (index < 1)
@@ -1690,13 +1690,13 @@ set_event_assign <- function(model, eventindex, index,
   if (!is_azrmod(model))
     stop("set_event_assign: model argument is not an AZRmodel")
 
-  if (getNumberOfEventsAZRmodel(model) < eventindex)
+  if (len_events(model) < eventindex)
     stop("set_event_assign: value of eventindex larger than number of events.")
 
   if (eventindex < 1)
     stop("set_event_assign: value of eventindex should be larger than 0.")
 
-  if (getNumberOfEventassignmentsAZRmodel(model,eventindex) < index)
+  if (len_event_assign(model,eventindex) < index)
     stop("set_event_assign: value of index larger than number of event assignments in selected event.")
 
   if (index < 1)
@@ -1726,13 +1726,13 @@ del_event_assign <- function(model, eventindex, index) {
   if (!is_azrmod(model))
     stop("del_event_assign: model argument is not an AZRmodel")
 
-  if (getNumberOfEventsAZRmodel(model) < eventindex)
+  if (len_events(model) < eventindex)
     stop("del_event_assign: value of eventindex larger than number of events.")
 
   if (eventindex < 1)
     stop("del_event_assign: value of eventindex should be larger than 0.")
 
-  if (getNumberOfEventassignmentsAZRmodel(model,eventindex) < index)
+  if (len_event_assign(model,eventindex) < index)
     stop("del_event_assign: value of index larger than number of event assignments in selected event.")
 
   if (index < 1)
@@ -1792,13 +1792,13 @@ add_input <- function(model,
   if (length(factors) != length(stateindex))
     stop("add_input: stateindex and factors need to have same number of elements")
 
-  if (max(stateindex) > getNumberOfStatesAZRmodel(model))
+  if (max(stateindex) > len_states(model))
     stop("add_input: values of stateindices exceed number of states in the model")
 
   if (min(stateindex) < 1)
     stop("add_input: values of stateindices need to be larger than 0")
 
-  name <- paste("INPUT", getNumberOfInputsAZRmodel(model)+1, sep="")
+  name <- paste("INPUT", len_inputs(model)+1, sep="")
   for (k in 1:length(factors)) {
     factors[k] <- strtrimM(factors[k])
     if (substr(factors[k],1,1)!="+") factors[k] <- paste("+",factors[k],sep="")
@@ -1807,13 +1807,13 @@ add_input <- function(model,
   terms <- factors
   for (k in 1:length(terms)) terms[k] <- paste(strremWhite(factors[k]),"*",name, sep="")
   model <- add_parameter(model,name=name,value=0)
-  parindex <- getNumberOfParametersAZRmodel(model)
+  parindex <- len_parameters(model)
   for (k in 1:length(stateindex))
     model$states[[stateindex[k]]]$ODE <- paste(model$states[[stateindex[k]]]$ODE,terms[k],sep="")
 
   inputInfo <- list(name=name, factors=factors, terms=terms, stateindex=stateindex, parindex=parindex)
 
-  model$inputs[[getNumberOfInputsAZRmodel(model)+1]] <- inputInfo
+  model$inputs[[len_inputs(model)+1]] <- inputInfo
   return(model)
 }
 
@@ -1835,7 +1835,7 @@ get_input <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_input: model argument is not an AZRmodel")
 
-  if (getNumberOfInputsAZRmodel(model) < index)
+  if (len_inputs(model) < index)
     stop("get_input: value of index larger than number of inputs.")
 
   if (index < 1)
@@ -1861,7 +1861,7 @@ delete_input <- function(model, index) {
   if (!is_azrmod(model))
     stop("delete_input: model argument is not an AZRmodel")
 
-  if (getNumberOfInputsAZRmodel(model) < index)
+  if (len_inputs(model) < index)
     stop("delete_input: value of index larger than number of inputs.")
 
   if (index < 1)
@@ -1916,15 +1916,15 @@ add_output <- function(model,
   if (is.null(formula))
     stop("add_output: formula is a required input argument")
 
-  name <- paste("OUTPUT", getNumberOfOutputsAZRmodel(model)+1, sep="")
+  name <- paste("OUTPUT", len_outputs(model)+1, sep="")
 
   model <- add_variable(model,name,formula,notes=notes)
 
-  varindex <- getNumberOfVariablesAZRmodel(model)
+  varindex <- len_variables(model)
 
   outputInfo <- list(name=name, formula=formula, notes=notes, varindex=varindex)
 
-  model$outputs[[getNumberOfOutputsAZRmodel(model)+1]] <- outputInfo
+  model$outputs[[len_outputs(model)+1]] <- outputInfo
   return(model)
 }
 
@@ -1944,7 +1944,7 @@ get_output <- function(model, index) {
   if (!is_azrmod(model))
     stop("get_output: model argument is not an AZRmodel")
 
-  if (getNumberOfOutputsAZRmodel(model) < index)
+  if (len_outputs(model) < index)
     stop("get_output: value of index larger than number of outputs.")
 
   if (index < 1)
@@ -1968,7 +1968,7 @@ delete_output <- function(model, index) {
   if (!is_azrmod(model))
     stop("delete_output: model argument is not an AZRmodel")
 
-  if (getNumberOfOutputsAZRmodel(model) < index)
+  if (len_outputs(model) < index)
     stop("delete_output: value of index larger than number of outputs.")
 
   if (index < 1)
@@ -2016,8 +2016,8 @@ get_all_states <- function(model) {
   statenames <- c()
   stateICs <- c()
   stateODEs <- c()
-  if (getNumberOfStatesAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  if (len_states(model) > 0) {
+    for (k in 1:len_states(model)) {
       x <- get_state(model,k)
       statenames[k] <- x$name
       stateICs[k] <- x$IC
@@ -2052,8 +2052,8 @@ get_all_parameters <- function(model) {
   paramvalues <- c()
   paramestimate <- c()
   paramregressor <- c()
-  if (getNumberOfParametersAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfParametersAZRmodel(model)) {
+  if (len_parameters(model) > 0) {
+    for (k in 1:len_parameters(model)) {
       x <- get_parameter(model,k)
       paramnames[k] <- x$name
       paramvalues[k] <- x$value
@@ -2086,8 +2086,8 @@ get_all_variables <- function(model) {
 
   varnames <- c()
   varformulas <- c()
-  if (getNumberOfVariablesAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfVariablesAZRmodel(model)) {
+  if (len_variables(model) > 0) {
+    for (k in 1:len_variables(model)) {
       x <- get_variable(model,k)
       varnames[k] <- x$name
       varformulas[k] <- x$formula
@@ -2120,8 +2120,8 @@ get_all_reactions <- function(model) {
   reacformulas <- c()
   reacfast <- c()
   reacreversible <- c()
-  if (getNumberOfReactionsAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfReactionsAZRmodel(model)) {
+  if (len_reactions(model) > 0) {
+    for (k in 1:len_reactions(model)) {
       x <- get_reaction(model,k)
       reacnames[k] <- x$name
       reacformulas[k] <- x$formula
@@ -2153,8 +2153,8 @@ get_all_functions <- function(model) {
   funcnames <- c()
   funcformulas <- c()
   funcarguments <- c()
-  if (getNumberOfFunctionsAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfFunctionsAZRmodel(model)) {
+  if (len_functions(model) > 0) {
+    for (k in 1:len_functions(model)) {
       x <- get_function(model,k)
       funcnames[k] <- x$name
       funcformulas[k] <- x$formula
@@ -2186,8 +2186,8 @@ get_all_events <- function(model) {
   evetriggers <- c()
   evevariables <- c()
   eveformulas <- c()
-  if (getNumberOfEventsAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfEventsAZRmodel(model)) {
+  if (len_events(model) > 0) {
+    for (k in 1:len_events(model)) {
       x <- get_event(model,k)
       evenames[k] <- x$name
       evetriggers[k] <- x$trigger
@@ -2263,7 +2263,7 @@ rename_elements <- function(model, origStrings, newStrings) {
 replace_text <- function(model, origString, newString) {
 
   # Check if states present in the model
-  if (getNumberOfStatesAZRmodel(model) == 0)
+  if (len_states(model) == 0)
     return(model)
 
   # Get temporary text file name

@@ -82,8 +82,8 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
   # now construct the states IC text
   # states
-  if (getNumberOfStatesAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  if (len_states(model) > 0) {
+    for (k in 1:len_states(model)) {
       ICtext <- paste(model$states[[k]]$name,"(0) = ",model$states[[k]]$IC,sep="")
 
       type <- model$states[[k]]$type
@@ -155,7 +155,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL PARAMETERS\n\n",sep="")
 
-  if (getNumberOfParametersAZRmodel(model) > 0) {
+  if (len_parameters(model) > 0) {
     for (k in 1:length(model$parameters)) {
       PARtext <- paste(model$parameters[[k]]$name," = ",model$parameters[[k]]$value,sep="")
       type <- model$parameters[[k]]$type
@@ -386,7 +386,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
     for (k in seq_along(model$events)) {
       EVEtext <- paste(model$events[[k]]$name," = ",model$events[[k]]$trigger,sep="")
-      if (getNumberOfEventassignmentsAZRmodel(model,k) > 0) {
+      if (len_event_assign(model,k) > 0) {
         for (k2 in 1:length(model$events[[k]]$assignment))
           EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,
                            ",",model$events[[k]]$assignment[[k2]]$formula,sep="")

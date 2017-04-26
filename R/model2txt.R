@@ -42,8 +42,8 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL STATES\n\n",sep="")
 
-  if (getNumberOfStatesAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  if (len_states(model) > 0) {
+    for (k in 1:len_states(model)) {
       ODEtext <- paste("d/dt(",model$states[[k]]$name,") = ",model$states[[k]]$ODE,sep="")
       type <- model$states[[k]]$type
       compartment <- model$states[[k]]$compartment
@@ -235,7 +235,7 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   for (k in seq_along(model$events)) {
     EVEtext <- paste(model$events[[k]]$name," = ",model$events[[k]]$trigger,sep="")
-    if (getNumberOfEventassignmentsAZRmodel(model,k) > 0) {
+    if (len_event_assign(model,k) > 0) {
       for (k2 in 1:length(model$events[[k]]$assignment))
         EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,
                          ",",model$events[[k]]$assignment[[k2]]$formula,sep="")

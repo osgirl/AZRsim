@@ -56,12 +56,12 @@ exportCcodeAZRmodel <- function (model, filename=NULL) {
   ###############################################
   # GET NUMBER OF THE MODELS ELEMENTS
   ###############################################
-  NRSTATES      <- getNumberOfStatesAZRmodel(model)
-  NRPARAMETERS  <- getNumberOfParametersAZRmodel(model)
-  NRVARIABLES   <- getNumberOfVariablesAZRmodel(model)
-  NRREACTIONS   <- getNumberOfReactionsAZRmodel(model)
-  NRFUNCTIONS   <- getNumberOfFunctionsAZRmodel(model)
-  NREVENTS      <- getNumberOfEventsAZRmodel(model)
+  NRSTATES      <- len_states(model)
+  NRPARAMETERS  <- len_parameters(model)
+  NRVARIABLES   <- len_variables(model)
+  NRREACTIONS   <- len_reactions(model)
+  NRFUNCTIONS   <- len_functions(model)
+  NREVENTS      <- len_events(model)
 
   ###############################################
   # DEAL WITH THE FORMULAS

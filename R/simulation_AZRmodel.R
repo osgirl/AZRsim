@@ -102,7 +102,7 @@ simulate <- function (model,
   if (!is_azrmod(model))
     stop("AZRsimulate: provided model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) == 0)
+  if (len_states(model) == 0)
     stop("AZRsimulate: provided model has no dynamic states")
 
   if (has_algebraic(model))
@@ -210,11 +210,11 @@ simulate <- function (model,
   ##############################################################################
 
   # Get component number information
-  NRSTATES      <- getNumberOfStatesAZRmodel(model)
-  NRPARAMETERS  <- getNumberOfParametersAZRmodel(model)
-  NRVARIABLES   <- getNumberOfVariablesAZRmodel(model)
-  NRREACTIONS   <- getNumberOfReactionsAZRmodel(model)
-  NREVENTS      <- getNumberOfEventsAZRmodel(model)
+  NRSTATES      <- len_states(model)
+  NRPARAMETERS  <- len_parameters(model)
+  NRVARIABLES   <- len_variables(model)
+  NRREACTIONS   <- len_reactions(model)
+  NREVENTS      <- len_events(model)
   model_elements_nr <- c(NRSTATES,NRPARAMETERS,NRVARIABLES,NRREACTIONS,NREVENTS)
 
   # Get C code models address
@@ -307,8 +307,8 @@ simulate <- function (model,
     y           <- dplyr::arrange(y,TIME)
     y           <- dplyr::filter(y,TIME<=max(simtime))
     y$EVID      <- NULL
-    if (getNumberOfInputsAZRmodel(attr(model,"originalModel")) > 0) {
-      for (k in 1:getNumberOfInputsAZRmodel(attr(model,"originalModel"))) {
+    if (len_inputs(attr(model,"originalModel")) > 0) {
+      for (k in 1:len_inputs(attr(model,"originalModel"))) {
         y[,paste("input",k,sep="")] <- NULL
       }
     }
@@ -585,7 +585,7 @@ AZRxdotcalc <- function (model,
   if (!is_azrmod(model))
     stop("AZRxdotcalc: provided model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) == 0)
+  if (len_states(model) == 0)
     stop("AZRxdotcalc: provided model has no dynamic states")
 
   if (has_algebraic(model))
@@ -658,11 +658,11 @@ AZRxdotcalc <- function (model,
   ##############################################################################
 
   # Get component number information
-  NRSTATES      <- getNumberOfStatesAZRmodel(model)
-  NRPARAMETERS  <- getNumberOfParametersAZRmodel(model)
-  NRVARIABLES   <- getNumberOfVariablesAZRmodel(model)
-  NRREACTIONS   <- getNumberOfReactionsAZRmodel(model)
-  NREVENTS      <- getNumberOfEventsAZRmodel(model)
+  NRSTATES      <- len_states(model)
+  NRPARAMETERS  <- len_parameters(model)
+  NRVARIABLES   <- len_variables(model)
+  NRREACTIONS   <- len_reactions(model)
+  NREVENTS      <- len_events(model)
   model_elements_nr <- c(NRSTATES,NRPARAMETERS,NRVARIABLES,NRREACTIONS,NREVENTS)
 
   # Get C code models address
@@ -851,7 +851,7 @@ AZRsimpop <- function (model,
   if (!is_azrmod(model))
     stop("AZRsimpop: provided model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) == 0)
+  if (len_states(model) == 0)
     stop("AZRsimpop: provided model has no dynamic states")
 
   if (has_algebraic(model))

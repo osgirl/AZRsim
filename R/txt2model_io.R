@@ -59,7 +59,7 @@ getOutputs <- function(model) {
     outputNotes <- model$variables[[outputVarIndex]]$notes
     # Add information to the model
     outputInfo <- list(name=outputName, formula=outputFormula, notes=outputNotes, varindex=outputVarIndex)
-    model$outputs[[getNumberOfOutputsAZRmodel(model)+1]] <- outputInfo
+    model$outputs[[len_outputs(model)+1]] <- outputInfo
     # Check if output formula is a state or a variable and if not then produce a warning
     test <- cbind(unname(which(outputFormula==states$statenames)),unname(which(outputFormula==variables$varnames)))
     if (length(test)==0)
@@ -130,7 +130,7 @@ getInputs <- function(model) {
     if (length(inputParindex)==0) {
       # Parameter not yet present - add it
       model <- add_parameter(model,name=inputName,value=0)
-      inputParindex <- getNumberOfParametersAZRmodel(model)
+      inputParindex <- len_parameters(model)
     }
 
     # Cycle through stateindex and get the input terms
@@ -148,7 +148,7 @@ getInputs <- function(model) {
     # need to do "manually"
 
     inputInfo <- list(name=inputName, factors=inputFactors, terms=inputTerms, stateindex=inputStateindex, parindex=inputParindex)
-    model$inputs[[getNumberOfInputsAZRmodel(model)+1]] <- inputInfo
+    model$inputs[[len_inputs(model)+1]] <- inputInfo
   }
   return(model)
 }
@@ -326,11 +326,11 @@ handleINPUTreactions <- function(model) {
     # Now it is ensured that INPUT appears outside parentheses and not in an sum of terms on
     # the RHS of the reaction formula - exchange in ODEs can now happen!
     # Cycle through states and update ODEs
-    for (k2 in 1:getNumberOfStatesAZRmodel(model)) {
+    for (k2 in 1:len_states(model)) {
       model$states[[k2]]$ODE <- strrepM(model$states[[k2]]$ODE,reacName,reacFormula)
     }
     # Check if the reaction name is used in other reactions
-    for (k2 in 1:getNumberOfReactionsAZRmodel(model)) {
+    for (k2 in 1:len_reactions(model)) {
       if (length(grep(paste("\\b",reacName,"\\b",sep=""),reactions$reacformulas[k2]))>0)
         stop("getInputs: A reaction with an INPUT is present on the RHS of another reaction. This is not allowed!")
     }

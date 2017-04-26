@@ -14,7 +14,7 @@ genSimFunctions <- function (model) {
   if (!is_azrmod(model))
     stop("genSimFunctions: input argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model)==0)
+  if (len_states(model)==0)
     stop("genSimFunctions: model does not contain any dynamic states")
 
   ##############################################################################
@@ -140,7 +140,7 @@ compileAZRmodelAZR <- function(model) {
 handleVectorSyntaxInterpR <- function(model) {
 
   # Handle ODEs
-  for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  for (k in 1:len_states(model)) {
     formula <- model$states[[k]]$ODE
     # Check if square brackets present in formula - if so then lets
     # make R vectors out of it
@@ -154,8 +154,8 @@ handleVectorSyntaxInterpR <- function(model) {
   }
 
   # Handle Variables
-  if (getNumberOfVariablesAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfVariablesAZRmodel(model)) {
+  if (len_variables(model) > 0) {
+    for (k in 1:len_variables(model)) {
       formula <- model$variables[[k]]$formula
       # Check if square brackets present in formula - if so then lets
       # make R vectors out of it
@@ -170,8 +170,8 @@ handleVectorSyntaxInterpR <- function(model) {
   }
 
   # Handle Reactions
-  if (getNumberOfReactionsAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfReactionsAZRmodel(model)) {
+  if (len_reactions(model) > 0) {
+    for (k in 1:len_reactions(model)) {
       formula <- model$reactions[[k]]$formula
       # Check if square brackets present in formula - if so then lets
       # make R vectors out of it
@@ -195,7 +195,7 @@ handleVectorSyntaxInterpR <- function(model) {
 handleConstraintsSim <- function (model) {
 
   # Cycle through states and check for constraints
-  for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  for (k in 1:len_states(model)) {
     si <- get_state(model,k)
     if (!is.null(si$lowConstraint) && !is.null(si$highConstraint)) {
       # Add switch condition variable
@@ -219,13 +219,13 @@ handleConstraintsSim <- function (model) {
 # Returns updated model with all inputs handled.
 ###############################################################################
 implementALLinputMath <- function(model) {
-  if (getNumberOfInputsAZRmodel(model)>0) {
+  if (len_inputs(model)>0) {
     # Implement the math for each input
-    for (k in 1:getNumberOfInputsAZRmodel(model)) {
+    for (k in 1:len_inputs(model)) {
       model <- implementInputMath(model,k)
     }
     # Remove each input from model
-    for (k in 1:getNumberOfInputsAZRmodel(model)) {
+    for (k in 1:len_inputs(model)) {
       # index always 1!
       model <- delete_input(model,1)
     }

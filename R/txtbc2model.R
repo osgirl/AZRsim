@@ -448,9 +448,9 @@ getStatesTxtBc <- function(model,model_states) {
     }
 
     # add algebraic ic into model
-    if (!found && getNumberOfAlgebraicAZRmodel(model)>0) {
+    if (!found && len_algebraic(model)>0) {
       algebraic_names = c()
-      for (k2 in 1:getNumberOfAlgebraicAZRmodel(model)) {
+      for (k2 in 1:len_algebraic(model)) {
         if (!is.null(model$algebraic[[k2]]$name)) {
           algebraic_names <- cbind(algebraic_names,model$algebraic[[k2]]$name)
         } else {
