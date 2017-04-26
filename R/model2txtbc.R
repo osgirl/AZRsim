@@ -43,7 +43,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
   # determine the names of that states that need to be described by ODEs
   stoichInfo <- stoichiometryAZRmodel(model,raw=FALSE)
   N <- stoichInfo$N
-  stateNamesAll <- getAllStatesAZRmodel(model)$statenames
+  stateNamesAll <- get_all_states(model)$statenames
   stateNamesBC <- stoichInfo$statenames
   stateNamesODE <- setdiff(stateNamesAll,stateNamesBC)
 
@@ -264,7 +264,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
   # Use the stoichiometric matrix determined above (by eventually adding
   # species that are defined by variables)
   # get reaction names, kinetics, and reversibility flag
-  reacInfo <- getAllReactionsAZRmodel(model)
+  reacInfo <- get_all_reactions(model)
 
   # cycle through the columns of the stoichiometric matrix N to build the
   # reaction expressions

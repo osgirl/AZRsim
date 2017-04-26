@@ -24,10 +24,10 @@
 getOutputs <- function(model) {
 
   # Get component information
-  states     <- getAllStatesAZRmodel(model)
-  parameters <- getAllParametersAZRmodel(model)
-  variables  <- getAllVariablesAZRmodel(model)
-  reactions  <- getAllReactionsAZRmodel(model)
+  states     <- get_all_states(model)
+  parameters <- get_all_parameters(model)
+  variables  <- get_all_variables(model)
+  reactions  <- get_all_reactions(model)
 
   # Check OUTPUT presence in component names other than variables and error in this case
   if (length(grep("OUTPUT",states$statenames))>0)
@@ -119,13 +119,13 @@ getInputs <- function(model) {
   if (NINPUTS==0) return(model)
 
   # Cycle through inputs and generate the input information
-  states <- getAllStatesAZRmodel(model)
+  states <- get_all_states(model)
   for (k in 1:NINPUTS) {
     inputName <- paste("INPUT",k,sep="")
     # Find all state indices for this inputs
     inputStateindex <- grep(paste("\\b",inputName,"\\b",sep=""),states$stateODEs)
     # Find parameter index and add a parameter if not yet present
-    parameters <- getAllParametersAZRmodel(model)
+    parameters <- get_all_parameters(model)
     inputParindex <- grep(paste("\\b",inputName,"\\b",sep=""),parameters$paramnames)
     if (length(inputParindex)==0) {
       # Parameter not yet present - add it
@@ -231,9 +231,9 @@ getFactorsTermsInput <- function(model,inputName,ODE) {
   inputTerm <- paste(inputFactor,"*",inputName,sep="")
 
   # Check if inputFactor contains state, variable, or reaction names
-  stateNames     <- getAllStatesAZRmodel(model)$statenames
-  variableNames  <- getAllVariablesAZRmodel(model)$varnames
-  reactionNames  <- getAllReactionsAZRmodel(model)$reacnames
+  stateNames     <- get_all_states(model)$statenames
+  variableNames  <- get_all_variables(model)$varnames
+  reactionNames  <- get_all_reactions(model)$reacnames
 
   testNames <- c(stateNames,variableNames,reactionNames)
 
@@ -252,7 +252,7 @@ getFactorsTermsInput <- function(model,inputName,ODE) {
 # getCheckNumberInputs: check if inputs only on states
 ###############################################################################
 getCheckNumberInputs <- function(model) {
-  states <- getAllStatesAZRmodel(model)
+  states <- get_all_states(model)
   m      <- gregexpr("INPUT[0-9]+",states$stateODEs,perl=TRUE)
   y      <- regmatches(states$stateODEs,m)
   y      <- unique(unlist(y))
@@ -274,8 +274,8 @@ getCheckNumberInputs <- function(model) {
 # inputsOnlyOnStates: check if inputs only on states
 ###############################################################################
 inputsOnlyOnStates <- function(model) {
-  variables  <- getAllVariablesAZRmodel(model)
-  reactions  <- getAllReactionsAZRmodel(model)
+  variables  <- get_all_variables(model)
+  reactions  <- get_all_reactions(model)
 
   result = TRUE
   if (length(grep("\\bINPUT[0-9]+\\b",variables$varnames))>0) result = FALSE
@@ -291,10 +291,10 @@ inputsOnlyOnStates <- function(model) {
 ###############################################################################
 handleINPUTreactions <- function(model) {
   # Get component information
-  states     <- getAllStatesAZRmodel(model)
-  parameters <- getAllParametersAZRmodel(model)
-  variables  <- getAllVariablesAZRmodel(model)
-  reactions  <- getAllReactionsAZRmodel(model)
+  states     <- get_all_states(model)
+  parameters <- get_all_parameters(model)
+  variables  <- get_all_variables(model)
+  reactions  <- get_all_reactions(model)
 
   # Handle INPUTS in reactions => remove reactions and add to ODEs
   ixReacInputs <- grep("INPUT",reactions$reacformulas)
@@ -339,7 +339,7 @@ handleINPUTreactions <- function(model) {
   reacNamesDelete <- reactions$reacnames[ixReacInputs]
   for (k in 1:length(reacNamesDelete)) {
     # find index
-    reactions  <- getAllReactionsAZRmodel(model)
+    reactions  <- get_all_reactions(model)
     ixReacInputs <- grep(paste("\\b",reacNamesDelete[k],"\\b",sep=""),reactions$reacnames)
     model <- del_reaction(model,ixReacInputs)
   }

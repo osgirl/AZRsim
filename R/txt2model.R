@@ -270,7 +270,7 @@ getStatesTxt <- function(model,model_states) {
       stateIC <- strtrimM(substr(ICString,temp[1]+1,nchar(ICString)))
       found <- FALSE
       # add state ic into model
-      ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
+      ix <- unname(which(get_all_states(model)$statenames==stateName))
       if (length(ix) != 0) {
         model <- set_state(model,ix,IC=stateIC)
         found <- TRUE

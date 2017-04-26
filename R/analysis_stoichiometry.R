@@ -60,9 +60,9 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
     stop("stoichiometryAZRmodel: model argument is not an AZRmodel")
 
   # Get state, parameter, reaction information
-  stateInfo <- getAllStatesAZRmodel(model)
-  paramInfo <- getAllParametersAZRmodel(model)
-  reacInfo <- getAllReactionsAZRmodel(model)
+  stateInfo <- get_all_states(model)
+  paramInfo <- get_all_parameters(model)
+  reacInfo <- get_all_reactions(model)
 
   # Return in trivial case (no reactions present)
   if (getNumberOfReactionsAZRmodel(model)==0)

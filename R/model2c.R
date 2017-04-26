@@ -46,12 +46,12 @@ exportCcodeAZRmodel <- function (model, filename=NULL) {
   ###############################################
   # GET THE MODELS ELEMENTS
   ###############################################
-  stateInfo <- getAllStatesAZRmodel(model)
-  paramInfo <- getAllParametersAZRmodel(model)
-  varInfo   <- getAllVariablesAZRmodel(model)
-  reacInfo  <- getAllReactionsAZRmodel(model)
-  funcInfo  <- getAllFunctionsAZRmodel(model)
-  eveInfo   <- getAllEventsAZRmodel(model)
+  stateInfo <- get_all_states(model)
+  paramInfo <- get_all_parameters(model)
+  varInfo   <- get_all_variables(model)
+  reacInfo  <- get_all_reactions(model)
+  funcInfo  <- get_all_functions(model)
+  eveInfo   <- get_all_events(model)
 
   ###############################################
   # GET NUMBER OF THE MODELS ELEMENTS

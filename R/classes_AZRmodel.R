@@ -241,10 +241,10 @@ print.azrmod <- function(x, ...) {
 ###############################################################################
 # Checks names of model components and issues warnings or errors
 check_azrmod <- function(model) {
-  stateNames <- toupper(getAllStatesAZRmodel(model)$statenames)
-  paramNames <- toupper(getAllParametersAZRmodel(model)$paramnames)
-  varNames   <- toupper(getAllVariablesAZRmodel(model)$varnames)
-  reacNames  <- toupper(getAllReactionsAZRmodel(model)$reacnames)
+  stateNames <- toupper(get_all_states(model)$statenames)
+  paramNames <- toupper(get_all_parameters(model)$paramnames)
+  varNames   <- toupper(get_all_variables(model)$varnames)
+  reacNames  <- toupper(get_all_reactions(model)$reacnames)
 
   # Check for single char name (should be avoided)
   if (sum(as.numeric(nchar(stateNames) == 1)) > 0)
@@ -830,7 +830,7 @@ delete_parameter <- function(model, index) {
 
   # Need to update the parindex fields in potentially available inputs
   if (getNumberOfInputsAZRmodel(model) > 0) {
-    paramnames <- getAllParametersAZRmodel(model)$paramnames
+    paramnames <- get_all_parameters(model)$paramnames
     for (k in 1:getNumberOfInputsAZRmodel(model)) {
       model$inputs[[k]]$parindex = strmatch(paramnames,model$inputs[[k]]$name)
     }
@@ -997,7 +997,7 @@ delete_variable <- function(model, index) {
 
   # Need to update the varindex fields in potentially available outputs
   if (getNumberOfOutputsAZRmodel(model) > 0) {
-    varnames <- getAllVariablesAZRmodel(model)$varnames
+    varnames <- get_all_variables(model)$varnames
     for (k in 1:getNumberOfOutputsAZRmodel(model)) {
       model$outputs[[k]]$varindex = strmatch(varnames,model$outputs[[k]]$name)
     }
@@ -1989,10 +1989,12 @@ delete_output <- function(model, index) {
 
 ###############################################################################
 # Get all element functions
-# getAllStatesAZRmodel
-# getAllParametersAZRmodel
-# getAllVariablesAZRmodel
-# getAllReactionsAZRmodel
+# get_all_states
+# get_all_parameters
+# get_all_variables
+# get_all_reactions
+# get_all_events
+# get_all_functions
 ###############################################################################
 
 # Get information about all states in an AZRmodel
@@ -2004,12 +2006,12 @@ delete_output <- function(model, index) {
 # \item{stateODEs}{Vector with ODEs}
 # @examples
 # model <- exNovakTyson
-# getAllStatesAZRmodel(model)
+# get_all_states(model)
 # @export
-getAllStatesAZRmodel <- function(model) {
+get_all_states <- function(model) {
 
   if (!is_azrmod(model))
-    stop("getAllStatesAZRmodel: model argument is not an AZRmodel")
+    stop("get_all_states: model argument is not an AZRmodel")
 
   statenames <- c()
   stateICs <- c()
@@ -2039,12 +2041,12 @@ getAllStatesAZRmodel <- function(model) {
 # \item{paramregressor}{Vector with parameter regressor flags}
 # @examples
 # model <- exNovakTyson
-# getAllParametersAZRmodel(model)
+# get_all_parameters(model)
 # @export
-getAllParametersAZRmodel <- function(model) {
+get_all_parameters <- function(model) {
 
   if (!is_azrmod(model))
-    stop("getAllParametersAZRmodel: model argument is not an AZRmodel")
+    stop("get_all_parameters: model argument is not an AZRmodel")
 
   paramnames <- c()
   paramvalues <- c()
@@ -2075,12 +2077,12 @@ getAllParametersAZRmodel <- function(model) {
 # \item{varformulas}{Vector with variable formulas}
 # @examples
 # model <- exNovakTyson
-# getAllVariablesAZRmodel(model)
+# get_all_variables(model)
 # @export
-getAllVariablesAZRmodel <- function(model) {
+get_all_variables <- function(model) {
 
   if (!is_azrmod(model))
-    stop("getAllVariablesAZRmodel: model argument is not an AZRmodel")
+    stop("get_all_variables: model argument is not an AZRmodel")
 
   varnames <- c()
   varformulas <- c()
@@ -2107,12 +2109,12 @@ getAllVariablesAZRmodel <- function(model) {
 # \item{reacreversible}{Flag for reversible reactions}
 # @examples
 # model <- exNovakTyson
-# getAllReactionsAZRmodel(model)
+# get_all_reactions(model)
 # @export
-getAllReactionsAZRmodel <- function(model) {
+get_all_reactions <- function(model) {
 
   if (!is_azrmod(model))
-    stop("getAllReactionsAZRmodel: model argument is not an AZRmodel")
+    stop("get_all_reactions: model argument is not an AZRmodel")
 
   reacnames <- c()
   reacformulas <- c()
@@ -2143,10 +2145,10 @@ getAllReactionsAZRmodel <- function(model) {
 # \item{funcarguments}{Flag for fast reactions}
 # @examples
 # @export
-getAllFunctionsAZRmodel <- function(model) {
+get_all_functions <- function(model) {
 
   if (!is_azrmod(model))
-    stop("getAllFunctionsAZRmodel: model argument is not an AZRmodel")
+    stop("get_all_functions: model argument is not an AZRmodel")
 
   funcnames <- c()
   funcformulas <- c()
@@ -2175,10 +2177,10 @@ getAllFunctionsAZRmodel <- function(model) {
 # \item{eveformulas}{Vector with event assignment expressions}
 # @examples
 # @export
-getAllEventsAZRmodel <- function(model) {
+get_all_events <- function(model) {
 
   if (!is_azrmod(model))
-    stop("getAllEventsAZRmodel: model argument is not an AZRmodel")
+    stop("get_all_events: model argument is not an AZRmodel")
 
   evenames <- c()
   evetriggers <- c()
@@ -2216,10 +2218,10 @@ getAllEventsAZRmodel <- function(model) {
 # @param newStrings vector or new strings
 # @return model updated model
 
-renameElementsAZRmodel <- function(model, origStrings, newStrings) {
+rename_elements <- function(model, origStrings, newStrings) {
 
   if (!is.null(attr(model,"ODEsim")))
-    stop("renameElementsAZRmodel: simulation functions attached - not allowed.")
+    stop("rename_elements: simulation functions attached - not allowed.")
 
   # Get temporary text file name
   tempfilename <- paste(tempfile(),".txt",sep="")
@@ -2258,7 +2260,7 @@ renameElementsAZRmodel <- function(model, origStrings, newStrings) {
 # @param newString new string
 # @return model updated model
 
-replaceTextAZRmodel <- function(model, origString, newString) {
+replace_text <- function(model, origString, newString) {
 
   # Check if states present in the model
   if (getNumberOfStatesAZRmodel(model) == 0)

@@ -129,7 +129,7 @@ simulate <- function (model,
   ##############################################################################
 
   if (!is.null(outputs)) {
-    test <- setdiff(outputs,c(getAllStatesAZRmodel(model)$statenames,getAllVariablesAZRmodel(model)$varnames,getAllReactionsAZRmodel(model)$reacnames))
+    test <- setdiff(outputs,c(get_all_states(model)$statenames,get_all_variables(model)$varnames,get_all_reactions(model)$reacnames))
     if (length(test) != 0)
       stop("AZRsimulate: At least one element defined in 'outputs' is not present in the model as state, variable, or reaction")
   }
@@ -165,7 +165,7 @@ simulate <- function (model,
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- getAllParametersAZRmodel(model)$paramvalues
+  parametersDefault        <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
@@ -279,7 +279,7 @@ simulate <- function (model,
   simresALL <- as.data.frame(simresALL)
 
   # Update names
-  names(simresALL) <- c("TIME", getAllStatesAZRmodel(model)$statenames, getAllVariablesAZRmodel(model)$varnames,getAllReactionsAZRmodel(model)$reacnames)
+  names(simresALL) <- c("TIME", get_all_states(model)$statenames, get_all_variables(model)$varnames,get_all_reactions(model)$reacnames)
 
   # Keep only simtime elements
   simresALL <- dplyr::filter(simresALL,TIME %in% simtime)
@@ -613,7 +613,7 @@ AZRxdotcalc <- function (model,
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- getAllParametersAZRmodel(model)$paramvalues
+  parametersDefault        <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
@@ -696,7 +696,7 @@ AZRxdotcalc <- function (model,
   )
 
   # Update names
-  names(simresALL) <- c(getAllStatesAZRmodel(model)$statenames)
+  names(simresALL) <- c(get_all_states(model)$statenames)
 
   # Return results
   return(simresALL)
@@ -712,7 +712,7 @@ calcNNic <- function(model,parametersSim) {
 
   # Check if model contains non-numerical initial conditions ... if not just return the
   # numerical ones
-  if (has_only_numeric_ic(model)) return(getAllStatesAZRmodel(model)$stateICs)
+  if (has_only_numeric_ic(model)) return(get_all_states(model)$stateICs)
 
   # Model contains non-numerical initial conditions => evaluate them - taking into account
   # potential changes in the parameters

@@ -307,10 +307,10 @@ nnICsim <- function (model) {
   # STEP 1: Expand all IC RHSs to only states and parameters
   ###############################################
   # GET ALL FORMULAS AND ODES
-  stateInfo <- getAllStatesAZRmodel(model)
-  paramInfo <- getAllParametersAZRmodel(model)
-  varInfo   <- getAllVariablesAZRmodel(model)
-  reacInfo  <- getAllReactionsAZRmodel(model)
+  stateInfo <- get_all_states(model)
+  paramInfo <- get_all_parameters(model)
+  varInfo   <- get_all_variables(model)
+  reacInfo  <- get_all_reactions(model)
   # EXPAND VARIABLES
   if (length(varInfo$varnames) > 0) {
     for (k in 1:length(varInfo$varnames)) {

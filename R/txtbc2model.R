@@ -244,8 +244,8 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
   # - check unittypes ........ BIG THING!!!
   #   define the state substructure
   allSpeciesStates <- c()
-  allParNames <- getAllParametersAZRmodel(model)$paramnames
-  allVarNames <- getAllVariablesAZRmodel(model)$varnames
+  allParNames <- get_all_parameters(model)$paramnames
+  allVarNames <- get_all_variables(model)$varnames
   for (k in seq_along(allSpecies)) {
     parameterIndex <- strmatch(allSpecies[k],allParNames)
     variableIndex <- strmatch(allSpecies[k],allVarNames)
@@ -435,7 +435,7 @@ getStatesTxtBc <- function(model,model_states) {
     # add state information into model
     found <- FALSE
 
-    ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
+    ix <- unname(which(get_all_states(model)$statenames==stateName))
 
     if (length(ix) > 1)
       stop("getStatesTxtBc: error in model definition - a state appears more than once.")
