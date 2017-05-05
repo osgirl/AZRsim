@@ -104,10 +104,6 @@ getParameters <- function(model,model_parameters) {
   for (k in seq_along(model_parameters)) {
     parameterString <- strtrimM(model_parameters[k])
 
-    # Parse comments / notes
-    commentInfo     <- checkgetNotes(parameterString)
-    parameterString <- commentInfo$main
-    notesk          <- commentInfo$comment
 
     # check if the "<estimate>" identifier is present.
     flagInfo        <- checkGetFlag(parameterString,"<estimate>")
@@ -122,6 +118,11 @@ getParameters <- function(model,model_parameters) {
     # Check if both estimate and regressor flag given
     if (estimateFlag && regressorFlag)
       stop("getParameters: parameter with both <estimate> and <regressor> flag")
+
+    # Parse comments / notes
+    commentInfo     <- checkgetNotes(parameterString)
+    parameterString <- commentInfo$main
+    notesk          <- commentInfo$comment
 
     # Parse SBML related information
     SBMLinfo        <- checkGetSBMLinfo(parameterString,"getParameters","parameter")
