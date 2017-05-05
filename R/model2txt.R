@@ -16,10 +16,15 @@
 # syntax, if possible. The default filename is constructed from the models name.
 #
 # @param model An AZRmodel to be exported.
-# @param filename Full path with filename to export the model to (.txt will be added)
 # @return None
 
-exportTxtAZRmodel <- function (model, filename=NULL) {
+#' provide the textual representation of a model as a vector of lines
+#' @param model azrmodel
+#' @details
+#' Export of an AZRmodel to a lines of text. ODE representation is used. These
+#' allow a humanly readable format of the model files.
+#' @export
+model_to_text <- function (model) {
 
   if (!is.AZRmodel(model))
     stop("exportTxtAZRmodel: input argument is not an AZRmodel")
@@ -246,6 +251,14 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
   }
   FILETEXT <- paste(FILETEXT," ",sep="")
 
-  # Write the file
-  readr::write_file(FILETEXT,filename)
+  return(FILETEXT)
+}
+
+#' export model to a file
+#' @param model azrmodel object
+#' @param .file path to write
+#' @export
+write_model <- function(model, .file) {
+  lines <- model_to_text(model)
+  readr::write_file(lines,.file)
 }
