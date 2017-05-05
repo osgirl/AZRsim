@@ -18,11 +18,10 @@
 # @examples
 # importTxtAZRmodel("model.txt")
 
-importTxtAZRmodel <- function(model,filename) {
+importTxtAZRmodel <- function(filename) {
 
-  ################################################################
-  # Preparation
-  ################################################################
+  # initialize an empty model
+  model <- create_model()
 
   # Read model file row by row (already split by row)
   modelText <- readr::read_lines(filename)
