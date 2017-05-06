@@ -314,7 +314,7 @@ simulate.azrmod <- function (model,
     }
     simresALL    <- y
   }
-  class(simresALL) <- "azrsim"
+  class(simresALL) <- c("azrsim", "data.frame")
   return(simresALL)
 }
 
