@@ -13,6 +13,8 @@
   opt_maxconvfails = 10, opt_maxnonlineariter = 3, verbose = FALSE)
 }
 \arguments{
+\item{model}{an object created using AZRsim::create_model}
+
 \item{simtime}{Simulation time vector. If scalar provided then 1001 simulation
 steps will be used. If not provided (20) seq(0,20,1000) will be used if
 no dosingTable provided. If not provided and a dosingTable is provided,
@@ -71,8 +73,6 @@ By default (NULL) all states, variables, reactions, are returned.}
 \item{opt_maxnonlineariter}{Integer value for maximum number of nonlinear solver iterations permitted per step}
 
 \item{verbose}{Integer flag for outputting additional diagnostic information}
-
-\item{a}{model object created using AZRsim::create_model}
 }
 \value{
 Dataframe with simulation results

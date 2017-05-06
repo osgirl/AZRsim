@@ -12,7 +12,7 @@
 #'
 #' Simulation function for AZRmodels. Able to handle dosing events etc.
 #'
-#' @param a model object created using AZRsim::create_model
+#' @param model an object created using AZRsim::create_model
 #'
 #' @param simtime Simulation time vector. If scalar provided then 1001 simulation
 #'        steps will be used. If not provided (20) seq(0,20,1000) will be used if
