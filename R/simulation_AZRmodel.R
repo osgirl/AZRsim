@@ -585,7 +585,7 @@ AZRxdotcalc <- function (model,
   if (!is_azrmod(model))
     stop("AZRxdotcalc: provided model argument is not an AZRmodel")
 
-  if (len_states(model) == 0)
+  if (!len_states(model))
     stop("AZRxdotcalc: provided model has no dynamic states")
 
   if (has_algebraic(model))

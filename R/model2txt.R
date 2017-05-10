@@ -235,7 +235,7 @@ exportTxtAZRmodel <- function (model, filename=NULL) {
 
   for (k in seq_along(model$events)) {
     EVEtext <- paste(model$events[[k]]$name," = ",model$events[[k]]$trigger,sep="")
-    if (len_event_assign(model,k) > 0) {
+    if (len_event_assign(model,k)) {
       for (k2 in 1:length(model$events[[k]]$assignment))
         EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,
                          ",",model$events[[k]]$assignment[[k2]]$formula,sep="")

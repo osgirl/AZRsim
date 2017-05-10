@@ -140,7 +140,7 @@ compileAZRmodelAZR <- function(model) {
 handleVectorSyntaxInterpR <- function(model) {
 
   # Handle ODEs
-  for (k in 1:len_states(model)) {
+  for (k in seq_along(model$states)) {
     formula <- model$states[[k]]$ODE
     # Check if square brackets present in formula - if so then lets
     # make R vectors out of it
@@ -154,34 +154,30 @@ handleVectorSyntaxInterpR <- function(model) {
   }
 
   # Handle Variables
-  if (len_variables(model) > 0) {
-    for (k in 1:len_variables(model)) {
-      formula <- model$variables[[k]]$formula
-      # Check if square brackets present in formula - if so then lets
-      # make R vectors out of it
-      if (!is.null(strlocateall(formula,"[")$start)) {
-        # Square brackets present
-        formula <- strremWhite(formula)
-        formula <- strrepM(formula,"[","c(")
-        formula <- strrepM(formula,"]",")")
-        model$variables[[k]]$formula <- formula
-      }
+  for (k in seq_along(model$variables)) {
+    formula <- model$variables[[k]]$formula
+    # Check if square brackets present in formula - if so then lets
+    # make R vectors out of it
+    if (!is.null(strlocateall(formula,"[")$start)) {
+      # Square brackets present
+      formula <- strremWhite(formula)
+      formula <- strrepM(formula,"[","c(")
+      formula <- strrepM(formula,"]",")")
+      model$variables[[k]]$formula <- formula
     }
   }
 
   # Handle Reactions
-  if (len_reactions(model) > 0) {
-    for (k in 1:len_reactions(model)) {
-      formula <- model$reactions[[k]]$formula
-      # Check if square brackets present in formula - if so then lets
-      # make R vectors out of it
-      if (!is.null(strlocateall(formula,"[")$start)) {
-        # Square brackets present
-        formula <- strremWhite(formula)
-        formula <- strrepM(formula,"[","c(")
-        formula <- strrepM(formula,"]",")")
-        model$reactions[[k]]$formula <- formula
-      }
+  for (k in seq_along(model$reactions)) {
+    formula <- model$reactions[[k]]$formula
+    # Check if square brackets present in formula - if so then lets
+    # make R vectors out of it
+    if (!is.null(strlocateall(formula,"[")$start)) {
+      # Square brackets present
+      formula <- strremWhite(formula)
+      formula <- strrepM(formula,"[","c(")
+      formula <- strrepM(formula,"]",")")
+      model$reactions[[k]]$formula <- formula
     }
   }
 
