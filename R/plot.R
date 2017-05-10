@@ -4,6 +4,11 @@
 #' the simulation function \code{AZRsim::simulate.azrmod()}.
 #'
 #' @param object An object of class \code{azrsim}
+#' @param mfrow_val A vector of length two that describes the dimensions of the lattice plot
+#' (e.g. \code{mfrow = c(2,2)} will create a 2-by-2 grid of plots).
+#' @param pars A vector of parameter names to plot (as defined in the text file representation of the model).
+#' @param plot_names A vector of parameter names that will replace the title of each
+#' individual plot in the lattice.
 #' @param ... Additional arguments to \code{plot()}.
 #' @return A lattice plot of the variable simulations over time.
 #' @examples
@@ -11,12 +16,16 @@
 #' sho_sim <- simulate(sho, 100)
 #' plot(sho_sim, lwd = 2)
 #' @export
-plot.azrsim <- function(object, mfrow_val = NULL, pars = NULL, ...) {
+plot.azrsim <- function(object, mfrow_val = NULL, pars = NULL, plot_names = NULL, ...) {
   call <- match.call()
   if (!("azrsim" %in% class(object))) {
     stop(paste0(call$object, " must be of class 'azrsim'."))
   }
   param_names <- names(object)[-which(names(object) == "TIME")]
+
+  if (is.null(plot_names))
+    plot_names <- param_names
+
   if(is.null(mfrow_val) & is.null(pars)) {
     param_count <- length(param_names)
     num_plots <- c(1:min(param_count, 9))
@@ -24,26 +33,30 @@ plot.azrsim <- function(object, mfrow_val = NULL, pars = NULL, ...) {
     if(param_count %in% c(1,2,3)) {
       par(mfrow = c(1, param_count))
       for(name in param_names[num_plots]) {
-        plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+        plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+             ylab = "", xlab = "Time", type = "l", ...)
       }
     }
     else if(param_count %in% c(4,5,6)) {
       par(mfrow = c(2, param_count))
       for(name in param_names[num_plots]) {
-        plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+        plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+             ylab = "", xlab = "Time", type = "l", ...)
       }
     }
     else if(param_count %in% c(7,8,9)) {
       par(mfrow = c(3, 3))
       for(name in param_names[num_plots]) {
-        plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+        plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+             ylab = "", xlab = "Time", type = "l", ...)
       }
     }
     else {
       warning(paste0("Plotting 9 out of ", param_count, " variables"), call. = FALSE)
       par(mfrow = c(3, 3))
       for(name in param_names[num_plots]) {
-        plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+        plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+             ylab = "", xlab = "Time", type = "l", ...)
       }
     }
   }
@@ -51,7 +64,8 @@ plot.azrsim <- function(object, mfrow_val = NULL, pars = NULL, ...) {
     if(!is.null(mfrow_val) & is.null(pars)) {
       par(mfrow = mfrow_val)
       for(name in param_names[1:prod(mfrow_val)]) {
-        plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+        plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+             ylab = "", xlab = "Time", type = "l", ...)
       }
     }
     else if(!is.null(mfrow_val) & !is.null(pars)) {
@@ -60,26 +74,30 @@ plot.azrsim <- function(object, mfrow_val = NULL, pars = NULL, ...) {
       }
       par(mfrow = mfrow_val)
       for(name in pars) {
-        plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+        plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+             ylab = "", xlab = "Time", type = "l", ...)
       }
     }
     else if (is.null(mfrow_val) & !is.null(pars)) {
       if(length(pars) <= 3) {
         par(mfrow = c(1,length(pars)))
         for(name in pars) {
-          plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+          plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+               ylab = "", xlab = "Time", type = "l", ...)
         }
       }
       else if(length(pars) <= 6) {
         par(mfrow = c(1,length(pars)))
         for(name in pars) {
-          plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+          plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+               ylab = "", xlab = "Time", type = "l", ...)
         }
       }
       else if(length(pars) <= 9) {
         par(mfrow = c(1,length(pars)))
         for(name in pars) {
-          plot(object[["TIME"]], object[[name]], main = name, ylab = "", xlab = "Time", type = "l", ...)
+          plot(object[["TIME"]], object[[name]], main = plot_names[which(param_names==name)],
+               ylab = "", xlab = "Time", type = "l", ...)
         }
       }
     }

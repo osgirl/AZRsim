@@ -4,10 +4,19 @@
 \alias{plot.azrsim}
 \title{Plot a simulated model}
 \usage{
-\method{plot}{azrsim}(object, mfrow_val = NULL, pars = NULL, ...)
+\method{plot}{azrsim}(object, mfrow_val = NULL, pars = NULL,
+  plot_names = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class \code{azrsim}}
+
+\item{mfrow_val}{A vector of length two that describes the dimensions of the lattice plot
+(e.g. \code{mfrow = c(2,2)} will create a 2-by-2 grid of plots).}
+
+\item{pars}{A vector of parameter names to plot (as defined in the text file representation of the model).}
+
+\item{plot_names}{A vector of parameter names that will replace the title of each
+individual plot in the lattice.}
 
 \item{...}{Additional arguments to \code{plot()}.}
 }
