@@ -208,7 +208,7 @@ getStatesTxt <- function(model,model_states) {
     ODEk <- strtrimM(test)
 
     # Add state in model with default IC
-    model <- addStateAZRmodel(model,name=namek,IC=0,ODE=ODEk,lowConstraint=stateConstraints[1],highConstraint=stateConstraints[2],type=typek,
+    model <- add_state(model,name=namek,IC=0,ODE=ODEk,lowConstraint=stateConstraints[1],highConstraint=stateConstraints[2],type=typek,
                               compartment=compartmentk,unittype=unittypek,notes=notesk)
   }
 
@@ -252,7 +252,7 @@ getStatesTxt <- function(model,model_states) {
       ARformulak <- strtrimM(terms[2])
 
       # add algebraic state to the model
-      model <- addAlgebraicAZRmodel(model,name=ARnamek,IC=ARick,formula=ARformulak,type=typek,
+      model <- add_algebraic(model,name=ARnamek,IC=ARick,formula=ARformulak,type=typek,
                                     compartment=compartmentk,unittype=unittypek,notes=notesk)
     }
   }
@@ -274,15 +274,15 @@ getStatesTxt <- function(model,model_states) {
       stateIC <- strtrimM(substr(ICString,temp[1]+1,nchar(ICString)))
       found <- FALSE
       # add state ic into model
-      ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
+      ix <- unname(which(get_all_states(model)$statenames==stateName))
       if (length(ix) != 0) {
-        model <- setStateAZRmodel(model,ix,IC=stateIC)
+        model <- set_state(model,ix,IC=stateIC)
         found <- TRUE
       }
       # add algebraic ic into model
-      if (!found && getNumberOfAlgebraicAZRmodel(model)>0) {
+      if (!found && len_algebraic(model)>0) {
         algebraic_names = c()
-        for (k2 in 1:getNumberOfAlgebraicAZRmodel(model)) {
+        for (k2 in 1:len_algebraic(model)) {
           if (!is.null(model$algebraic[[k2]]$name)) {
             algebraic_names <- cbind(algebraic_names,model$algebraic[[k2]]$name)
           } else {
@@ -291,7 +291,7 @@ getStatesTxt <- function(model,model_states) {
         }
         ix <- unname(which(algebraic_names==stateName))
         if (length(ix) != 0) {
-          model <- setAlgebraicAZRmodel(model,ix,IC=stateIC)
+          model <- set_algebraic(model,ix,IC=stateIC)
           found <- TRUE
         }
       }
@@ -346,7 +346,7 @@ getReactionsTxt <- function(model,model_reactions) {
     }
 
     # Add reaction to model
-    model <- addReactionAZRmodel(model,name=namek,formula=formulak,notes=notesk,reversible=reversibleFlag,fast=fastFlag)
+    model <- add_reaction(model,name=namek,formula=formulak,notes=notesk,reversible=reversibleFlag,fast=fastFlag)
   }
   return(model)
 }

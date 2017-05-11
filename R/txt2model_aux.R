@@ -149,7 +149,7 @@ getParameters <- function(model,model_parameters) {
     }
 
     # add parameter to model
-    model <- addParameterAZRmodel(model,name=namek,value=as.numeric(valuek),
+    model <- add_parameter(model,name=namek,value=as.numeric(valuek),
                                   notes=notesk,type=typek,compartment=compartmentk,
                                   unittype=unittypek,estimate=estimateFlag,regressor=regressorFlag)
   }
@@ -196,7 +196,7 @@ getVariables <- function(model,model_variables) {
     }
 
     # add variable to model
-    model <- addVariableAZRmodel(model, name=namek, formula=formulak, notes=notesk,
+    model <- add_variable(model, name=namek, formula=formulak, notes=notesk,
                                  type=typek, compartment=compartmentk, unittype=unittypek)
   }
   return(model)
@@ -246,7 +246,7 @@ getFunctions <- function(model,model_functions) {
     }
 
     # add info about the function parts for kth function into the function lists
-    model <- addFunctionAZRmodel(model, name=namek, arguments=argumentsk,
+    model <- add_function(model, name=namek, arguments=argumentsk,
                                  formula=formulak ,notes=notesk)
   }
   return(model)
@@ -285,10 +285,10 @@ getEvents <- function(model,model_events) {
     # first element is assumed to be the trigger function
     triggerk <- strremWhite(elementsRHS[1])
     # Add event to the model
-    model <- addEventAZRmodel(model,name=namek,trigger=strremWhite(triggerk),notes=notesk)
+    model <- add_event(model,name=namek,trigger=strremWhite(triggerk),notes=notesk)
     # Add event assignments
     for (k2 in seq(2,length(elementsRHS),2)) {
-      model <- addEventAssignmentAZRmodel(model, eventindex=k,
+      model <- add_event_assign(model, eventindex=k,
                                           variable=strremWhite(elementsRHS[k2]),
                                           formula=strremWhite(elementsRHS[k2+1]))
     }

@@ -213,7 +213,7 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
     }
 
     # Generate model reaction information
-    model <- addReactionAZRmodel(model,name=reacName,formula=reacFormula,notes=reacNotes,
+    model <- add_reaction(model,name=reacName,formula=reacFormula,notes=reacNotes,
                                  reversible=reacReversible,fast=reacFast)
 
     # Get substrate and product information - needed for ODE construction
@@ -244,8 +244,8 @@ getStatesReactionsTxtBc <- function(model,model_states,model_reactions) {
   # - check unittypes ........ BIG THING!!!
   #   define the state substructure
   allSpeciesStates <- c()
-  allParNames <- getAllParametersAZRmodel(model)$paramnames
-  allVarNames <- getAllVariablesAZRmodel(model)$varnames
+  allParNames <- get_all_parameters(model)$paramnames
+  allVarNames <- get_all_variables(model)$varnames
   for (k in seq_along(allSpecies)) {
     parameterIndex <- strmatch(allSpecies[k],allParNames)
     variableIndex <- strmatch(allSpecies[k],allVarNames)
@@ -345,7 +345,7 @@ getStatesTxtBc <- function(model,model_states) {
     ODEk <- strtrimM(test)
 
     # Add state in model with default IC
-    model <- addStateAZRmodel(model,name=namek,IC=0,ODE=ODEk)
+    model <- add_state(model,name=namek,IC=0,ODE=ODEk)
   }
 
   ###################
@@ -375,7 +375,7 @@ getStatesTxtBc <- function(model,model_states) {
     ARformulak <- strtrimM(terms[2])
 
     # add algebraic state to the model
-    model <- addAlgebraicAZRmodel(model,name=ARnamek,IC=ARick,formula=ARformulak)
+    model <- add_algebraic(model,name=ARnamek,IC=ARick,formula=ARformulak)
   }
 
   ###################
@@ -435,22 +435,22 @@ getStatesTxtBc <- function(model,model_states) {
     # add state information into model
     found <- FALSE
 
-    ix <- unname(which(getAllStatesAZRmodel(model)$statenames==stateName))
+    ix <- unname(which(get_all_states(model)$statenames==stateName))
 
     if (length(ix) > 1)
       stop("getStatesTxtBc: error in model definition - a state appears more than once.")
 
     if (length(ix) != 0) {
-      model <- setStateAZRmodel(model,ix,IC=stateIC,lowConstraint=stateConstraints[1],
+      model <- set_state(model,ix,IC=stateIC,lowConstraint=stateConstraints[1],
                                 highConstraint=stateConstraints[2],type=typek,
                                 compartment=compartmentk,unittype=unittypek,notes=notesk)
       found <- TRUE
     }
 
     # add algebraic ic into model
-    if (!found && getNumberOfAlgebraicAZRmodel(model)>0) {
+    if (!found && len_algebraic(model)>0) {
       algebraic_names = c()
-      for (k2 in 1:getNumberOfAlgebraicAZRmodel(model)) {
+      for (k2 in 1:len_algebraic(model)) {
         if (!is.null(model$algebraic[[k2]]$name)) {
           algebraic_names <- cbind(algebraic_names,model$algebraic[[k2]]$name)
         } else {
@@ -459,7 +459,7 @@ getStatesTxtBc <- function(model,model_states) {
       }
       ix <- unname(which(algebraic_names==stateName))
       if (length(ix) != 0) {
-        model <- setAlgebraicAZRmodel(model,ix,IC=stateIC,type=typek,compartment=compartmentk,unittype=unittypek,
+        model <- set_algebraic(model,ix,IC=stateIC,type=typek,compartment=compartmentk,unittype=unittypek,
                                       notes=notesk)
         found <- TRUE
       }

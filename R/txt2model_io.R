@@ -24,10 +24,10 @@
 getOutputs <- function(model) {
 
   # Get component information
-  states     <- getAllStatesAZRmodel(model)
-  parameters <- getAllParametersAZRmodel(model)
-  variables  <- getAllVariablesAZRmodel(model)
-  reactions  <- getAllReactionsAZRmodel(model)
+  states     <- get_all_states(model)
+  parameters <- get_all_parameters(model)
+  variables  <- get_all_variables(model)
+  reactions  <- get_all_reactions(model)
 
   # Check OUTPUT presence in component names other than variables and error in this case
   if (length(grep("OUTPUT",states$statenames))>0)
@@ -59,7 +59,7 @@ getOutputs <- function(model) {
     outputNotes <- model$variables[[outputVarIndex]]$notes
     # Add information to the model
     outputInfo <- list(name=outputName, formula=outputFormula, notes=outputNotes, varindex=outputVarIndex)
-    model$outputs[[getNumberOfOutputsAZRmodel(model)+1]] <- outputInfo
+    model$outputs[[len_outputs(model)+1]] <- outputInfo
     # Check if output formula is a state or a variable and if not then produce a warning
     test <- cbind(unname(which(outputFormula==states$statenames)),unname(which(outputFormula==variables$varnames)))
     if (length(test)==0)
@@ -119,18 +119,18 @@ getInputs <- function(model) {
   if (NINPUTS==0) return(model)
 
   # Cycle through inputs and generate the input information
-  states <- getAllStatesAZRmodel(model)
+  states <- get_all_states(model)
   for (k in 1:NINPUTS) {
     inputName <- paste("INPUT",k,sep="")
     # Find all state indices for this inputs
     inputStateindex <- grep(paste("\\b",inputName,"\\b",sep=""),states$stateODEs)
     # Find parameter index and add a parameter if not yet present
-    parameters <- getAllParametersAZRmodel(model)
+    parameters <- get_all_parameters(model)
     inputParindex <- grep(paste("\\b",inputName,"\\b",sep=""),parameters$paramnames)
     if (length(inputParindex)==0) {
       # Parameter not yet present - add it
-      model <- addParameterAZRmodel(model,name=inputName,value=0)
-      inputParindex <- getNumberOfParametersAZRmodel(model)
+      model <- add_parameter(model,name=inputName,value=0)
+      inputParindex <- len_parameters(model)
     }
 
     # Cycle through stateindex and get the input terms
@@ -148,7 +148,7 @@ getInputs <- function(model) {
     # need to do "manually"
 
     inputInfo <- list(name=inputName, factors=inputFactors, terms=inputTerms, stateindex=inputStateindex, parindex=inputParindex)
-    model$inputs[[getNumberOfInputsAZRmodel(model)+1]] <- inputInfo
+    model$inputs[[len_inputs(model)+1]] <- inputInfo
   }
   return(model)
 }
@@ -231,9 +231,9 @@ getFactorsTermsInput <- function(model,inputName,ODE) {
   inputTerm <- paste(inputFactor,"*",inputName,sep="")
 
   # Check if inputFactor contains state, variable, or reaction names
-  stateNames     <- getAllStatesAZRmodel(model)$statenames
-  variableNames  <- getAllVariablesAZRmodel(model)$varnames
-  reactionNames  <- getAllReactionsAZRmodel(model)$reacnames
+  stateNames     <- get_all_states(model)$statenames
+  variableNames  <- get_all_variables(model)$varnames
+  reactionNames  <- get_all_reactions(model)$reacnames
 
   testNames <- c(stateNames,variableNames,reactionNames)
 
@@ -252,7 +252,7 @@ getFactorsTermsInput <- function(model,inputName,ODE) {
 # getCheckNumberInputs: check if inputs only on states
 ###############################################################################
 getCheckNumberInputs <- function(model) {
-  states <- getAllStatesAZRmodel(model)
+  states <- get_all_states(model)
   m      <- gregexpr("INPUT[0-9]+",states$stateODEs,perl=TRUE)
   y      <- regmatches(states$stateODEs,m)
   y      <- unique(unlist(y))
@@ -274,8 +274,8 @@ getCheckNumberInputs <- function(model) {
 # inputsOnlyOnStates: check if inputs only on states
 ###############################################################################
 inputsOnlyOnStates <- function(model) {
-  variables  <- getAllVariablesAZRmodel(model)
-  reactions  <- getAllReactionsAZRmodel(model)
+  variables  <- get_all_variables(model)
+  reactions  <- get_all_reactions(model)
 
   result = TRUE
   if (length(grep("\\bINPUT[0-9]+\\b",variables$varnames))>0) result = FALSE
@@ -291,10 +291,10 @@ inputsOnlyOnStates <- function(model) {
 ###############################################################################
 handleINPUTreactions <- function(model) {
   # Get component information
-  states     <- getAllStatesAZRmodel(model)
-  parameters <- getAllParametersAZRmodel(model)
-  variables  <- getAllVariablesAZRmodel(model)
-  reactions  <- getAllReactionsAZRmodel(model)
+  states     <- get_all_states(model)
+  parameters <- get_all_parameters(model)
+  variables  <- get_all_variables(model)
+  reactions  <- get_all_reactions(model)
 
   # Handle INPUTS in reactions => remove reactions and add to ODEs
   ixReacInputs <- grep("INPUT",reactions$reacformulas)
@@ -326,11 +326,11 @@ handleINPUTreactions <- function(model) {
     # Now it is ensured that INPUT appears outside parentheses and not in an sum of terms on
     # the RHS of the reaction formula - exchange in ODEs can now happen!
     # Cycle through states and update ODEs
-    for (k2 in 1:getNumberOfStatesAZRmodel(model)) {
+    for (k2 in 1:len_states(model)) {
       model$states[[k2]]$ODE <- strrepM(model$states[[k2]]$ODE,reacName,reacFormula)
     }
     # Check if the reaction name is used in other reactions
-    for (k2 in 1:getNumberOfReactionsAZRmodel(model)) {
+    for (k2 in 1:len_reactions(model)) {
       if (length(grep(paste("\\b",reacName,"\\b",sep=""),reactions$reacformulas[k2]))>0)
         stop("getInputs: A reaction with an INPUT is present on the RHS of another reaction. This is not allowed!")
     }
@@ -339,9 +339,9 @@ handleINPUTreactions <- function(model) {
   reacNamesDelete <- reactions$reacnames[ixReacInputs]
   for (k in 1:length(reacNamesDelete)) {
     # find index
-    reactions  <- getAllReactionsAZRmodel(model)
+    reactions  <- get_all_reactions(model)
     ixReacInputs <- grep(paste("\\b",reacNamesDelete[k],"\\b",sep=""),reactions$reacnames)
-    model <- delReactionAZRmodel(model,ixReacInputs)
+    model <- del_reaction(model,ixReacInputs)
   }
   return(model)
 }

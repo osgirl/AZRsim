@@ -56,16 +56,16 @@
 
 stoichiometryAZRmodel <- function (model,raw=TRUE) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("stoichiometryAZRmodel: model argument is not an AZRmodel")
 
   # Get state, parameter, reaction information
-  stateInfo <- getAllStatesAZRmodel(model)
-  paramInfo <- getAllParametersAZRmodel(model)
-  reacInfo <- getAllReactionsAZRmodel(model)
+  stateInfo <- get_all_states(model)
+  paramInfo <- get_all_parameters(model)
+  reacInfo <- get_all_reactions(model)
 
   # Return in trivial case (no reactions present)
-  if (getNumberOfReactionsAZRmodel(model)==0)
+  if (len_reactions(model)==0)
     return(list(N=NULL, statenames=NULL, reacnames=NULL, reacreversible=NULL))
 
   ###############################################
@@ -200,7 +200,7 @@ stoichiometryAZRmodel <- function (model,raw=TRUE) {
   N <- c()
   statenames <- c()
 
-  for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  for (k in 1:len_states(model)) {
     # check if ODE contains only reaction terms - otherwise do not
     # consider the current state as component for the stoichiometric matrix
     Nrow <- getStoichiometryInformation(model$states[[k]]$ODE)

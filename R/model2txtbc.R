@@ -1,7 +1,7 @@
 ###############################################################################
 ###############################################################################
 # This file contains the export functions for AZRmodels to TXTBC files
-# These are not exported and called from AZRexportAZRmodel
+# These are not exported and called from export_azrmod
 ###############################################################################
 ###############################################################################
 
@@ -19,7 +19,7 @@
 
 exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("exportTxtBcAZRmodel: input argument is not an AZRmodel")
 
   if (is.null(filename))
@@ -43,7 +43,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
   # determine the names of that states that need to be described by ODEs
   stoichInfo <- stoichiometryAZRmodel(model,raw=FALSE)
   N <- stoichInfo$N
-  stateNamesAll <- getAllStatesAZRmodel(model)$statenames
+  stateNamesAll <- get_all_states(model)$statenames
   stateNamesBC <- stoichInfo$statenames
   stateNamesODE <- setdiff(stateNamesAll,stateNamesBC)
 
@@ -82,8 +82,8 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
   # now construct the states IC text
   # states
-  if (getNumberOfStatesAZRmodel(model) > 0) {
-    for (k in 1:getNumberOfStatesAZRmodel(model)) {
+  if (len_states(model) > 0) {
+    for (k in 1:len_states(model)) {
       ICtext <- paste(model$states[[k]]$name,"(0) = ",model$states[[k]]$IC,sep="")
 
       type <- model$states[[k]]$type
@@ -155,7 +155,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
   FILETEXT <- paste(FILETEXT,"********** MODEL PARAMETERS\n\n",sep="")
 
-  if (getNumberOfParametersAZRmodel(model) > 0) {
+  if (len_parameters(model) > 0) {
     for (k in 1:length(model$parameters)) {
       PARtext <- paste(model$parameters[[k]]$name," = ",model$parameters[[k]]$value,sep="")
       type <- model$parameters[[k]]$type
@@ -264,7 +264,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
   # Use the stoichiometric matrix determined above (by eventually adding
   # species that are defined by variables)
   # get reaction names, kinetics, and reversibility flag
-  reacInfo <- getAllReactionsAZRmodel(model)
+  reacInfo <- get_all_reactions(model)
 
   # cycle through the columns of the stoichiometric matrix N to build the
   # reaction expressions
@@ -386,7 +386,7 @@ exportTxtBcAZRmodel <- function (model, filename=NULL) {
 
     for (k in seq_along(model$events)) {
       EVEtext <- paste(model$events[[k]]$name," = ",model$events[[k]]$trigger,sep="")
-      if (getNumberOfEventassignmentsAZRmodel(model,k) > 0) {
+      if (len_event_assign(model,k) > 0) {
         for (k2 in 1:length(model$events[[k]]$assignment))
           EVEtext <- paste(EVEtext,",",model$events[[k]]$assignment[[k2]]$variable,
                            ",",model$events[[k]]$assignment[[k2]]$formula,sep="")

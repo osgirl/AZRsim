@@ -12,7 +12,7 @@
 #'
 #' Simulation function for AZRmodels. Able to handle dosing events etc.
 #'
-#' @param a model object created using AZRsim::create_model
+#' @param model an object created using AZRsim::create_model
 #'
 #' @param simtime Simulation time vector. If scalar provided then 1001 simulation
 #'        steps will be used. If not provided (20) seq(0,20,1000) will be used if
@@ -62,53 +62,53 @@
 #'
 #' @return Dataframe with simulation results
 #' @examples
-#' model <- check_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
+#' model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
 #' x <- simulate(model,400)
 #' x <- simulate(model,400,parameters=c(k1=0.5))
 #' @export
 
-simulate <- function (model,
-                      # Simulation time vector
-                      simtime               = NULL,
-                      # Initial conditions
-                      IC                    = NULL,
-                      # Parameter information
-                      parameters            = NULL,
-                      # Dosing / Event information
-                      dosingTable           = NULL,
-                      FLAGdosOut            = FALSE,
-                      # Output definitions
-                      outputs               = NULL,
-                      # Define integrator etc. options
-                      opt_method_stiff      = TRUE,
-                      opt_abstol            = 1.0e-6,
-                      opt_reltol            = 1.0e-6,
-                      opt_minstep           = 0.0,
-                      opt_maxstep           = 0.0,
-                      opt_initstep          = 0.0,
-                      opt_maxnumsteps       = 100000,
-                      opt_maxerrtestfails   = 50,
-                      opt_maxorder_stiff    = 5,
-                      opt_maxorder_nonstiff = 12,
-                      opt_maxconvfails      = 10,
-                      opt_maxnonlineariter  = 3,
-                      verbose               = FALSE
+simulate.azrmod <- function (model,
+                             # Simulation time vector
+                             simtime               = NULL,
+                             # Initial conditions
+                             IC                    = NULL,
+                             # Parameter information
+                             parameters            = NULL,
+                             # Dosing / Event information
+                             dosingTable           = NULL,
+                             FLAGdosOut            = FALSE,
+                             # Output definitions
+                             outputs               = NULL,
+                             # Define integrator etc. options
+                             opt_method_stiff      = TRUE,
+                             opt_abstol            = 1.0e-6,
+                             opt_reltol            = 1.0e-6,
+                             opt_minstep           = 0.0,
+                             opt_maxstep           = 0.0,
+                             opt_initstep          = 0.0,
+                             opt_maxnumsteps       = 100000,
+                             opt_maxerrtestfails   = 50,
+                             opt_maxorder_stiff    = 5,
+                             opt_maxorder_nonstiff = 12,
+                             opt_maxconvfails      = 10,
+                             opt_maxnonlineariter  = 3,
+                             verbose               = FALSE
 ) {
 
   ##############################################################################
   # Basic AZRmodel checks
   ##############################################################################
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("AZRsimulate: provided model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) == 0)
+  if (len_states(model) == 0)
     stop("AZRsimulate: provided model has no dynamic states")
 
-  if (hasalgebraicAZRmodel(model))
+  if (has_algebraic(model))
     stop("AZRsimulate: provided model has algebraic states. This is not supported in AZRsim at the moment")
 
-  if (hasfastreactionsAZRmodel(model))
+  if (has_fast_reactions(model))
     stop("AZRsimulate: provided model has fast reactions. This is not supported in AZRsim at the moment")
 
   ##############################################################################
@@ -129,7 +129,7 @@ simulate <- function (model,
   ##############################################################################
 
   if (!is.null(outputs)) {
-    test <- setdiff(outputs,c(getAllStatesAZRmodel(model)$statenames,getAllVariablesAZRmodel(model)$varnames,getAllReactionsAZRmodel(model)$reacnames))
+    test <- setdiff(outputs,c(get_all_states(model)$statenames,get_all_variables(model)$varnames,get_all_reactions(model)$reacnames))
     if (length(test) != 0)
       stop("AZRsimulate: At least one element defined in 'outputs' is not present in the model as state, variable, or reaction")
   }
@@ -165,7 +165,7 @@ simulate <- function (model,
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- getAllParametersAZRmodel(model)$paramvalues
+  parametersDefault        <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
@@ -210,11 +210,11 @@ simulate <- function (model,
   ##############################################################################
 
   # Get component number information
-  NRSTATES      <- getNumberOfStatesAZRmodel(model)
-  NRPARAMETERS  <- getNumberOfParametersAZRmodel(model)
-  NRVARIABLES   <- getNumberOfVariablesAZRmodel(model)
-  NRREACTIONS   <- getNumberOfReactionsAZRmodel(model)
-  NREVENTS      <- getNumberOfEventsAZRmodel(model)
+  NRSTATES      <- len_states(model)
+  NRPARAMETERS  <- len_parameters(model)
+  NRVARIABLES   <- len_variables(model)
+  NRREACTIONS   <- len_reactions(model)
+  NREVENTS      <- len_events(model)
   model_elements_nr <- c(NRSTATES,NRPARAMETERS,NRVARIABLES,NRREACTIONS,NREVENTS)
 
   # Get C code models address
@@ -279,7 +279,7 @@ simulate <- function (model,
   simresALL <- as.data.frame(simresALL)
 
   # Update names
-  names(simresALL) <- c("TIME", getAllStatesAZRmodel(model)$statenames, getAllVariablesAZRmodel(model)$varnames,getAllReactionsAZRmodel(model)$reacnames)
+  names(simresALL) <- c("TIME", get_all_states(model)$statenames, get_all_variables(model)$varnames,get_all_reactions(model)$reacnames)
 
   # Keep only simtime elements
   simresALL <- dplyr::filter(simresALL,TIME %in% simtime)
@@ -307,14 +307,14 @@ simulate <- function (model,
     y           <- dplyr::arrange(y,TIME)
     y           <- dplyr::filter(y,TIME<=max(simtime))
     y$EVID      <- NULL
-    if (getNumberOfInputsAZRmodel(attr(model,"originalModel")) > 0) {
-      for (k in 1:getNumberOfInputsAZRmodel(attr(model,"originalModel"))) {
+    if (len_inputs(attr(model,"originalModel")) > 0) {
+      for (k in 1:len_inputs(attr(model,"originalModel"))) {
         y[,paste("input",k,sep="")] <- NULL
       }
     }
     simresALL    <- y
   }
-
+  class(simresALL) <- c("azrsim", "data.frame")
   return(simresALL)
 }
 
@@ -582,16 +582,16 @@ AZRxdotcalc <- function (model,
   # Basic AZRmodel checks
   ##############################################################################
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("AZRxdotcalc: provided model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) == 0)
+  if (!len_states(model))
     stop("AZRxdotcalc: provided model has no dynamic states")
 
-  if (hasalgebraicAZRmodel(model))
+  if (has_algebraic(model))
     stop("AZRxdotcalc: provided model has algebraic states. This is not supported in AZRsim at the moment")
 
-  if (hasfastreactionsAZRmodel(model))
+  if (has_fast_reactions(model))
     stop("AZRxdotcalc: provided model has fast reactions. This is not supported in AZRsim at the moment")
 
   ##############################################################################
@@ -613,7 +613,7 @@ AZRxdotcalc <- function (model,
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- getAllParametersAZRmodel(model)$paramvalues
+  parametersDefault        <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
@@ -658,11 +658,11 @@ AZRxdotcalc <- function (model,
   ##############################################################################
 
   # Get component number information
-  NRSTATES      <- getNumberOfStatesAZRmodel(model)
-  NRPARAMETERS  <- getNumberOfParametersAZRmodel(model)
-  NRVARIABLES   <- getNumberOfVariablesAZRmodel(model)
-  NRREACTIONS   <- getNumberOfReactionsAZRmodel(model)
-  NREVENTS      <- getNumberOfEventsAZRmodel(model)
+  NRSTATES      <- len_states(model)
+  NRPARAMETERS  <- len_parameters(model)
+  NRVARIABLES   <- len_variables(model)
+  NRREACTIONS   <- len_reactions(model)
+  NREVENTS      <- len_events(model)
   model_elements_nr <- c(NRSTATES,NRPARAMETERS,NRVARIABLES,NRREACTIONS,NREVENTS)
 
   # Get C code models address
@@ -696,7 +696,7 @@ AZRxdotcalc <- function (model,
   )
 
   # Update names
-  names(simresALL) <- c(getAllStatesAZRmodel(model)$statenames)
+  names(simresALL) <- c(get_all_states(model)$statenames)
 
   # Return results
   return(simresALL)
@@ -712,7 +712,7 @@ calcNNic <- function(model,parametersSim) {
 
   # Check if model contains non-numerical initial conditions ... if not just return the
   # numerical ones
-  if (hasonlynumericICsAZRmodel(model)) return(getAllStatesAZRmodel(model)$stateICs)
+  if (has_only_numeric_ic(model)) return(get_all_states(model)$stateICs)
 
   # Model contains non-numerical initial conditions => evaluate them - taking into account
   # potential changes in the parameters
@@ -848,16 +848,16 @@ AZRsimpop <- function (model,
   # Basic AZRmodel checks
   ##############################################################################
 
-  if (!is.AZRmodel(model))
+  if (!is_azrmod(model))
     stop("AZRsimpop: provided model argument is not an AZRmodel")
 
-  if (getNumberOfStatesAZRmodel(model) == 0)
+  if (len_states(model) == 0)
     stop("AZRsimpop: provided model has no dynamic states")
 
-  if (hasalgebraicAZRmodel(model))
+  if (has_algebraic(model))
     stop("AZRsimpop: provided model has algebraic states. This is not supported in AZRsim at the moment")
 
-  if (hasfastreactionsAZRmodel(model))
+  if (has_fast_reactions(model))
     stop("AZRsimpop: provided model has fast reactions. This is not supported in AZRsim at the moment")
 
   ##############################################################################
