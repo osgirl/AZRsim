@@ -65,10 +65,10 @@ create_model <- function (input=NULL,simFlag=TRUE) {
   # Try to import the file
   #################################
   if (fileInfo$fileext==".txt") {
-    model <- importTxtAZRmodel(model,input)
+    model <- importTxtAZRmodel(input)
   } else {
     if (fileInfo$fileext==".txtbc") {
-      model <- importTxtBcAZRmodel(model,input)
+      model <- importTxtBcAZRmodel(input)
     } else {
       if (fileInfo$fileext==".xml") {
         stop("Import of AZRmodels from SBML not supported in AZR Tools!")
@@ -2238,7 +2238,7 @@ rename_elements <- function(model, origStrings, newStrings) {
   # Save modified model
   readr::write_file(content,tempfilename)
   # Load model (without generation of simulation functions)
-  model <- importTxtAZRmodel(create_model(),tempfilename)
+  model <- importTxtAZRmodel(tempfilename)
   # Delete temp file
   unlink(tempfilename)
   # Return model
@@ -2277,7 +2277,7 @@ replace_text <- function(model, origString, newString) {
   # Save modified model
   readr::write_file(content,tempfilename)
   # Load model (without generation of simulation functions)
-  model <- importTxtAZRmodel(create_model(),tempfilename)
+  model <- importTxtAZRmodel(tempfilename)
   # Delete temp file
   unlink(tempfilename)
   # Return model

@@ -17,15 +17,19 @@
 # @return The imported AZRmodel
 # @examples
 # importTxtAZRmodel("model.txt")
-
-importTxtAZRmodel <- function(model,filename) {
-
-  ################################################################
-  # Preparation
-  ################################################################
+importTxtAZRmodel <- function(filename) {
 
   # Read model file row by row (already split by row)
   modelText <- readr::read_lines(filename)
+  text_to_model(modelText)
+}
+
+#' convert vector of strings to a model object
+#' @param modelText strings of model file
+#' @export
+text_to_model <- function(modelText){
+  # initialize an empty model
+  model <- create_model()
 
   # Remove empty rows
   modelText <- gsub("^\\s+$", "", modelText)
