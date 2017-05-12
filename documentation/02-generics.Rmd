@@ -9,17 +9,26 @@ The `create_model` function is used to create the C code based on the text file 
 ```
 sho <- create_model(system.file("examples/sho.txt", package="AZRsim"))
 sho
-AZRmodel
-========
-Name:                       Harmonic Oscillator
-Number States:              2
-Number Parameters:          1
-Number Variables:           0
-Number Reactions:           0
-Number Functions:           0
+      AZRmodel
+      ========
+      Name:                       Harmonic Oscillator
+      Number States:              2
+      Number Parameters:          1
+      Number Variables:           0
+      Number Reactions:           0
+      Number Functions:           0
 ```
 
 In this model, the system of differential equations involves two states ($y_1$ and $y_2$) and one parameter ($\theta$).
+
+The `azrmod` object is a list and we can extract the meta data that was declared in the `Model Name` and `Model Notes` block by using `$` to access the elements within the list. Continuing the above example, below is the code that allows the user print the meta data associated with the `sho.txt` example model to the R console.
+
+```
+sho$name
+      "Simple Harmonic Oscillator"
+sho$notes
+      "Simple Harmonic Oscillator ODE example."
+```
 
 ## simulate
 

@@ -81,6 +81,7 @@
 <li class="chapter" data-level="3" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>3</b> Examples</a><ul>
 <li class="chapter" data-level="3.1" data-path="examples.html"><a href="examples.html#michaelismenten"><i class="fa fa-check"></i><b>3.1</b> Michaelis–Menten</a></li>
 <li class="chapter" data-level="3.2" data-path="examples.html"><a href="examples.html#two-compartment-model"><i class="fa fa-check"></i><b>3.2</b> Two Compartment Model</a></li>
+<li class="chapter" data-level="3.3" data-path="examples.html"><a href="examples.html#similar-parameterizations"><i class="fa fa-check"></i><b>3.3</b> Similar Parameterizations</a></li>
 </ul></li>
 </ul>
 
@@ -117,7 +118,7 @@
 ********** MODEL FUNCTIONS
 
 ********** MODEL EVENTS</code></pre>
-<p>The remainder of this section deals with what each block is used for.</p>
+<p>The remainder of this section deals with what can be declared within each block.</p>
 <div id="model-name-and-model-notes" class="section level2">
 <h2><span class="header-section-number">1.1</span> Model Name and Model Notes</h2>
 <p><code>Model Name</code> and <code>Model Notes</code> are descriptive blocks that allow the user to specify a model name and any notes about the model. The name of the model will be presented when an <code>azrmod</code> object is printed to the console.</p>
@@ -130,17 +131,7 @@ Harmonic Oscillator
 
 Harmonic Oscillator ODE example.
 </code></pre>
-<p>Here is what the associated <code>azrmod</code> object looks like after calling <code>create_model</code> on the text file.</p>
-<pre><code>sho &lt;- create_model(system.file(&quot;examples/sho.txt&quot;, package=&quot;AZRsim&quot;))
-sho
-AZRmodel
-========
-Name:                       Harmonic Oscillator
-Number States:              2
-Number Parameters:          1
-Number Variables:           0
-Number Reactions:           0
-Number Functions:           0</code></pre>
+<p>This meta data can be extracted from an <code>azrmod</code> object.</p>
 </div>
 <div id="model-states" class="section level2">
 <h2><span class="header-section-number">1.2</span> Model States</h2>
@@ -192,6 +183,36 @@ R = k1*A
 <div id="model-functions" class="section level2">
 <h2><span class="header-section-number">1.6</span> Model Functions</h2>
 <p>The <code>Model Functions</code> block can be used to define reoccuring calculations.</p>
+<p>As an example, the <code>sho_func.txt</code> example model in the <strong>AZRsim</strong> package applies the function <span class="math inline">\(f(x) = \frac{x}{100}\)</span> to the variable <span class="math inline">\(y_2\)</span> in <span class="math inline">\(\frac{d}{dt}y_2\)</span> equation in the system.</p>
+<pre><code>********** MODEL NAME
+
+Simple Harmonic Oscillator
+
+********** MODEL NOTES
+
+Simple Harmonic Oscillator ODE example.
+
+********** MODEL STATES
+
+% ODE system
+d/dt(y1) = y2
+d/dt(y2) = - y1 - theta * f(y2)
+
+% initial conditions
+y1(0) = 1
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.15
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+
+f(x) = x * 0.01
+
+********** MODEL EVENTS</code></pre>
 </div>
 <div id="model-events" class="section level2">
 <h2><span class="header-section-number">1.7</span> Model Events</h2>

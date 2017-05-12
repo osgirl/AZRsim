@@ -20,7 +20,7 @@ In order to simulate the time varying variables of a system of ordinary differen
 ********** MODEL EVENTS
 ```
 
-The remainder of this section deals with what each block is used for.
+The remainder of this section deals with what can be declared within each block.
 
 ## Model Name and Model Notes
 
@@ -39,20 +39,7 @@ Harmonic Oscillator ODE example.
 
 ```
 
-Here is what the associated `azrmod` object looks like after calling `create_model` on the text file.
-
-```
-sho <- create_model(system.file("examples/sho.txt", package="AZRsim"))
-sho
-AZRmodel
-========
-Name:                       Harmonic Oscillator
-Number States:              2
-Number Parameters:          1
-Number Variables:           0
-Number Reactions:           0
-Number Functions:           0
-```
+This meta data can be extracted from an `azrmod` object.
 
 ## Model States
 
@@ -111,6 +98,40 @@ R = k1*A
 ## Model Functions
 
 The `Model Functions` block can be used to define reoccuring calculations.
+
+
+As an example, the `sho_func.txt` example model in the **AZRsim** package applies the function $f(x) = \frac{x}{100}$ to the variable $y_2$ in $\frac{d}{dt}y_2$ equation in the system.
+```
+********** MODEL NAME
+
+Simple Harmonic Oscillator
+
+********** MODEL NOTES
+
+Simple Harmonic Oscillator ODE example.
+
+********** MODEL STATES
+
+% ODE system
+d/dt(y1) = y2
+d/dt(y2) = - y1 - theta * f(y2)
+
+% initial conditions
+y1(0) = 1
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.15
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+
+f(x) = x * 0.01
+
+********** MODEL EVENTS
+```
 
 ## Model Events
 

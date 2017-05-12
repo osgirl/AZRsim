@@ -81,6 +81,7 @@
 <li class="chapter" data-level="3" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>3</b> Examples</a><ul>
 <li class="chapter" data-level="3.1" data-path="examples.html"><a href="examples.html#michaelismenten"><i class="fa fa-check"></i><b>3.1</b> Michaelis–Menten</a></li>
 <li class="chapter" data-level="3.2" data-path="examples.html"><a href="examples.html#two-compartment-model"><i class="fa fa-check"></i><b>3.2</b> Two Compartment Model</a></li>
+<li class="chapter" data-level="3.3" data-path="examples.html"><a href="examples.html#similar-parameterizations"><i class="fa fa-check"></i><b>3.3</b> Similar Parameterizations</a></li>
 </ul></li>
 </ul>
 
@@ -107,15 +108,20 @@
 <p>The <code>create_model</code> function is used to create the C code based on the text file representation of the model. This function returns and object of class <code>azrmod</code>. Once you create a model you can print a summary of the model in R. Below is an example of printing the simple harmonic oscillator, which is part of the <strong>AZRsim</strong> package.</p>
 <pre><code>sho &lt;- create_model(system.file(&quot;examples/sho.txt&quot;, package=&quot;AZRsim&quot;))
 sho
-AZRmodel
-========
-Name:                       Harmonic Oscillator
-Number States:              2
-Number Parameters:          1
-Number Variables:           0
-Number Reactions:           0
-Number Functions:           0</code></pre>
+      AZRmodel
+      ========
+      Name:                       Harmonic Oscillator
+      Number States:              2
+      Number Parameters:          1
+      Number Variables:           0
+      Number Reactions:           0
+      Number Functions:           0</code></pre>
 <p>In this model, the system of differential equations involves two states (<span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span>) and one parameter (<span class="math inline">\(\theta\)</span>).</p>
+<p>The <code>azrmod</code> object is a list and we can extract the meta data that was declared in the <code>Model Name</code> and <code>Model Notes</code> block by using <code>$</code> to access the elements within the list. Continuing the above example, below is the code that allows the user print the meta data associated with the <code>sho.txt</code> example model to the R console.</p>
+<pre><code>sho$name
+      &quot;Simple Harmonic Oscillator&quot;
+sho$notes
+      &quot;Simple Harmonic Oscillator ODE example.&quot;</code></pre>
 </div>
 <div id="simulate" class="section level2">
 <h2><span class="header-section-number">2.2</span> simulate</h2>
