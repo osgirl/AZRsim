@@ -3,5 +3,3 @@
 ## Michaelis–Menten
 
 ## Two Compartment Model
-
-## Similar Parameterizations
