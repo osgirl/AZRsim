@@ -18,27 +18,40 @@ get_replacement_vars <- function(model) {
   stringr::str_replace_all(model_states, inverted)
 }
 
-grViz('
+get_inputs <- function(model_states) {
+  inputs <- unlist(stringr::str_extract_all(model_states, "input\\d+" ))
+  return(unique(inputs))
+}
+
+sep_values <- function(.values, .sep = ";") {
+  paste0(.values, sep = .sep, collapse = ' ')
+}
+
+model_states
+
+test_grviz <- infuser::infuse("
   digraph test {
 
-      # several "node" statements
+      # several 'node' statements
       node [shape = box,fontname = Helvetica]
-      Ad; Cc;
+      {{.model_states}}
 
       node [shape = circle,
       fixedsize = true,
-      width = 0.9] // sets as circles
-      input1; input2;
+      width = 0.9]
+      {{.model_inputs}}
 
-      // empty node to use to have arrows go to/from exclusively
       node [style=invis, width=0.1, height=0.1]
       empty;
-      # several "edge" statements
-      Ad -> Cc [label="Ka"]; input1 -> Ad;
-      input2 -> Cc ; Cc -> empty [label="CL"];
+      # several 'edge' statements
+      Ad -> Cc [label='Ka']; input1 -> Ad;
+      input2 -> Cc ; Cc -> empty [label='CL'];
       }
-      ')
+      ", .model_states = sep_values(names(model_states)),
+        .model_inputs = sep_values(get_inputs(model_states)))
 
+test_grviz
+grViz(test_grviz)
 grViz("
 digraph test {
 
