@@ -1,5 +1,81 @@
 # Examples
 
+## Simple Harmonic Oscillator
+
+The equations that govern a harmonic oscillator are the following,
+
+\begin{align*}
+\frac{d}{dt}y_1 &= y_2 \\
+\frac{d}{dt}y_2 &= - y_1-\theta y_2
+\end{align*}
+
+where $y_1$, $y_2$ are state variables and $\theta$ is a parameter in this model. The text file representation of the model is provided below.
+
+```{r echo=FALSE, comment=''}
+cat(readLines(system.file("examples/sho.txt", package="AZRsim")), sep = '\n')
+```
+
+Compiling and simulating the model.
+
+```{r, include=TRUE}
+sho_model <- create_model(system.file("examples/sho.txt", package="AZRsim"))
+sho_sim <- simulate(sho, seq(0, 100, by=0.1))
+head(sho_sim)
+```
+
+Plotting variables as a function of time.
+
+```{r, include=TRUE, fig.align='center', fig.width=12, fig.height=6}
+plot(sho_sim, col = "#808080", lwd = 3)
+```
+
+Plotting the variables as a function of each other.
+
+```{r, include=TRUE, fig.align='center', fig.width=6, fig.height=6}
+plot(sho_sim[,"y1"], sho_sim[,"y2"], type = "l", col = "#808080", lwd = 2, xlab = "y1", ylab = "y2")
+```
+
 ## Michaelis–Menten
 
+```{r echo=FALSE, comment=''}
+cat(readLines(system.file("examples/PKlibrary/modelPK_1cpt_MM.txt", package="AZRsim")), sep = '\n')
+```
+
 ## Two Compartment Model
+
+Here we consider a simple two compartment model where, for example, we model the concentration of an oral drug in the intestines and in the blood. The ODE system takes the following form,
+
+\begin{align*}
+\frac{d}{dt}y_1 &= -a \cdot y_1 + u_t \\
+\frac{d}{dt}y_2 &= a \cdot y_1 - b \cdot y_2
+\end{align*}
+
+where $y_1$ denotes the concetration of the drug the intenstine, $y_2$ denotes the concentration of the drug in the blood, $a$ and $b$ are parameters, and $u_t$ denotes the uptake of the drug at time period $t$.
+
+The text file representation of the model above provided below.
+
+```{r echo=FALSE, comment=''}
+cat(readLines(system.file("examples/two_cpt.txt", package="AZRsim")), sep = '\n')
+```
+
+Below the model is compiled and simulated and the 10 initial and final values are presented.
+
+```{r, include = TRUE}
+two_cpt <- create_model(system.file("examples/two_cpt.txt", package="AZRsim"))
+two_cpt_simulation <- simulate(two_cpt, simtime = 10)
+head(two_cpt_simulation, n = 10)
+tail(two_cpt_simulation, n = 10)
+```
+
+Using the `plot` generic we can plot the simulation to visualize the concentration of the drug in both compartments over time.
+
+```{r, inclue=TRUE, fig.align='center', fig.width=12, fig.height=6}
+plot(two_cpt_simulation, col = "#808080", lwd = 3, plot_names = c("intestines", "blood"))
+```
+
+Below we simulate the model with a different parameter value for $b$.
+
+```{r, inclue=TRUE, fig.align='center', fig.width=12, fig.height=6}
+two_cpt_simulation2 <- simulate(two_cpt, simtime = 10, parameters = c("a" = 6, "b" = 1))
+plot(two_cpt_simulation2, col = "#808080", lwd = 3, plot_names = c("intestines", "blood"))
+```

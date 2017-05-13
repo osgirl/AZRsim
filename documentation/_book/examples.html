@@ -116,8 +116,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.4" data-path="modeling-functions.html"><a href="modeling-functions.html#shiny_plot"><i class="fa fa-check"></i><b>2.4</b> shiny_plot</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>3</b> Examples</a><ul>
-<li class="chapter" data-level="3.1" data-path="examples.html"><a href="examples.html#michaelismenten"><i class="fa fa-check"></i><b>3.1</b> Michaelis–Menten</a></li>
-<li class="chapter" data-level="3.2" data-path="examples.html"><a href="examples.html#two-compartment-model"><i class="fa fa-check"></i><b>3.2</b> Two Compartment Model</a></li>
+<li class="chapter" data-level="3.1" data-path="examples.html"><a href="examples.html#simple-harmonic-oscillator"><i class="fa fa-check"></i><b>3.1</b> Simple Harmonic Oscillator</a></li>
+<li class="chapter" data-level="3.2" data-path="examples.html"><a href="examples.html#michaelismenten"><i class="fa fa-check"></i><b>3.2</b> Michaelis–Menten</a></li>
+<li class="chapter" data-level="3.3" data-path="examples.html"><a href="examples.html#two-compartment-model"><i class="fa fa-check"></i><b>3.3</b> Two Compartment Model</a></li>
 </ul></li>
 </ul>
 
@@ -138,11 +139,194 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="examples" class="section level1">
 <h1><span class="header-section-number">3</span> Examples</h1>
+<div id="simple-harmonic-oscillator" class="section level2">
+<h2><span class="header-section-number">3.1</span> Simple Harmonic Oscillator</h2>
+<p>The equations that govern a harmonic oscillator are the following,</p>
+<span class="math display">\[\begin{align*}
+\frac{d}{dt}y_1 &amp;= y_2 \\
+\frac{d}{dt}y_2 &amp;= - y_1-\theta y_2
+\end{align*}\]</span>
+<p>where <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span> are state variables and <span class="math inline">\(\theta\)</span> is a parameter in this model. The text file representation of the model is provided below.</p>
+<pre><code>********** MODEL NAME
+
+Harmonic Oscillator
+
+********** MODEL NOTES
+
+Harmonic Oscillator ODE example.
+
+********** MODEL STATES
+
+d/dt(y1) = y2
+d/dt(y2) = - y1 - theta * y2
+
+y1(0) = 1
+y2(0) = 0
+
+********** MODEL PARAMETERS
+theta = 0.15
+
+********** MODEL VARIABLES
+
+
+********** MODEL REACTIONS
+
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS</code></pre>
+<p>Compiling and simulating the model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sho_model &lt;-<span class="st"> </span><span class="kw">create_model</span>(<span class="kw">system.file</span>(<span class="st">&quot;examples/sho.txt&quot;</span>, <span class="dt">package=</span><span class="st">&quot;AZRsim&quot;</span>))
+sho_sim &lt;-<span class="st"> </span><span class="kw">simulate</span>(sho, <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dt">by=</span><span class="fl">0.1</span>))
+<span class="kw">head</span>(sho_sim)</code></pre></div>
+<pre><code>##   TIME        y1          y2
+## 1  0.0 1.0000000  0.00000000
+## 2  0.1 0.9950291 -0.09908663
+## 3  0.2 0.9802655 -0.19571802
+## 4  0.3 0.9560005 -0.28896993
+## 5  0.4 0.9226147 -0.37796717
+## 6  0.5 0.8805759 -0.46189106</code></pre>
+<p>Plotting variables as a function of time.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(sho_sim, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-8-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Plotting the variables as a function of each other.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(sho_sim[,<span class="st">&quot;y1&quot;</span>], sho_sim[,<span class="st">&quot;y2&quot;</span>], <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">xlab =</span> <span class="st">&quot;y1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;y2&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
 <div id="michaelismenten" class="section level2">
-<h2><span class="header-section-number">3.1</span> Michaelis–Menten</h2>
+<h2><span class="header-section-number">3.2</span> Michaelis–Menten</h2>
+<pre><code>********** MODEL NAME
+
+model_1cpt_MM
+
+********** MODEL NOTES
+
+One compartmental distribution model with linear and saturable
+elinination and with inputs allowing to realize first order
+absorptions into central compartment and direct administration
+into central compartment.
+
+********** MODEL STATES
+
+d/dt(Ad)    = -ka*Ad + Fabs1*INPUT1
+d/dt(Ac)    =  ka*Ad - CL/Vc*Ac - VMAX*Cc/(KM+Cc) + INPUT2
+
+Ad(0)       = 0
+Ac(0)       = 0
+
+********** MODEL PARAMETERS
+
+Fabs1       = 1     % Bioavailability
+ka            = 0.2     % Absorption rate parameter
+CL            = 0.4     % Clearance
+Vc            = 12    % Central volume
+VMAX            = 5     % Maximum rate of elimination of nonlinear term
+KM        = 0.1   % Value of concentration at which half the maximum nonlinear elimination is achieved
+
+********** MODEL VARIABLES
+
+% Calculation of concentration in central compartment
+Cc            = Ac/Vc
+
+% Defining an output (only needed when interfacing with NLME
+% parameter estimation tools such as NONMEM and MONOLIX)
+OUTPUT1     = Cc
+
+********** MODEL REACTIONS
+
+
+********** MODEL FUNCTIONS
+
+
+********** MODEL EVENTS</code></pre>
 </div>
 <div id="two-compartment-model" class="section level2">
-<h2><span class="header-section-number">3.2</span> Two Compartment Model</h2>
+<h2><span class="header-section-number">3.3</span> Two Compartment Model</h2>
+<p>Here we consider a simple two compartment model where, for example, we model the concentration of an oral drug in the intestines and in the blood. The ODE system takes the following form,</p>
+<span class="math display">\[\begin{align*}
+\frac{d}{dt}y_1 &amp;= -a \cdot y_1 + u_t \\
+\frac{d}{dt}y_2 &amp;= a \cdot y_1 - b \cdot y_2
+\end{align*}\]</span>
+<p>where <span class="math inline">\(y_1\)</span> denotes the concetration of the drug the intenstine, <span class="math inline">\(y_2\)</span> denotes the concentration of the drug in the blood, <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are parameters, and <span class="math inline">\(u_t\)</span> denotes the uptake of the drug at time period <span class="math inline">\(t\)</span>.</p>
+<p>The text file representation of the model above provided below.</p>
+<pre><code>********** MODEL NAME
+
+Simple Two Compartment Dosing Model
+
+********** MODEL NOTES
+
+A simple two compartment dosing model where
+ten equally spaced doses are given to the subject.
+
+********** MODEL STATES
+
+d/dt(y1) = -a * y1
+d/dt(y2) = a * y1 - b * y2
+
+y1(0) = 0
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+a = 6
+b = 0.6
+
+********** MODEL VARIABLES
+
+********** MODEL REACTIONS
+
+********** MODEL FUNCTIONS
+
+********** MODEL EVENTS
+
+% adding 40 units at a specified time step
+event1 = eq(time, 1), y1, y1+2
+event2 = eq(time, 2), y1, y1+2
+event3 = eq(time, 3), y1, y1+2
+event4 = eq(time, 4), y1, y1+2
+event5 = eq(time, 5), y1, y1+2
+event6 = eq(time, 6), y1, y1+2
+event7 = eq(time, 7), y1, y1+2
+event8 = eq(time, 8), y1, y1+2
+event9 = eq(time, 9), y1, y1+2</code></pre>
+<p>Below the model is compiled and simulated and the 10 initial and final values are presented.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">two_cpt &lt;-<span class="st"> </span><span class="kw">create_model</span>(<span class="kw">system.file</span>(<span class="st">&quot;examples/two_cpt.txt&quot;</span>, <span class="dt">package=</span><span class="st">&quot;AZRsim&quot;</span>))</code></pre></div>
+<pre><code>## Warning in check_azrmod(model): check_azrmod: AZRmodel contains parameter
+## names with a single character name. Try to avoid that if you plan to use
+## NONMEM or MONOLIX</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">two_cpt_simulation &lt;-<span class="st"> </span><span class="kw">simulate</span>(two_cpt, <span class="dt">simtime =</span> <span class="dv">10</span>)
+<span class="kw">head</span>(two_cpt_simulation, <span class="dt">n =</span> <span class="dv">10</span>)</code></pre></div>
+<pre><code>##    TIME y1 y2
+## 1  0.00  0  0
+## 2  0.01  0  0
+## 3  0.02  0  0
+## 4  0.03  0  0
+## 5  0.04  0  0
+## 6  0.05  0  0
+## 7  0.06  0  0
+## 8  0.07  0  0
+## 9  0.08  0  0
+## 10 0.09  0  0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(two_cpt_simulation, <span class="dt">n =</span> <span class="dv">10</span>)</code></pre></div>
+<pre><code>##       TIME          y1       y2
+## 992   9.91 0.008530545 2.830656
+## 993   9.92 0.008033781 2.814218
+## 994   9.93 0.007565934 2.797850
+## 995   9.94 0.007125330 2.781552
+## 996   9.95 0.006710385 2.765326
+## 997   9.96 0.006319605 2.749174
+## 998   9.97 0.005951668 2.733095
+## 999   9.98 0.005605222 2.717091
+## 1000  9.99 0.005279009 2.701162
+## 1001 10.00 0.004971828 2.685310</code></pre>
+<p>Using the <code>plot</code> generic we can plot the simulation to visualize the concentration of the drug in both compartments over time.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(two_cpt_simulation, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>, <span class="dt">plot_names =</span> <span class="kw">c</span>(<span class="st">&quot;intestines&quot;</span>, <span class="st">&quot;blood&quot;</span>))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-13-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Below we simulate the model with a different parameter value for <span class="math inline">\(b\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">two_cpt_simulation2 &lt;-<span class="st"> </span><span class="kw">simulate</span>(two_cpt, <span class="dt">simtime =</span> <span class="dv">10</span>, <span class="dt">parameters =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span> =<span class="st"> </span><span class="dv">6</span>, <span class="st">&quot;b&quot;</span> =<span class="st"> </span><span class="dv">1</span>))
+<span class="kw">plot</span>(two_cpt_simulation2, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>, <span class="dt">plot_names =</span> <span class="kw">c</span>(<span class="st">&quot;intestines&quot;</span>, <span class="st">&quot;blood&quot;</span>))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-14-1.png" width="1152" style="display: block; margin: auto;" /></p>
 
 </div>
 </div>

@@ -1,0 +1,40 @@
+********** MODEL NAME
+
+Simple Two Compartment Dosing Model
+
+********** MODEL NOTES
+
+A simple two compartment dosing model where
+ten equally spaced doses are given to the subject.
+
+********** MODEL STATES
+
+d/dt(y1) = -a * y1
+d/dt(y2) = a * y1 - b * y2
+
+y1(0) = 0
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+a = 6
+b = 0.6
+
+********** MODEL VARIABLES
+
+********** MODEL REACTIONS
+
+********** MODEL FUNCTIONS
+
+********** MODEL EVENTS
+
+% adding 40 units at a specified time step
+event1 = eq(time, 1), y1, y1+2
+event2 = eq(time, 2), y1, y1+2
+event3 = eq(time, 3), y1, y1+2
+event4 = eq(time, 4), y1, y1+2
+event5 = eq(time, 5), y1, y1+2
+event6 = eq(time, 6), y1, y1+2
+event7 = eq(time, 7), y1, y1+2
+event8 = eq(time, 8), y1, y1+2
+event9 = eq(time, 9), y1, y1+2
