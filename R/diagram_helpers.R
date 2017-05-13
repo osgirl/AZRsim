@@ -7,6 +7,9 @@
 position_and_sign <- function(.x, sign = "p") {
   if (nrow(.x)) {
     results <- c()
+    # str_locate_all returns a matrix of start/end values, we
+    # need to iterate by row, so could use apply, however this
+    # is simple so will just loop
     for (r in 1:nrow(.x))  {
      results <- c(results, purrr::set_names(.x[r][[1]], sign))
     }
