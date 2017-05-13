@@ -1,7 +1,7 @@
-install.packages("DiagrammeR")
 library(DiagrammeR)
-
-
+library(AZRsim)
+model <- create_model("modelPKtest.txt")
+model <- create_model("modelPK_3cpt_linear.txt")
 model_states <- AZRsim:::get_all_states(model)$stateODEs
 
 get_states_replacements <- function(model) {
@@ -30,7 +30,6 @@ sep_values <- function(.values, .sep = ";") {
   paste0(.values, sep = .sep, collapse = ' ')
 }
 
-model_states
 
 model_chunks <- chunk_ode(model_states)
 
@@ -44,41 +43,9 @@ prepare_inputs <- function(model_states) {
   ), collapse = " ")
 }
 
-get_cmpt_relationships <- function(model_states) {
-  model_chunks <- chunk_ode(model_states)
-
-  positive_relationships <-
-    purrr::set_names(map(names(model_chunks), function(.x){
-      chunks <- model_chunks[[.x]]
-      positives <- which(names(chunks) == "p")
-      chunks <- chunks[positives]
-      to_remove <- which(str_detect(chunks, "input\\d+"))
-      if (length(to_remove)) {
-        chunks <- chunks[-to_remove]
-      }
-      return(chunks)
-  }), names(model_chunks))
-  negative_relationships <-
-      purrr::set_names(map(names(model_chunks), function(.x){
-      chunks <- model_chunks[[.x]]
-      negatives <- which(names(chunks) == "n")
-      chunks <- chunks[negatives]
-      to_remove <- which(str_detect(chunks, "input\\d+"))
-      if (length(to_remove)) {
-        chunks <- chunks[-to_remove]
-      }
-      return(chunks)
-  }), names(model_chunks))
-
-  map(positive_relationships, function(.relationship){
-    if (length(.relationship)) {
-      map(.relationship, function(.chunk) {
-
-      })
-    }
-
-  })
-}
+cmpt_relations <- get_cmpt_relationships(model_states) %>%
+  mutate(result = paste0(from, "->", to, ";"))
+  paste0(cmpt_relations$result, collapse = " ")
 
 test_grviz <- infuser::infuse("
   digraph test {
@@ -98,11 +65,12 @@ test_grviz <- infuser::infuse("
       # inputs
       {{.inputs}}
       # several 'edge' statements
+      {{.cmpt_relations}}
       }
       ", .model_states = sep_values(names(model_states)),
         .model_inputs = sep_values(get_inputs(model_states)),
         .inputs = prepare_inputs(model_states),
-        .cmpt_relations = get_cmpt_relationships(model_states)
+        .cmpt_relations =  paste0(cmpt_relations$result, collapse = " ")
 )
 
 test_grviz
