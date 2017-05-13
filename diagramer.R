@@ -21,27 +21,7 @@ get_states_replacements <- function(model) {
 }
 
 
-get_inputs <- function(model_states) {
-  inputs <- unlist(stringr::str_extract_all(model_states, "input\\d+" ))
-  return(unique(inputs))
-}
 
-sep_values <- function(.values, .sep = ";") {
-  paste0(.values, sep = .sep, collapse = ' ')
-}
-
-
-model_chunks <- chunk_ode(model_states)
-
-prepare_inputs <- function(model_states) {
-  model_inputs <- unlist(purrr::set_names(
-    stringr::str_extract_all(model_states, "input\\d+" ),
-    names(model_states)
-  ) )
-  paste0(purrr::flatten_chr(
-    purrr::map(names(model_inputs), ~ paste0(model_inputs[[.x]], " -> ", .x, ";"))
-  ), collapse = " ")
-}
 
 cmpt_relations <- get_cmpt_relationships(model_states) %>%
   mutate(result = paste0(from, "->", to, ";"))

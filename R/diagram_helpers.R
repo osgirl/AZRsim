@@ -1,3 +1,19 @@
+#' determine the names of the inputs in the ode system of equations
+#' @param model_states vector of ode model states
+#' @example
+#' get_inputs(c("-ka*Ad + F11*input1", "ka*Ad - Cl*Ac/V + F22*input2"))
+get_inputs <- function(model_states) {
+  inputs <- unlist(stringr::str_extract_all(model_states, "input\\d+" ))
+  return(unique(inputs))
+}
+
+#' light wrapper for collapse diagrammer separator requirements
+#' @param .values vector to collapse to single string
+#' @param .sep separator to value
+sep_values <- function(.values, .sep = ";") {
+  paste0(.values, sep = .sep, collapse = ' ')
+}
+
 #' get the position and assign it a sign value from a str_locate_all output
 #' @param .x list of start and end positions for locate call
 #' @param sign the sign value, (p/n)
@@ -105,4 +121,19 @@ chunk_ode <- function(.string) {
     return(purrr::set_names(results, names(.string)))
   }
   return(results)
+}
+
+#' prepare inputs from the system of equations for diagrammer
+#' @param model_states named vector of ode system of equations
+#' @details
+#' nodes for diagrammer need to be specified, this will extract the
+#' compartments and the inputs and generate the required syntax
+prepare_inputs <- function(model_states) {
+  model_inputs <- unlist(purrr::set_names(
+    stringr::str_extract_all(model_states, "input\\d+" ),
+    names(model_states)
+  ) )
+  paste0(purrr::flatten_chr(
+    purrr::map(names(model_inputs), ~ paste0(model_inputs[[.x]], " -> ", .x, ";"))
+  ), collapse = " ")
 }
