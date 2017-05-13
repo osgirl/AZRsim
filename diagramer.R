@@ -75,6 +75,8 @@ test_grviz <- infuser::infuse("
 
 test_grviz
 grViz(test_grviz)
+
+# hand coded example
 grViz("
 digraph test {
 
