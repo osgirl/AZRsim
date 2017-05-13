@@ -34,10 +34,10 @@ sep_values <- function(.values, .sep = ";") {
 model_chunks <- chunk_ode(model_states)
 
 prepare_inputs <- function(model_states) {
-  model_inputs <- purrr::set_names(
+  model_inputs <- unlist(purrr::set_names(
     stringr::str_extract_all(model_states, "input\\d+" ),
     names(model_states)
-  )
+  ) )
   paste0(purrr::flatten_chr(
     purrr::map(names(model_inputs), ~ paste0(model_inputs[[.x]], " -> ", .x, ";"))
   ), collapse = " ")
