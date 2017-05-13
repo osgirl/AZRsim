@@ -79,10 +79,12 @@ recombine_parens <- function(.lv) {
 
 #' chunk an ode into parts split on +/- signs
 #' @param .string vector of ode strings
+#' @return list of chunked odes
 chunk_ode <- function(.string) {
   splits <- str_split(.string, "[-|+]")
   signs <- get_chunk_signs(.string)
-  purrr::map2(splits, signs, function(.splits, .signs){
+  results <- purrr::map2(splits, signs,
+                         function(.splits, .signs){
     # if first split was negative the lhs will be empty
     if (.splits[1] == "") {
       .splits <- .splits[-1]
@@ -92,4 +94,9 @@ chunk_ode <- function(.string) {
     }
     purrr::set_names(.splits, names(.signs))
   })
+  results <- recombine_parens(results)
+  if (!is.null(names(.string))) {
+    return(purrr::set_names(results, names(.string)))
+  }
+  return(results)
 }
