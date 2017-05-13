@@ -92,7 +92,7 @@ chunk_ode <- function(.string) {
     if (!(length(.splits) == length(.signs))) {
       stop("signs and splits not matching")
     }
-    purrr::set_names(.splits, names(.signs))
+    purrr::set_names(stringr::str_trim(.splits), names(.signs))
   })
   results <- recombine_parens(results)
   if (!is.null(names(.string))) {
