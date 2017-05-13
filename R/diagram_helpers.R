@@ -86,6 +86,9 @@ chunk_ode <- function(.string) {
   results <- purrr::map2(splits, signs,
                          function(.splits, .signs){
     # if first split was negative the lhs will be empty
+    # so want to remove the first empty block, eg
+    # splitting -ka*Ad will have 2 blocks
+    # a blank leading one, ka*Ad
     if (.splits[1] == "") {
       .splits <- .splits[-1]
     }
