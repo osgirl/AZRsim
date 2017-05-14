@@ -1,0 +1,29 @@
+********** MODEL NAME
+
+Simple Harmonic Oscillator
+
+********** MODEL NOTES
+
+Simple Harmonic Oscillator ODE example.
+
+********** MODEL STATES
+
+% ODE system
+d/dt(y1) = y2
+d/dt(y2) = - y1 - R
+
+% initial conditions
+y1(0) = 1
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.15
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+
+R = theta * y2
+
+********** MODEL FUNCTIONS
+********** MODEL EVENTS
