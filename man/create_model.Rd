@@ -8,7 +8,7 @@ create_model(input = NULL, simFlag = TRUE)
 }
 \arguments{
 \item{input}{A string with the full filename (including absolute or
-relative path) to a text file, describing an azrmod.}
+relative path) to a text file that describes the model.}
 
 \item{simFlag}{If set to \code{TRUE} (default) then the model will be prepared for
 simulations (dosing, constraints, etc.) and all required sim functions will
@@ -17,16 +17,19 @@ you want to simulate. In cases were the model structure and the information
 about inputs is important, then choose \code{FALSE}.}
 }
 \value{
-An object of class azr_model. If input is NULL, an empty object is returned.
+A list object of class \code{azrmod}. If input is \code{NULL} an empty object is returned.
 }
 \description{
-This function creates an object of class \code{azrmod} which represents dynamic,
+This function creates an object of class \code{azrmod} which represents dynamic
 ODE based models that can be simulated. The class constructor function
 \code{azrmod} creates such objects from specifc text file descriptions of
-these models. If no input argument is provided, an empty azrmod object is returned.
+these models. If no input argument is provided then an empty \code{azrmod} object is returned.
 }
 \examples{
-empty_mod <- create_model()
-filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
-mod <- create_model(filename)
+# an empty model
+empty_model <- create_model()
+# creating the simple harmonic oscillator model
+fname <- system.file(package="AZRsim","examples","sho.txt")
+sho_mod <- create_model(fname)
+sho_mod
 }

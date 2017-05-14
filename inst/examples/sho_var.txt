@@ -25,5 +25,7 @@ theta = 0.15
 V = theta * y2
 
 ********** MODEL REACTIONS
+
 ********** MODEL FUNCTIONS
+
 ********** MODEL EVENTS

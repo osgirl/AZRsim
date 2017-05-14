@@ -26,4 +26,6 @@ theta = 0.15
 R = theta * y2
 
 ********** MODEL FUNCTIONS
+
 ********** MODEL EVENTS
+

@@ -13,7 +13,7 @@
   opt_maxconvfails = 10, opt_maxnonlineariter = 3, verbose = FALSE)
 }
 \arguments{
-\item{model}{an object created using AZRsim::create_model}
+\item{model}{An object of class \code{azrmod} created using \code{AZRsim::create_model}}
 
 \item{simtime}{Simulation time vector. If scalar provided then 1001 simulation
 steps will be used. If not provided (20) seq(0,20,1000) will be used if
@@ -38,8 +38,8 @@ A states IC can depend on a previously defined state in the model.
 Otherwise an error message will appear during the import of a model from
 text.}
 
-\item{dosingTable}{A dataframe defining a dosing table. Required columns:
-TIME, INPUT, DOSE, DURATION, LAGTIME}
+\item{dosingTable}{A dataframe defining a dosing table with the following columns:
+\code{TIME}, \code{INPUT}, \code{DOSE}, \code{DURATION}, and \code{LAGTIME}.}
 
 \item{FLAGdosOut}{If TRUE then dosing table information will be added to the
 output variable. If FALSE then it will not be added. This flag only
@@ -75,13 +75,27 @@ By default (NULL) all states, variables, reactions, are returned.}
 \item{verbose}{Integer flag for outputting additional diagnostic information}
 }
 \value{
-Dataframe with simulation results
+A \code{data.frame} object of class \code{azrsim} which contains simulations.
 }
 \description{
-Simulation function for AZRmodels. Able to handle dosing events etc.
+Simulation function for \code{azrmod} objects which is able to handle dosing events.
 }
 \examples{
-model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
-x <- simulate(model,400)
-x <- simulate(model,400,parameters=c(k1=0.5))
+# simple harmonic oscillator simulation
+sho_model <- create_model(system.file("examples/sho.txt", package="AZRsim"))
+sho_sim <- simulate(sho_model, seq(1, 100, by = 0.1))
+sho_sim <- simulate(sho_model, 100, parameters = c("theta" = 0.5))
+sho_sim <- simulate(sho_model, 100, IC = c("y1" = 1, "y2" = 2))
+plot(sho_sim)
+
+# simple one compartment dosing
+one_cpt <- create_model(system.file("examples/one_cpt_dt.txt", package="AZRsim"))
+dt <- data.frame("TIME" = seq(1,9, by = 1),
+                 "DOSE" = 40,
+                 "DURATION" = 0,
+                 "INPUT" = 1,
+                 "LAGTIME" = 0,
+                 stringsAsFactors = FALSE)
+one_cpt_sim <- simulate(one_cpt, seq(0, 10, by=0.01), dosingTable = dt, output = c("y"))
+plot(one_cpt_sim, lwd = 2, plot_names = "blood")
 }
