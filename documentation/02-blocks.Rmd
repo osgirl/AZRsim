@@ -1,0 +1,172 @@
+# Model Specification
+
+In order to simulate the time varying variables of a system of ordinary differential equations you need to provide a specific representation of your mathematical model in a text file (a file with extension `.txt`). Every text file representation of a model must contain the following blocks presented exactly as defined below. Notice that each block name is preceded with ten `*`s. It is possible to comment out a line of code using `%`.
+
+```
+********** MODEL NAME
+
+********** MODEL NOTES
+
+********** MODEL STATES
+
+********** MODEL PARAMETERS
+
+********** MODEL VARIABLES
+
+********** MODEL REACTIONS
+
+********** MODEL FUNCTIONS
+
+********** MODEL EVENTS
+```
+
+The remainder of this section deals with what can be declared within each block.
+
+## Model Name and Model Notes
+
+`MODEL NAME` and `MODEL NOTES` are descriptive blocks that allow the user to specify a model name and any notes about the model. The name of the model will be presented when an `azrmod` object is printed to the console.
+
+Below are the model name and model notes blocks for the simple harmonic oscillator example in the **AZRsim** package (`sho.txt`).
+
+```
+********** MODEL NAME
+
+Harmonic Oscillator
+
+********** MODEL NOTES
+
+Harmonic Oscillator ODE example.
+
+```
+
+This meta data can be extracted from an `azrmod` object.
+
+## Model States
+
+The `MODEL STATES` block is where the user describes the system of differential equations followed by the initial conditions for each variable. The left hand side of each differential equation *must* be declared as `d/dt(x)` where `x` is a variable name chosen by the user.
+
+The initial conditions *must* be defined, and they *must* be defined after the system of differential equations is defined. If variable `x` in the preceding paragraph had an initial condition value of 3 then we can declare `x(0) = 3` after defining the system of differential equations.
+
+## Model Parameters
+
+The `MODEL PARAMETERS` block is where the user defines the values of the parameters in the system of differential equations defined in `MODEL STATES`.
+
+## Model Variables
+
+The `MODEL VARIABLES` block provides a way to reparametrize parts of the model. Variables for intermediate calculations should be defined under `MODEL VARIABLES`.
+
+```
+********** MODEL STATES
+
+d/dt(A) = -R
+d/dt(B) = R
+A(0) = 1
+B(0) = 0
+
+********** MODEL PARAMETERS
+
+k1 = 0.5
+
+********** MODEL VARIABLES
+
+R = k1*A
+
+```
+
+## Model Reactions
+
+The `MODEL REACTIONS` block provides a way to reparametrize parts of the model. Reaction rates should be defined in the `MODEL REACTIONS` block.
+
+```
+********** MODEL STATES
+
+d/dt(A) = -R
+d/dt(B) = R
+A(0) = 1
+B(0) = 0
+
+********** MODEL PARAMETERS
+
+k1 = 0.5
+
+********** MODEL REACTIONS
+
+R = k1*A
+
+```
+
+## Model Functions
+
+The `MODEL FUNCTIONS` block can be used to define reoccuring calculations.
+
+
+As an example, the `sho_func.txt` example model in the **AZRsim** package applies the function $f(x) = \frac{x}{100}$ to the variable $y_2$ in $\frac{d}{dt}y_2$ equation in the system.
+```
+********** MODEL NAME
+
+Simple Harmonic Oscillator
+
+********** MODEL NOTES
+
+Simple Harmonic Oscillator ODE example.
+
+********** MODEL STATES
+
+% ODE system
+d/dt(y1) = y2
+d/dt(y2) = - y1 - theta * f(y2)
+
+% initial conditions
+y1(0) = 1
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.15
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+
+f(x) = x * 0.01
+
+********** MODEL EVENTS
+```
+
+## Model Events
+
+The `MODEL EVENTS` block can be used to define discrete state events. Note that the declaration of events is not vectorized.
+
+There are essentially two parts to defining a discrete event in the model:
+
+1. When does the event take place?
+2. What is the event?
+
+Below is an example of a event block.
+
+```
+********* MODEL EVENTS
+
+event1 = eq(time, 1), y, y+40
+event2 = eq(time, 2), y, y+40
+
+```
+
+The term `eq(time, 1)` pertains to (1). This says that the event occurs when the time step is strictly equal to 1. The term `y, y+40` pertains to (2). This is the event that is to take place. In this case the event involves variable `y` and we want to add 40 units of the drug this variable, `y+40`. (Note that events cannot take place at time 0.) In summary, the above block defines adding 40 to the value of `y` at time steps 1 and 2.
+
+We can issue multiple events. The event defined below specifies resetting the value of `x` to 1 and `y` to 0 when `x` is equal to 0.1.
+
+```
+********* MODEL EVENTS
+
+event = eq(x, 0.1), x, 1, y, 0
+
+```
+
+Below is a summary of the options that can be used to declare when an event takes place.
+
+* `eq(a, 0)` implies variable a is strictly equal to 0.
+* `lq(a, 0)` implies variable a is less than or equal to 0.
+* `gq(a, 0)` implies variable a is greater than or equal to 0.
+* `lt(a, 0)` implies variable a is strictly less than 0.
+* `gt(a, 0)` implies variable a is strictly greater than 0.

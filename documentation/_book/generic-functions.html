@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AZRsim Documentation</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="AZRsim Documentation">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+
+  <meta property="og:title" content="AZRsim Documentation" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="AZRsim Documentation" />
+  
+  
+  
+
+<meta name="author" content="AstraZeneca">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="model-specification.html">
+<link rel="next" href="examples.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>User Guide</a></li>
+<li class="chapter" data-level="1" data-path="model-specification.html"><a href="model-specification.html"><i class="fa fa-check"></i><b>1</b> Model Specification</a><ul>
+<li class="chapter" data-level="1.1" data-path="model-specification.html"><a href="model-specification.html#model-name-and-model-notes"><i class="fa fa-check"></i><b>1.1</b> Model Name and Model Notes</a></li>
+<li class="chapter" data-level="1.2" data-path="model-specification.html"><a href="model-specification.html#model-states"><i class="fa fa-check"></i><b>1.2</b> Model States</a></li>
+<li class="chapter" data-level="1.3" data-path="model-specification.html"><a href="model-specification.html#model-parameters"><i class="fa fa-check"></i><b>1.3</b> Model Parameters</a></li>
+<li class="chapter" data-level="1.4" data-path="model-specification.html"><a href="model-specification.html#model-variables"><i class="fa fa-check"></i><b>1.4</b> Model Variables</a></li>
+<li class="chapter" data-level="1.5" data-path="model-specification.html"><a href="model-specification.html#model-reactions"><i class="fa fa-check"></i><b>1.5</b> Model Reactions</a></li>
+<li class="chapter" data-level="1.6" data-path="model-specification.html"><a href="model-specification.html#model-functions"><i class="fa fa-check"></i><b>1.6</b> Model Functions</a></li>
+<li class="chapter" data-level="1.7" data-path="model-specification.html"><a href="model-specification.html#model-events"><i class="fa fa-check"></i><b>1.7</b> Model Events</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="generic-functions.html"><a href="generic-functions.html"><i class="fa fa-check"></i><b>2</b> Generic Functions</a><ul>
+<li class="chapter" data-level="2.1" data-path="generic-functions.html"><a href="generic-functions.html#create_model"><i class="fa fa-check"></i><b>2.1</b> create_model</a></li>
+<li class="chapter" data-level="2.2" data-path="generic-functions.html"><a href="generic-functions.html#simulate"><i class="fa fa-check"></i><b>2.2</b> simulate</a></li>
+<li class="chapter" data-level="2.3" data-path="generic-functions.html"><a href="generic-functions.html#plot"><i class="fa fa-check"></i><b>2.3</b> plot</a></li>
+<li class="chapter" data-level="2.4" data-path="generic-functions.html"><a href="generic-functions.html#shiny_plot"><i class="fa fa-check"></i><b>2.4</b> shiny_plot</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>3</b> Examples</a><ul>
+<li class="chapter" data-level="3.1" data-path="examples.html"><a href="examples.html#michaelismenten"><i class="fa fa-check"></i><b>3.1</b> Michaelis–Menten</a></li>
+<li class="chapter" data-level="3.2" data-path="examples.html"><a href="examples.html#two-compartment-model"><i class="fa fa-check"></i><b>3.2</b> Two Compartment Model</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">AZRsim Documentation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="generic-functions" class="section level1">
+<h1><span class="header-section-number">2</span> Generic Functions</h1>
+<div id="create_model" class="section level2">
+<h2><span class="header-section-number">2.1</span> create_model</h2>
+</div>
+<div id="simulate" class="section level2">
+<h2><span class="header-section-number">2.2</span> simulate</h2>
+</div>
+<div id="plot" class="section level2">
+<h2><span class="header-section-number">2.3</span> plot</h2>
+</div>
+<div id="shiny_plot" class="section level2">
+<h2><span class="header-section-number">2.4</span> shiny_plot</h2>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="model-specification.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="examples.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
