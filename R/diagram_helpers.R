@@ -18,7 +18,7 @@ sep_values <- function(.values, .sep = ";") {
 #' @param .x list of start and end positions for locate call
 #' @param sign the sign value, (p/n)
 #' @examples
-#'  positives <- str_locate_all('-ka*Ad+F11*input1', '\\+')
+#'  positives <- stringr::str_locate_all('-ka*Ad+F11*input1', '\\+')
 #'  position_and_sign(positives)
 position_and_sign <- function(.x, sign = "p") {
   if (nrow(.x)) {
@@ -100,7 +100,7 @@ recombine_parens <- function(.lv) {
 #' @param .string vector of ode strings
 #' @return list of chunked odes
 chunk_ode <- function(.string) {
-  splits <- str_split(.string, "[-|+]")
+  splits <- stringr::str_split(.string, "[-|+]")
   signs <- get_chunk_signs(.string)
   results <- purrr::map2(splits, signs,
                          function(.splits, .signs){
