@@ -15,6 +15,13 @@ describe("chunk_ode()", {
                      .Names = c("p", "n")))
     )
   })
+  it("retains parens inside a chunk", {
+    expect_equal(
+      chunk_ode("ka*Ad-(1-F11)*input1"),
+      list(structure(c("ka*Ad", "(1-F11)*input1"),
+                     .Names = c("p", "n")))
+    )
+  })
 })
 
 
