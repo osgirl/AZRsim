@@ -13,7 +13,7 @@
 # Export of an AZRmodel to a .txt file. ODE representation is used. These
 # .txt files allow a humanly readable format of the model files. An alternative
 # is the export to a .txtbc file, which uses a chemical reaction type of
-# syntax, if possible. The default filename is constructed from the models name.
+# syntax, if possible.
 #
 # @param model An AZRmodel to be exported.
 # @return None
@@ -28,11 +28,6 @@ model_to_text <- function (model) {
 
   if (!is_azrmod(model))
     stop("exportTxtAZRmodel: input argument is not an AZRmodel")
-
-  if (is.null(filename))
-    filename <- gsub("\\W","",model$name)
-
-  filename <- paste(strrepM(filename,".txt",""), ".txt", sep="")
 
   # Initialize the FILETEXT
   FILETEXT <- ""
