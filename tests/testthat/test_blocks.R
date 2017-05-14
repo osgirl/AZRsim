@@ -58,13 +58,13 @@ injectevents <- data.frame(var = "y",
 deSolve_one_cpt <- deSolve::ode(y = yini, times = seq(0, 10, by=0.01), func = one_cpt, parms = pars, events = list(data = injectevents))
 drop_obs <- seq(101, 901, by = 100)
 
-test_that("AZRsim events and deSolve events return the same simulation for a one compartment model", {
+test_that("AZRsim events and deSolve events return the same discrete dosing simulation", {
   model <- create_model(system.file("examples/one_cpt.txt", package="AZRsim"))
   azr_one_cpt <- simulate(model, seq(0, 10, by=0.01))
   expect_equal(azr_one_cpt$y[-drop_obs], deSolve_one_cpt[-drop_obs,2], tolerance = 1e-3)
 })
 
-test_that("AZRsim dosing and deSolve events return the same simulation for a one compartment model", {
+test_that("AZRsim dosing and deSolve events return the same dosing table simulation", {
   model <- create_model(system.file("examples/one_cpt_dt.txt", package="AZRsim"))
   dt <- data.frame("TIME" = seq(1,9, by = 1),
                    "DOSE" = 40,
