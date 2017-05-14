@@ -24,7 +24,7 @@ The remainder of this section deals with what can be declared within each block.
 
 ## Model Name and Model Notes
 
-`Model Name` and `Model Notes` are descriptive blocks that allow the user to specify a model name and any notes about the model. The name of the model will be presented when an `azrmod` object is printed to the console.
+`MODEL NAME` and `MODEL NOTES` are descriptive blocks that allow the user to specify a model name and any notes about the model. The name of the model will be presented when an `azrmod` object is printed to the console.
 
 Below are the model name and model notes blocks for the simple harmonic oscillator example in the **AZRsim** package (`sho.txt`).
 
@@ -43,17 +43,17 @@ This meta data can be extracted from an `azrmod` object.
 
 ## Model States
 
-The `Model States` block is where the user describes the system of differential equations followed by the initial conditions for each variable. The left hand side of each differential equation *must* be declared as `d/dt(x)` where `x` is a variable name chosen by the user.
+The `MODEL STATES` block is where the user describes the system of differential equations followed by the initial conditions for each variable. The left hand side of each differential equation *must* be declared as `d/dt(x)` where `x` is a variable name chosen by the user.
 
 The initial conditions *must* be defined, and they *must* be defined after the system of differential equations is defined. If variable `x` in the preceding paragraph had an initial condition value of 3 then we can declare `x(0) = 3` after defining the system of differential equations.
 
 ## Model Parameters
 
-The `Model Parameters` block is where the user defines the values of the parameters in the system of differential equations defined in `Model States`.
+The `MODEL PARAMETERS` block is where the user defines the values of the parameters in the system of differential equations defined in `MODEL STATES`.
 
 ## Model Variables
 
-The `Model Variables` block provides a way to reparametrize parts of the model. Variables for intermediate calculations should be defined under `Model Variables`.
+The `MODEL VARIABLES` block provides a way to reparametrize parts of the model. Variables for intermediate calculations should be defined under `MODEL VARIABLES`.
 
 ```
 ********** MODEL STATES
@@ -75,7 +75,7 @@ R = k1*A
 
 ## Model Reactions
 
-The `Model Reactions` block provides a way to reparametrize parts of the model. Reaction rates should be defined under `Model Reactions`.
+The `MODEL REACTIONS` block provides a way to reparametrize parts of the model. Reaction rates should be defined in the `MODEL REACTIONS` block.
 
 ```
 ********** MODEL STATES
@@ -97,7 +97,7 @@ R = k1*A
 
 ## Model Functions
 
-The `Model Functions` block can be used to define reoccuring calculations.
+The `MODEL FUNCTIONS` block can be used to define reoccuring calculations.
 
 
 As an example, the `sho_func.txt` example model in the **AZRsim** package applies the function $f(x) = \frac{x}{100}$ to the variable $y_2$ in $\frac{d}{dt}y_2$ equation in the system.
@@ -135,7 +135,7 @@ f(x) = x * 0.01
 
 ## Model Events
 
-The `Model Events` block can be used to define discrete state events.
+The `MODEL EVENTS` block can be used to define discrete state events. Note that the declaration of events is not vectorized.
 
 There are essentially two parts to defining a discrete event in the model:
 

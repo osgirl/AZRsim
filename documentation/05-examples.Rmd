@@ -6,7 +6,7 @@ The equations that govern a harmonic oscillator are the following,
 
 \begin{align*}
 \frac{d}{dt}y_1 &= y_2 \\
-\frac{d}{dt}y_2 &= - y_1-\theta y_2
+\frac{d}{dt}y_2 &= - y_1-\theta \cdot y_2
 \end{align*}
 
 where $y_1$, $y_2$ are state variables and $\theta$ is a parameter in this model. The text file representation of the model is provided below.
@@ -33,12 +33,6 @@ Plotting the variables as a function of each other.
 
 ```{r, include=TRUE, fig.align='center', fig.width=6, fig.height=6}
 plot(sho_sim[,"y1"], sho_sim[,"y2"], type = "l", col = "#808080", lwd = 2, xlab = "y1", ylab = "y2")
-```
-
-## Michaelis–Menten
-
-```{r echo=FALSE, comment=''}
-cat(readLines(system.file("examples/PKlibrary/modelPK_1cpt_MM.txt", package="AZRsim")), sep = '\n')
 ```
 
 ## Two Compartment Model

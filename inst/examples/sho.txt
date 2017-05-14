@@ -15,15 +15,10 @@ y1(0) = 1
 y2(0) = 0
 
 ********** MODEL PARAMETERS
+
 theta = 0.15
 
 ********** MODEL VARIABLES
-
-
 ********** MODEL REACTIONS
-
-
 ********** MODEL FUNCTIONS
-
-
 ********** MODEL EVENTS

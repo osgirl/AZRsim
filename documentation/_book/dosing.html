@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="installation.html">
-<link rel="next" href="modeling-functions.html">
+<link rel="prev" href="modeling-functions.html">
+<link rel="next" href="examples.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -142,148 +142,154 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="model-specification" class="section level1">
-<h1><span class="header-section-number">2</span> Model Specification</h1>
-<p>In order to simulate the time varying variables of a system of ordinary differential equations you need to provide a specific representation of your mathematical model in a text file (a file with extension <code>.txt</code>). Every text file representation of a model must contain the following blocks presented exactly as defined below. Notice that each block name is preceded with ten <code>*</code>s. It is possible to comment out a line of code using <code>%</code>.</p>
+<div id="dosing" class="section level1">
+<h1><span class="header-section-number">4</span> Dosing</h1>
+<p>Dosing can be handled either in the <code>Model Events</code> block or by providing a data frame that describes a dosing table that can be called into the <code>simulate</code> function as the argument <code>dosingTable</code>. Both approaches are discussed below using, as an example, the following model of a simple one compartment model.</p>
+<p><span class="math display">\[
+\frac{d}{dt}y = -\theta \cdot y
+\]</span></p>
+<div id="dosing-in-the-model-events-block" class="section level2">
+<h2><span class="header-section-number">4.1</span> Dosing in the Model Events Block</h2>
+<p>The model below defines dosing within the <code>Model Events</code> block for a simple one compartment model.</p>
 <pre><code>********** MODEL NAME
 
+Simple One Compartment Dosing Model
+
 ********** MODEL NOTES
+
+A simple one compartment dosing model where
+ten equally spaced doses are given to the subject.
 
 ********** MODEL STATES
 
-********** MODEL PARAMETERS
+d/dt(y) = -theta * y
 
-********** MODEL VARIABLES
-
-********** MODEL REACTIONS
-
-********** MODEL FUNCTIONS
-
-********** MODEL EVENTS</code></pre>
-<p>The remainder of this section deals with what can be declared within each block.</p>
-<div id="model-name-and-model-notes" class="section level2">
-<h2><span class="header-section-number">2.1</span> Model Name and Model Notes</h2>
-<p><code>MODEL NAME</code> and <code>MODEL NOTES</code> are descriptive blocks that allow the user to specify a model name and any notes about the model. The name of the model will be presented when an <code>azrmod</code> object is printed to the console.</p>
-<p>Below are the model name and model notes blocks for the simple harmonic oscillator example in the <strong>AZRsim</strong> package (<code>sho.txt</code>).</p>
-<pre><code>********** MODEL NAME
-
-Harmonic Oscillator
-
-********** MODEL NOTES
-
-Harmonic Oscillator ODE example.
-</code></pre>
-<p>This meta data can be extracted from an <code>azrmod</code> object.</p>
-</div>
-<div id="model-states" class="section level2">
-<h2><span class="header-section-number">2.2</span> Model States</h2>
-<p>The <code>MODEL STATES</code> block is where the user describes the system of differential equations followed by the initial conditions for each variable. The left hand side of each differential equation <em>must</em> be declared as <code>d/dt(x)</code> where <code>x</code> is a variable name chosen by the user.</p>
-<p>The initial conditions <em>must</em> be defined, and they <em>must</em> be defined after the system of differential equations is defined. If variable <code>x</code> in the preceding paragraph had an initial condition value of 3 then we can declare <code>x(0) = 3</code> after defining the system of differential equations.</p>
-</div>
-<div id="model-parameters" class="section level2">
-<h2><span class="header-section-number">2.3</span> Model Parameters</h2>
-<p>The <code>MODEL PARAMETERS</code> block is where the user defines the values of the parameters in the system of differential equations defined in <code>MODEL STATES</code>.</p>
-</div>
-<div id="model-variables" class="section level2">
-<h2><span class="header-section-number">2.4</span> Model Variables</h2>
-<p>The <code>MODEL VARIABLES</code> block provides a way to reparametrize parts of the model. Variables for intermediate calculations should be defined under <code>MODEL VARIABLES</code>.</p>
-<pre><code>********** MODEL STATES
-
-d/dt(A) = -R
-d/dt(B) = R
-A(0) = 1
-B(0) = 0
+y(0) = 0
 
 ********** MODEL PARAMETERS
 
-k1 = 0.5
-
-********** MODEL VARIABLES
-
-R = k1*A
-</code></pre>
-</div>
-<div id="model-reactions" class="section level2">
-<h2><span class="header-section-number">2.5</span> Model Reactions</h2>
-<p>The <code>MODEL REACTIONS</code> block provides a way to reparametrize parts of the model. Reaction rates should be defined in the <code>MODEL REACTIONS</code> block.</p>
-<pre><code>********** MODEL STATES
-
-d/dt(A) = -R
-d/dt(B) = R
-A(0) = 1
-B(0) = 0
-
-********** MODEL PARAMETERS
-
-k1 = 0.5
-
-********** MODEL REACTIONS
-
-R = k1*A
-</code></pre>
-</div>
-<div id="model-functions" class="section level2">
-<h2><span class="header-section-number">2.6</span> Model Functions</h2>
-<p>The <code>MODEL FUNCTIONS</code> block can be used to define reoccuring calculations.</p>
-<p>As an example, the <code>sho_func.txt</code> example model in the <strong>AZRsim</strong> package applies the function <span class="math inline">\(f(x) = \frac{x}{100}\)</span> to the variable <span class="math inline">\(y_2\)</span> in <span class="math inline">\(\frac{d}{dt}y_2\)</span> equation in the system.</p>
-<pre><code>********** MODEL NAME
-
-Simple Harmonic Oscillator
-
-********** MODEL NOTES
-
-Simple Harmonic Oscillator ODE example.
-
-********** MODEL STATES
-
-% ODE system
-d/dt(y1) = y2
-d/dt(y2) = - y1 - theta * f(y2)
-
-% initial conditions
-y1(0) = 1
-y2(0) = 0
-
-********** MODEL PARAMETERS
-
-theta = 0.15
+theta = 0.6
 
 ********** MODEL VARIABLES
 ********** MODEL REACTIONS
 ********** MODEL FUNCTIONS
+********** MODEL EVENTS
 
-f(x) = x * 0.01
-
-********** MODEL EVENTS</code></pre>
-</div>
-<div id="model-events" class="section level2">
-<h2><span class="header-section-number">2.7</span> Model Events</h2>
-<p>The <code>MODEL EVENTS</code> block can be used to define discrete state events. Note that the declaration of events is not vectorized.</p>
-<p>There are essentially two parts to defining a discrete event in the model:</p>
-<ol style="list-style-type: decimal">
-<li>When does the event take place?</li>
-<li>What is the event?</li>
-</ol>
-<p>Below is an example of a event block.</p>
-<pre><code>********* MODEL EVENTS
-
+% adding 40 units at a specified time step
 event1 = eq(time, 1), y, y+40
 event2 = eq(time, 2), y, y+40
-</code></pre>
-<p>The term <code>eq(time, 1)</code> pertains to (1). This says that the event occurs when the time step is strictly equal to 1. The term <code>y, y+40</code> pertains to (2). This is the event that is to take place. In this case the event involves variable <code>y</code> and we want to add 40 units of the drug this variable, <code>y+40</code>. (Note that events cannot take place at time 0.) In summary, the above block defines adding 40 to the value of <code>y</code> at time steps 1 and 2.</p>
-<p>We can issue multiple events. The event defined below specifies resetting the value of <code>x</code> to 1 and <code>y</code> to 0 when <code>x</code> is equal to 0.1.</p>
-<pre><code>********* MODEL EVENTS
+event3 = eq(time, 3), y, y+40
+event4 = eq(time, 4), y, y+40
+event5 = eq(time, 5), y, y+40
+event6 = eq(time, 6), y, y+40
+event7 = eq(time, 7), y, y+40
+event8 = eq(time, 8), y, y+40
+event9 = eq(time, 9), y, y+40</code></pre>
+<p>Below we compile the model, simulate, and plot the variable.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">one_cpt &lt;-<span class="st"> </span><span class="kw">create_model</span>(<span class="kw">system.file</span>(<span class="st">&quot;examples/one_cpt.txt&quot;</span>, <span class="dt">package=</span><span class="st">&quot;AZRsim&quot;</span>))</code></pre></div>
+<pre><code>## Warning in check_azrmod(model): check_azrmod: AZRmodel contains state names
+## with a single character name. Try to avoid that if you plan to use NONMEM
+## or MONOLIX</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">one_cpt_simulation &lt;-<span class="st"> </span><span class="kw">simulate</span>(one_cpt, <span class="dt">simtime =</span> <span class="dv">10</span>)
+<span class="kw">plot</span>(one_cpt_simulation, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>, <span class="dt">plot_names =</span> <span class="st">&quot;blood&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="dosing-with-a-dosing-table" class="section level2">
+<h2><span class="header-section-number">4.2</span> Dosing with a Dosing Table</h2>
+<p>The model below defines an analogous dosing regimen using the <code>INPUT*</code> variable in the system of differential equations for the same model. Note that <code>INPUT*</code> must be applied to the relevant variables in the <code>Model States</code> block. In this context a dose (the units of which will be defined in the dosing table) is added to the variable <code>y</code> at specific time intervals (also defined in the dosing table).</p>
+<pre><code>********** MODEL NAME
 
-event = eq(x, 0.1), x, 1, y, 0
-</code></pre>
-<p>Below is a summary of the options that can be used to declare when an event takes place.</p>
+Simple One Compartment Dosing Model
+
+********** MODEL NOTES
+
+A simple one compartment dosing model where
+the doses must be defined as a data frame in
+the &#39;dosingTable&#39; argument of the simulate
+function.
+
+********** MODEL STATES
+
+d/dt(y) = -theta * y + INPUT1
+
+y(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.6
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+********** MODEL EVENTS</code></pre>
+<p>Below we construct a dosing table, compile the model, simulate, and plot the variable. The dosing table must be a data frame with the following columns,</p>
 <ul>
-<li><code>eq(a, 0)</code> implies variable a is strictly equal to 0.</li>
-<li><code>lq(a, 0)</code> implies variable a is less than or equal to 0.</li>
-<li><code>gq(a, 0)</code> implies variable a is greater than or equal to 0.</li>
-<li><code>lt(a, 0)</code> implies variable a is strictly less than 0.</li>
-<li><code>gt(a, 0)</code> implies variable a is strictly greater than 0.</li>
+<li><code>TIME</code> - the time at which the does occurs.</li>
+<li><code>DOSE</code> - the units of the dose.</li>
+<li><code>DURATION</code> - how long the dose is administered.</li>
+<li><code>INPUT</code> - which input variable the dose is associated with.</li>
+<li><code>LAGTIME</code> - the lag time associated with each dose.</li>
 </ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">one_cpt_dt &lt;-<span class="st"> </span><span class="kw">create_model</span>(<span class="kw">system.file</span>(<span class="st">&quot;examples/one_cpt_dt.txt&quot;</span>, <span class="dt">package=</span><span class="st">&quot;AZRsim&quot;</span>))</code></pre></div>
+<pre><code>## Warning in check_azrmod(model): check_azrmod: AZRmodel contains state names
+## with a single character name. Try to avoid that if you plan to use NONMEM
+## or MONOLIX</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dt &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="st">&quot;TIME&quot;</span> =<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">9</span>, <span class="dt">by =</span> <span class="dv">1</span>),
+                 <span class="st">&quot;DOSE&quot;</span> =<span class="st"> </span><span class="dv">40</span>,
+                 <span class="st">&quot;DURATION&quot;</span> =<span class="st"> </span><span class="dv">0</span>,
+                 <span class="st">&quot;INPUT&quot;</span> =<span class="st"> </span><span class="dv">1</span>,
+                 <span class="st">&quot;LAGTIME&quot;</span> =<span class="st"> </span><span class="dv">0</span>,
+                 <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
+one_cpt_dt_simulation &lt;-<span class="st"> </span><span class="kw">simulate</span>(one_cpt_dt, <span class="dv">10</span>, <span class="dt">dosingTable =</span> dt)
+<span class="kw">plot</span>(one_cpt_dt_simulation, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>, <span class="dt">pars =</span> <span class="st">&quot;y&quot;</span>, <span class="dt">plot_names =</span> <span class="st">&quot;blood&quot;</span>)</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="outputs" class="section level2">
+<h2><span class="header-section-number">4.3</span> Outputs</h2>
+<p>It is also possible to defined outputs from using <code>OUTPUT*</code> in the model. An example is provided below where the output is half of the state variable.</p>
+<pre><code>********** MODEL NAME
+
+Simple One Compartment Dosing Model
+
+********** MODEL NOTES
+
+A simple one compartment dosing model where
+the doses must be defined as a data frame in
+the &#39;dosingTable&#39; argument of the simulate
+function.
+
+********** MODEL STATES
+
+d/dt(y) = -theta * y + INPUT1
+
+y(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.6
+
+********** MODEL VARIABLES
+
+y_new = y/2
+OUTPUT1 = y_new
+
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+********** MODEL EVENTS</code></pre>
+<p>Below we compile the model, simulate the state variables, and plot the results.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">one_cpt_out &lt;-<span class="st"> </span><span class="kw">create_model</span>(<span class="kw">system.file</span>(<span class="st">&quot;examples/one_cpt_output.txt&quot;</span>, <span class="dt">package=</span><span class="st">&quot;AZRsim&quot;</span>))</code></pre></div>
+<pre><code>## Warning in check_azrmod(model): check_azrmod: AZRmodel contains state names
+## with a single character name. Try to avoid that if you plan to use NONMEM
+## or MONOLIX</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dt &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="st">&quot;TIME&quot;</span> =<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">9</span>, <span class="dt">by =</span> <span class="dv">1</span>),
+                 <span class="st">&quot;DOSE&quot;</span> =<span class="st"> </span><span class="dv">40</span>,
+                 <span class="st">&quot;DURATION&quot;</span> =<span class="st"> </span><span class="dv">0</span>,
+                 <span class="st">&quot;INPUT&quot;</span> =<span class="st"> </span><span class="dv">1</span>,
+                 <span class="st">&quot;LAGTIME&quot;</span> =<span class="st"> </span><span class="dv">0</span>,
+                 <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
+one_cpt_out_simulation &lt;-<span class="st"> </span><span class="kw">simulate</span>(one_cpt_out, <span class="dv">10</span>, <span class="dt">dosingTable =</span> dt, <span class="dt">output =</span> <span class="kw">c</span>(<span class="st">&quot;y&quot;</span>, <span class="st">&quot;OUTPUT1&quot;</span>))
+<span class="kw">plot</span>(one_cpt_out_simulation, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>, <span class="dt">plot_names =</span> <span class="kw">c</span>(<span class="st">&quot;blood (y)&quot;</span>, <span class="st">&quot;blood (y/2)&quot;</span>))</code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 
 </div>
 </div>
@@ -292,8 +298,8 @@ event = eq(x, 0.1), x, 1, y, 0
           </div>
         </div>
       </div>
-<a href="installation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="modeling-functions.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="modeling-functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="examples.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

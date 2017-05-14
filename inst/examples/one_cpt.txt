@@ -1,0 +1,34 @@
+********** MODEL NAME
+
+Simple One Compartment Dosing Model
+
+********** MODEL NOTES
+
+A simple one compartment dosing model where
+ten equally spaced doses are given to the subject.
+
+********** MODEL STATES
+
+d/dt(y) = -theta * y
+
+y(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.6
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+********** MODEL EVENTS
+
+% adding 40 units at a specified time step
+event1 = eq(time, 1), y, y+40
+event2 = eq(time, 2), y, y+40
+event3 = eq(time, 3), y, y+40
+event4 = eq(time, 4), y, y+40
+event5 = eq(time, 5), y, y+40
+event6 = eq(time, 6), y, y+40
+event7 = eq(time, 7), y, y+40
+event8 = eq(time, 8), y, y+40
+event9 = eq(time, 9), y, y+40

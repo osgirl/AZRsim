@@ -1,0 +1,73 @@
+# Dosing
+
+Dosing can be handled either in the `Model Events` block or by providing a data frame that describes a dosing table that can be called into the `simulate` function as the argument `dosingTable`. Both approaches are discussed below using, as an example, the following model of a simple one compartment model.
+
+$$
+\frac{d}{dt}y = -\theta \cdot y
+$$
+
+## Dosing in the Model Events Block
+
+The model below defines dosing within the `Model Events` block for a simple one compartment model.
+
+```{r echo=FALSE, comment=''}
+cat(readLines(system.file("examples/one_cpt.txt", package="AZRsim")), sep = '\n')
+```
+
+Below we compile the model, simulate, and plot the variable.
+
+```{r include=TRUE}
+one_cpt <- create_model(system.file("examples/one_cpt.txt", package="AZRsim"))
+one_cpt_simulation <- simulate(one_cpt, simtime = 10)
+plot(one_cpt_simulation, col = "#808080", lwd = 3, plot_names = "blood")
+```
+
+## Dosing with a Dosing Table
+
+The model below defines an analogous dosing regimen using the `INPUT*` variable in the system of differential equations for the same model. Note that `INPUT*` must be applied to the relevant variables in the `Model States` block. In this context a dose (the units of which will be defined in the dosing table) is added to the variable `y` at specific time intervals (also defined in the dosing table).
+
+```{r echo=FALSE, comment=''}
+cat(readLines(system.file("examples/one_cpt_dt.txt", package="AZRsim")), sep = '\n')
+```
+
+Below we construct a dosing table, compile the model, simulate, and plot the variable. The dosing table must be a data frame with the following columns,
+
+* `TIME` - the time at which the does occurs.
+* `DOSE` - the units of the dose.
+* `DURATION` - how long the dose is administered.
+* `INPUT` - which input variable the dose is associated with.
+* `LAGTIME` - the lag time associated with each dose.
+
+```{r, include=TRUE}
+one_cpt_dt <- create_model(system.file("examples/one_cpt_dt.txt", package="AZRsim"))
+dt <- data.frame("TIME" = seq(1,9, by = 1),
+                 "DOSE" = 40,
+                 "DURATION" = 0,
+                 "INPUT" = 1,
+                 "LAGTIME" = 0,
+                 stringsAsFactors = FALSE)
+one_cpt_dt_simulation <- simulate(one_cpt_dt, 10, dosingTable = dt)
+plot(one_cpt_dt_simulation, col = "#808080", lwd = 3, pars = "y", plot_names = "blood")
+```
+
+## Outputs
+
+It is also possible to defined outputs from using `OUTPUT*` in the model. An example is provided below where the output is half of the state variable.
+
+```{r echo=FALSE, comment=''}
+cat(readLines(system.file("examples/one_cpt_output.txt", package="AZRsim")), sep = '\n')
+```
+
+Below we compile the model, simulate the state variables, and plot the results.
+
+```{r, include=TRUE}
+one_cpt_out <- create_model(system.file("examples/one_cpt_output.txt", package="AZRsim"))
+dt <- data.frame("TIME" = seq(1,9, by = 1),
+                 "DOSE" = 40,
+                 "DURATION" = 0,
+                 "INPUT" = 1,
+                 "LAGTIME" = 0,
+                 stringsAsFactors = FALSE)
+one_cpt_out_simulation <- simulate(one_cpt_out, 10, dosingTable = dt, output = c("y", "OUTPUT1"))
+plot(one_cpt_out_simulation, col = "#808080", lwd = 3, plot_names = c("blood (y)", "blood (y/2)"))
+```

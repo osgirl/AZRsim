@@ -1,0 +1,29 @@
+********** MODEL NAME
+
+Simple One Compartment Dosing Model
+
+********** MODEL NOTES
+
+A simple one compartment dosing model where
+the doses must be defined as a data frame in
+the 'dosingTable' argument of the simulate
+function.
+
+********** MODEL STATES
+
+d/dt(y) = -theta * y + INPUT1
+
+y(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.6
+
+********** MODEL VARIABLES
+
+y_new = y/2
+OUTPUT1 = y_new
+
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+********** MODEL EVENTS
