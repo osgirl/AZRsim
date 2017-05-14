@@ -43,8 +43,8 @@ position_and_sign <- function(.x, sign = "p") {
 #'     Ac = "ka*Ad + F22*input2 - CL*Ac/Vc")
 #' )
 get_chunk_signs <- function(.string) {
-  positives <- str_locate_all(.string, "\\+")
-  negatives <- str_locate_all(.string, "\\-")
+  positives <- stringr::str_locate_all(.string, "\\+")
+  negatives <- stringr::str_locate_all(.string, "\\-")
   purrr::map2(positives, negatives, function(.x, .y) {
     positives <- position_and_sign(.x)
     negatives <- position_and_sign(.y, sign = "n")
@@ -64,7 +64,7 @@ get_chunk_signs <- function(.string) {
 #' @examples
 #' recombine_parens(list(c(p = "ka*Ad", p = "(1", n = "F11)*input1")))
 recombine_parens <- function(.lv) {
-  map(.lv, function(.v){
+  purrr::map(.lv, function(.v){
     to_combine <- c()
     # find if any start with ( and eventually combine it with
     # the next block to to turn, for example,
@@ -75,7 +75,7 @@ recombine_parens <- function(.lv) {
       }
     }
     if (length(to_combine)) {
-      replacements <- map(to_combine, function(.c){
+      replacements <- purrr::map(to_combine, function(.c){
         indices <- .c:(.c+1)
         combination <- .v[indices]
         signs <- names(.v)[indices]
@@ -87,8 +87,8 @@ recombine_parens <- function(.lv) {
                              collapse = sign_symbol),
                      sign = signs[1])
       })
-      replacements <- purrr::set_names(map_chr(replacements, ~ .x$output),
-                               map_chr(replacements, ~ .x$sign))
+      replacements <- purrr::set_names(purrr::map_chr(replacements, ~ .x$output),
+                               purrr::map_chr(replacements, ~ .x$sign))
       .v <- .v[-c(to_combine, to_combine+1)]
       .v <- c(.v, replacements)
     }
