@@ -15,6 +15,6 @@ position_and_sign(.x, sign = "p")
 get the position and assign it a sign value from a str_locate_all output
 }
 \examples{
- positives <- str_locate_all('-ka*Ad+F11*input1', '\\\\+')
+ positives <- stringr::str_locate_all('-ka*Ad+F11*input1', '\\\\+')
  position_and_sign(positives)
 }
