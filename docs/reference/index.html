@@ -58,7 +58,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/IntiQuan/AZRtools">
+  <a href="https://github.com/AZQCP/AZRtools">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -88,11 +88,6 @@
         <li><code><a href="as_numeric.html">as_numeric</a></code></li>
       </ul>
       
-      <p><a href="AZRexportAZRmodel.html">Export of AZRmodel</a></p>
-      <ul>
-        <li><code><a href="AZRexportAZRmodel.html">AZRexportAZRmodel</a></code></li>
-      </ul>
-      
       <p><a href="AZRsimpop.html">Population simulation</a></p>
       <ul>
         <li><code><a href="AZRsimpop.html">AZRsimpop</a></code></li>
@@ -103,9 +98,24 @@
         <li><code><a href="AZRxdotcalc.html">AZRxdotcalc</a></code></li>
       </ul>
       
-      <p><a href="create_model.html">AZRmodel class</a></p>
+      <p><a href="chunk_ode.html">chunk an ode into parts split on +/- signs</a></p>
+      <ul>
+        <li><code><a href="chunk_ode.html">chunk_ode</a></code></li>
+      </ul>
+      
+      <p><a href="create_model.html">azrmod class</a></p>
       <ul>
         <li><code><a href="create_model.html">create_model</a></code></li>
+      </ul>
+      
+      <p><a href="diagram.html">create a diagram of the ODE system of a model</a></p>
+      <ul>
+        <li><code><a href="diagram.html">diagram</a></code></li>
+      </ul>
+      
+      <p><a href="export_azrmod.html">Export of AZRmodel</a></p>
+      <ul>
+        <li><code><a href="export_azrmod.html">export_azrmod</a></code></li>
       </ul>
       
       <p><a href="fclose.html">Closes a file</a></p>
@@ -128,9 +138,29 @@
         <li><code><a href="fwrite.html">fwrite</a></code></li>
       </ul>
       
-      <p><a href="is.AZRmodel.html">Check function if it is an AZRmodel</a></p>
+      <p><a href="generate_diagram_syntax.html">generate the digraph syntax from a model</a></p>
       <ul>
-        <li><code><a href="is.AZRmodel.html">is.AZRmodel</a></code></li>
+        <li><code><a href="generate_diagram_syntax.html">generate_diagram_syntax</a></code></li>
+      </ul>
+      
+      <p><a href="get_chunk_signs.html">determine the signs for each of the chunks in an ode</a></p>
+      <ul>
+        <li><code><a href="get_chunk_signs.html">get_chunk_signs</a></code></li>
+      </ul>
+      
+      <p><a href="get_cmpt_relationships.html">get compartment relationships</a></p>
+      <ul>
+        <li><code><a href="get_cmpt_relationships.html">get_cmpt_relationships</a></code></li>
+      </ul>
+      
+      <p><a href="get_inputs.html">determine the names of the inputs in the ode system of equations</a></p>
+      <ul>
+        <li><code><a href="get_inputs.html">get_inputs</a></code></li>
+      </ul>
+      
+      <p><a href="is_azrmod.html">Check function if it is an azrmod</a></p>
+      <ul>
+        <li><code><a href="is_azrmod.html">is_azrmod</a></code></li>
       </ul>
       
       <p><a href="isnumericVector.html">Checks if a vector consists of numeric entries</a></p>
@@ -143,9 +173,34 @@
         <li><code><a href="mkdirp.html">mkdirp</a></code></li>
       </ul>
       
-      <p><a href="print.AZRmodel.html">Generic print function for AZRmodels</a></p>
+      <p><a href="model_to_text.html">provide the textual representation of a model as a vector of lines</a></p>
       <ul>
-        <li><code><a href="print.AZRmodel.html">print.AZRmodel</a></code></li>
+        <li><code><a href="model_to_text.html">model_to_text</a></code></li>
+      </ul>
+      
+      <p><a href="plot.azrsim.html">Plot a simulated model</a></p>
+      <ul>
+        <li><code><a href="plot.azrsim.html">plot.azrsim</a></code></li>
+      </ul>
+      
+      <p><a href="position_and_sign.html">get the position and assign it a sign value from a str_locate_all output</a></p>
+      <ul>
+        <li><code><a href="position_and_sign.html">position_and_sign</a></code></li>
+      </ul>
+      
+      <p><a href="prepare_inputs.html">prepare inputs from the system of equations for diagrammer</a></p>
+      <ul>
+        <li><code><a href="prepare_inputs.html">prepare_inputs</a></code></li>
+      </ul>
+      
+      <p><a href="print.azrmod.html">Generic print function for AZRmodels</a></p>
+      <ul>
+        <li><code><a href="print.azrmod.html">print.azrmod</a></code></li>
+      </ul>
+      
+      <p><a href="recombine_parens.html">recombine equations in parens for one nested layer</a></p>
+      <ul>
+        <li><code><a href="recombine_parens.html">recombine_parens</a></code></li>
       </ul>
       
       <p><a href="rmdir.html">Removes a folder</a></p>
@@ -153,14 +208,19 @@
         <li><code><a href="rmdir.html">rmdir</a></code></li>
       </ul>
       
+      <p><a href="sep_values.html">light wrapper for collapse diagrammer separator requirements</a></p>
+      <ul>
+        <li><code><a href="sep_values.html">sep_values</a></code></li>
+      </ul>
+      
       <p><a href="shiny_plot.html">Use shiny to graphically represent the contents of a dataframe</a></p>
       <ul>
         <li><code><a href="shiny_plot.html">shiny_plot</a></code></li>
       </ul>
       
-      <p><a href="simulate.html">Simulate an AZRmodel</a></p>
+      <p><a href="simulate.azrmod.html">Simulate an AZRmodel</a></p>
       <ul>
-        <li><code><a href="simulate.html">simulate</a></code></li>
+        <li><code><a href="simulate.azrmod.html">simulate.azrmod</a></code></li>
       </ul>
       
       <p><a href="strexplode.html">Splits a string based on a separator substring</a></p>
@@ -196,6 +256,16 @@
       <p><a href="strtrimM.html">Truncates strings by removing leading and trailing white spaces</a></p>
       <ul>
         <li><code><a href="strtrimM.html">strtrimM</a></code></li>
+      </ul>
+      
+      <p><a href="text_to_model.html">convert vector of strings to a model object</a></p>
+      <ul>
+        <li><code><a href="text_to_model.html">text_to_model</a></code></li>
+      </ul>
+      
+      <p><a href="write_model.html">export model to a file</a></p>
+      <ul>
+        <li><code><a href="write_model.html">write_model</a></code></li>
       </ul>
     
     </div>
