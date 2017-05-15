@@ -1,4 +1,7 @@
-
+#' get compartment relationships
+#' @param model_states states of of a model
+#' @importFrom stringr str_detect
+#' @importFrom purrr map map_chr set_names map_df map2_df
 get_cmpt_relationships <- function(model_states) {
   model_chunks <- chunk_ode(model_states)
 
