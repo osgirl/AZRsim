@@ -1,6 +1,6 @@
 #' determine the names of the inputs in the ode system of equations
 #' @param model_states vector of ode model states
-#' @example
+#' @examples
 #' get_inputs(c("-ka*Ad + F11*input1", "ka*Ad - Cl*Ac/V + F22*input2"))
 get_inputs <- function(model_states) {
   inputs <- unlist(stringr::str_extract_all(model_states, "input\\d+" ))
