@@ -1,5 +1,6 @@
 #' generate the digraph syntax from a model
 #' @param model azrmodel
+#' @importFrom purrr map
 #' @export
 generate_diagram_syntax <- function(model) {
   model_states <- AZRsim:::get_all_states(model)$stateODEs
