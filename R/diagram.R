@@ -1,5 +1,6 @@
 #' generate the digraph syntax from a model
 #' @param model azrmodel
+#' @export
 generate_diagram_syntax <- function(model) {
   model_states <- AZRsim:::get_all_states(model)$stateODEs
   cmpt_relations <- get_cmpt_relationships(model_states) %>%
@@ -35,7 +36,10 @@ generate_diagram_syntax <- function(model) {
   test_grviz
 }
 
-visualize <- function(model) {
+#' create a diagram of the ODE system of a model
+#' @param model azrmodel
+#' @export
+diagram <- function(model) {
   diagram <- generate_diagram_syntax(model)
   DiagrammeR::grViz(diagram)
 }
