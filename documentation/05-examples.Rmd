@@ -19,7 +19,7 @@ Compiling and simulating the model.
 
 ```{r, include=TRUE}
 sho_model <- create_model(system.file("examples/sho.txt", package="AZRsim"))
-sho_sim <- simulate(sho, seq(0, 100, by=0.1))
+sho_sim <- simulate(sho_model, seq(0, 100, by=0.1))
 head(sho_sim)
 ```
 
