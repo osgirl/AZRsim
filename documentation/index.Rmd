@@ -1,11 +1,10 @@
 ---
-title: "AZRsim Documentation"
-author: "AstraZeneca"
+knit: "bookdown::render_book"
+title: "AZRtools documentation"
+author: ["Devin Pastoor", "Imad Mali"]
+description: "AZRtools documentation"
 site: bookdown::bookdown_site
 documentclass: book
-output:
-  bookdown::pdf_book: default
-  bookdown::gitbook: default
 ---
 
 # User Guide {-}
