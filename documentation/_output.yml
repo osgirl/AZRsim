@@ -1,0 +1,9 @@
+bookdown::gitbook:
+  config:
+    toc:
+      collapse: section
+    edit:
+      link: https://github.com/AZQCP/AZRsim/edit/master/%s
+      text: "Edit"
+    sharing: no
+  css: azrsim.css
