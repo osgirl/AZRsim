@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AZRtools documentation</title>
+  <meta name="description" content="AZRtools documentation">
+  <meta name="generator" content="bookdown 0.3.20 and GitBook 2.6.7">
+
+  <meta property="og:title" content="AZRtools documentation" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="AZRtools documentation" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="AZRtools documentation" />
+  
+  <meta name="twitter:description" content="AZRtools documentation" />
+  
+
+<meta name="author" content="Devin Pastoor">
+<meta name="author" content="Imad Mali">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="dosing.html">
+<link rel="next" href="azrnlme.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="azrsim.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>User Guide</a></li>
+<li class="chapter" data-level="1" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>1</b> Installation</a></li>
+<li class="chapter" data-level="2" data-path="model-specification.html"><a href="model-specification.html"><i class="fa fa-check"></i><b>2</b> Model Specification</a><ul>
+<li class="chapter" data-level="2.1" data-path="model-specification.html"><a href="model-specification.html#model-name-and-model-notes"><i class="fa fa-check"></i><b>2.1</b> Model Name and Model Notes</a></li>
+<li class="chapter" data-level="2.2" data-path="model-specification.html"><a href="model-specification.html#model-states"><i class="fa fa-check"></i><b>2.2</b> Model States</a></li>
+<li class="chapter" data-level="2.3" data-path="model-specification.html"><a href="model-specification.html#model-parameters"><i class="fa fa-check"></i><b>2.3</b> Model Parameters</a></li>
+<li class="chapter" data-level="2.4" data-path="model-specification.html"><a href="model-specification.html#model-variables"><i class="fa fa-check"></i><b>2.4</b> Model Variables</a></li>
+<li class="chapter" data-level="2.5" data-path="model-specification.html"><a href="model-specification.html#model-reactions"><i class="fa fa-check"></i><b>2.5</b> Model Reactions</a></li>
+<li class="chapter" data-level="2.6" data-path="model-specification.html"><a href="model-specification.html#model-functions"><i class="fa fa-check"></i><b>2.6</b> Model Functions</a></li>
+<li class="chapter" data-level="2.7" data-path="model-specification.html"><a href="model-specification.html#model-events"><i class="fa fa-check"></i><b>2.7</b> Model Events</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="modeling-functions.html"><a href="modeling-functions.html"><i class="fa fa-check"></i><b>3</b> Modeling Functions</a><ul>
+<li class="chapter" data-level="3.1" data-path="modeling-functions.html"><a href="modeling-functions.html#create_model"><i class="fa fa-check"></i><b>3.1</b> create_model</a></li>
+<li class="chapter" data-level="3.2" data-path="modeling-functions.html"><a href="modeling-functions.html#simulate"><i class="fa fa-check"></i><b>3.2</b> simulate</a></li>
+<li class="chapter" data-level="3.3" data-path="modeling-functions.html"><a href="modeling-functions.html#plot"><i class="fa fa-check"></i><b>3.3</b> plot</a></li>
+<li class="chapter" data-level="3.4" data-path="modeling-functions.html"><a href="modeling-functions.html#shiny_plot"><i class="fa fa-check"></i><b>3.4</b> shiny_plot</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="dosing.html"><a href="dosing.html"><i class="fa fa-check"></i><b>4</b> Dosing</a><ul>
+<li class="chapter" data-level="4.1" data-path="dosing.html"><a href="dosing.html#dosing-in-the-model-events-block"><i class="fa fa-check"></i><b>4.1</b> Dosing in the Model Events Block</a></li>
+<li class="chapter" data-level="4.2" data-path="dosing.html"><a href="dosing.html#dosing-with-a-dosing-table"><i class="fa fa-check"></i><b>4.2</b> Dosing with a Dosing Table</a></li>
+<li class="chapter" data-level="4.3" data-path="dosing.html"><a href="dosing.html#outputs"><i class="fa fa-check"></i><b>4.3</b> Outputs</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>5</b> Examples</a><ul>
+<li class="chapter" data-level="5.1" data-path="examples.html"><a href="examples.html#simple-harmonic-oscillator"><i class="fa fa-check"></i><b>5.1</b> Simple Harmonic Oscillator</a></li>
+<li class="chapter" data-level="5.2" data-path="examples.html"><a href="examples.html#two-compartment-model"><i class="fa fa-check"></i><b>5.2</b> Two Compartment Model</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="azrnlme.html"><a href="azrnlme.html"><i class="fa fa-check"></i><b>6</b> AZRnlme</a><ul>
+<li class="chapter" data-level="6.1" data-path="azrnlme.html"><a href="azrnlme.html#running-a-model"><i class="fa fa-check"></i><b>6.1</b> Running a model</a></li>
+<li class="chapter" data-level="6.2" data-path="azrnlme.html"><a href="azrnlme.html#dosing-1"><i class="fa fa-check"></i><b>6.2</b> dosing</a></li>
+<li class="chapter" data-level="6.3" data-path="azrnlme.html"><a href="azrnlme.html#project-path"><i class="fa fa-check"></i><b>6.3</b> project path</a></li>
+<li class="chapter" data-level="6.4" data-path="azrnlme.html"><a href="azrnlme.html#data"><i class="fa fa-check"></i><b>6.4</b> data</a></li>
+<li class="chapter" data-level="6.5" data-path="azrnlme.html"><a href="azrnlme.html#model-specification-1"><i class="fa fa-check"></i><b>6.5</b> model specification:</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="azrnlme.html"><a href="azrnlme.html#popvalues0-and-popestimate"><i class="fa fa-check"></i><b>6.5.1</b> <code>POPvalues0</code> and <code>POPestimate</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="azrnlme.html"><a href="azrnlme.html#iivdistribution"><i class="fa fa-check"></i><b>6.5.2</b> <code>IIVdistribution</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="azrnlme.html"><a href="azrnlme.html#iivvalues0-and-iivestimate"><i class="fa fa-check"></i><b>6.5.3</b> <code>IIVvalues0</code> and <code>IIVestimate</code></a></li>
+<li class="chapter" data-level="6.5.4" data-path="azrnlme.html"><a href="azrnlme.html#errormodel"><i class="fa fa-check"></i><b>6.5.4</b> <code>errorModel</code></a></li>
+<li class="chapter" data-level="6.5.5" data-path="azrnlme.html"><a href="azrnlme.html#covariancemodel"><i class="fa fa-check"></i><b>6.5.5</b> <code>covarianceModel</code></a></li>
+<li class="chapter" data-level="6.5.6" data-path="azrnlme.html"><a href="azrnlme.html#covariatemodel"><i class="fa fa-check"></i><b>6.5.6</b> <code>covariateModel</code></a></li>
+<li class="chapter" data-level="6.5.7" data-path="azrnlme.html"><a href="azrnlme.html#covariatemodelvalues"><i class="fa fa-check"></i><b>6.5.7</b> <code>covariateModelValues</code></a></li>
+<li class="chapter" data-level="6.5.8" data-path="azrnlme.html"><a href="azrnlme.html#covestimate"><i class="fa fa-check"></i><b>6.5.8</b> <code>COVestimate</code></a></li>
+<li class="chapter" data-level="6.5.9" data-path="azrnlme.html"><a href="azrnlme.html#covcentering"><i class="fa fa-check"></i><b>6.5.9</b> <code>COVcentering</code></a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="azrnlme.html"><a href="azrnlme.html#algorithm-spec"><i class="fa fa-check"></i><b>6.6</b> algorithm spec</a></li>
+<li class="chapter" data-level="6.7" data-path="azrnlme.html"><a href="azrnlme.html#additional-assumptions"><i class="fa fa-check"></i><b>6.7</b> Additional Assumptions</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">AZRtools documentation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="examples" class="section level1">
+<h1><span class="header-section-number">5</span> Examples</h1>
+<div id="simple-harmonic-oscillator" class="section level2">
+<h2><span class="header-section-number">5.1</span> Simple Harmonic Oscillator</h2>
+<p>The equations that govern a harmonic oscillator are the following,</p>
+<span class="math display">\[\begin{align*}
+\frac{d}{dt}y_1 &amp;= y_2 \\
+\frac{d}{dt}y_2 &amp;= - y_1-\theta \cdot y_2
+\end{align*}\]</span>
+<p>where <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span> are state variables and <span class="math inline">\(\theta\)</span> is a parameter in this model. The text file representation of the model is provided below.</p>
+<pre><code>********** MODEL NAME
+
+Harmonic Oscillator
+
+********** MODEL NOTES
+
+Harmonic Oscillator ODE example.
+
+********** MODEL STATES
+
+d/dt(y1) = y2
+d/dt(y2) = - y1 - theta * y2
+
+y1(0) = 1
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.15
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+********** MODEL EVENTS</code></pre>
+<p>Compiling and simulating the model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sho_model &lt;-<span class="st"> </span><span class="kw">create_model</span>(<span class="kw">system.file</span>(<span class="st">&quot;examples/sho.txt&quot;</span>, <span class="dt">package=</span><span class="st">&quot;AZRsim&quot;</span>))
+sho_sim &lt;-<span class="st"> </span><span class="kw">simulate</span>(sho_model, <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dt">by=</span><span class="fl">0.1</span>))
+<span class="co">#&gt; Warning: package &#39;bindrcpp&#39; was built under R version 3.3.3</span>
+<span class="kw">head</span>(sho_sim)
+<span class="co">#&gt;   TIME    y1      y2</span>
+<span class="co">#&gt; 1  0.0 1.000  0.0000</span>
+<span class="co">#&gt; 2  0.1 0.995 -0.0991</span>
+<span class="co">#&gt; 3  0.2 0.980 -0.1957</span>
+<span class="co">#&gt; 4  0.3 0.956 -0.2890</span>
+<span class="co">#&gt; 5  0.4 0.923 -0.3780</span>
+<span class="co">#&gt; 6  0.5 0.881 -0.4619</span></code></pre></div>
+<p>Plotting variables as a function of time.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(sho_sim, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>)</code></pre></div>
+<p><img src="05-examples_files/figure-html/unnamed-chunk-4-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Plotting the variables as a function of each other.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(sho_sim[,<span class="st">&quot;y1&quot;</span>], sho_sim[,<span class="st">&quot;y2&quot;</span>], <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">2</span>, <span class="dt">xlab =</span> <span class="st">&quot;y1&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;y2&quot;</span>)</code></pre></div>
+<p><img src="05-examples_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+<div id="two-compartment-model" class="section level2">
+<h2><span class="header-section-number">5.2</span> Two Compartment Model</h2>
+<p>Here we consider a simple two compartment model where, for example, we model the concentration of an oral drug in the intestines and in the blood. The ODE system takes the following form,</p>
+<span class="math display">\[\begin{align*}
+\frac{d}{dt}y_1 &amp;= -a \cdot y_1 + u_t \\
+\frac{d}{dt}y_2 &amp;= a \cdot y_1 - b \cdot y_2
+\end{align*}\]</span>
+<p>where <span class="math inline">\(y_1\)</span> denotes the concetration of the drug the intenstine, <span class="math inline">\(y_2\)</span> denotes the concentration of the drug in the blood, <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are parameters, and <span class="math inline">\(u_t\)</span> denotes the uptake of the drug at time period <span class="math inline">\(t\)</span>.</p>
+<p>The text file representation of the model above provided below.</p>
+<pre><code>********** MODEL NAME
+
+Simple Two Compartment Dosing Model
+
+********** MODEL NOTES
+
+A simple two compartment dosing model where
+ten equally spaced doses are given to the subject.
+
+********** MODEL STATES
+
+d/dt(y1) = -a * y1
+d/dt(y2) = a * y1 - b * y2
+
+y1(0) = 0
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+a = 6
+b = 0.6
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+********** MODEL EVENTS
+
+% adding 40 units at a specified time step
+event1 = eq(time, 1), y1, y1+2
+event2 = eq(time, 2), y1, y1+2
+event3 = eq(time, 3), y1, y1+2
+event4 = eq(time, 4), y1, y1+2
+event5 = eq(time, 5), y1, y1+2
+event6 = eq(time, 6), y1, y1+2
+event7 = eq(time, 7), y1, y1+2
+event8 = eq(time, 8), y1, y1+2
+event9 = eq(time, 9), y1, y1+2</code></pre>
+<p>Below the model is compiled and simulated and the 10 initial and final values are presented.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">two_cpt &lt;-<span class="st"> </span><span class="kw">create_model</span>(<span class="kw">system.file</span>(<span class="st">&quot;examples/two_cpt.txt&quot;</span>, <span class="dt">package=</span><span class="st">&quot;AZRsim&quot;</span>))
+<span class="co">#&gt; Warning in check_azrmod(model): check_azrmod: AZRmodel contains parameter</span>
+<span class="co">#&gt; names with a single character name. Try to avoid that if you plan to use</span>
+<span class="co">#&gt; NONMEM or MONOLIX</span>
+two_cpt_simulation &lt;-<span class="st"> </span><span class="kw">simulate</span>(two_cpt, <span class="dt">simtime =</span> <span class="dv">10</span>)
+<span class="kw">head</span>(two_cpt_simulation, <span class="dt">n =</span> <span class="dv">10</span>)
+<span class="co">#&gt;    TIME y1 y2</span>
+<span class="co">#&gt; 1  0.00  0  0</span>
+<span class="co">#&gt; 2  0.01  0  0</span>
+<span class="co">#&gt; 3  0.02  0  0</span>
+<span class="co">#&gt; 4  0.03  0  0</span>
+<span class="co">#&gt; 5  0.04  0  0</span>
+<span class="co">#&gt; 6  0.05  0  0</span>
+<span class="co">#&gt; 7  0.06  0  0</span>
+<span class="co">#&gt; 8  0.07  0  0</span>
+<span class="co">#&gt; 9  0.08  0  0</span>
+<span class="co">#&gt; 10 0.09  0  0</span>
+<span class="kw">tail</span>(two_cpt_simulation, <span class="dt">n =</span> <span class="dv">10</span>)
+<span class="co">#&gt;       TIME      y1   y2</span>
+<span class="co">#&gt; 992   9.91 0.00853 2.83</span>
+<span class="co">#&gt; 993   9.92 0.00803 2.81</span>
+<span class="co">#&gt; 994   9.93 0.00757 2.80</span>
+<span class="co">#&gt; 995   9.94 0.00713 2.78</span>
+<span class="co">#&gt; 996   9.95 0.00671 2.77</span>
+<span class="co">#&gt; 997   9.96 0.00632 2.75</span>
+<span class="co">#&gt; 998   9.97 0.00595 2.73</span>
+<span class="co">#&gt; 999   9.98 0.00561 2.72</span>
+<span class="co">#&gt; 1000  9.99 0.00528 2.70</span>
+<span class="co">#&gt; 1001 10.00 0.00497 2.69</span></code></pre></div>
+<p>Using the <code>plot</code> generic we can plot the simulation to visualize the concentration of the drug in both compartments over time.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(two_cpt_simulation, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>, <span class="dt">plot_names =</span> <span class="kw">c</span>(<span class="st">&quot;intestines&quot;</span>, <span class="st">&quot;blood&quot;</span>))</code></pre></div>
+<p><img src="05-examples_files/figure-html/unnamed-chunk-8-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>Below we simulate the model with a different parameter value for <span class="math inline">\(b\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">two_cpt_simulation2 &lt;-<span class="st"> </span><span class="kw">simulate</span>(two_cpt, <span class="dt">simtime =</span> <span class="dv">10</span>, <span class="dt">parameters =</span> <span class="kw">c</span>(<span class="st">&quot;a&quot;</span> =<span class="st"> </span><span class="dv">6</span>, <span class="st">&quot;b&quot;</span> =<span class="st"> </span><span class="dv">1</span>))
+<span class="kw">plot</span>(two_cpt_simulation2, <span class="dt">col =</span> <span class="st">&quot;#808080&quot;</span>, <span class="dt">lwd =</span> <span class="dv">3</span>, <span class="dt">plot_names =</span> <span class="kw">c</span>(<span class="st">&quot;intestines&quot;</span>, <span class="st">&quot;blood&quot;</span>))</code></pre></div>
+<p><img src="05-examples_files/figure-html/unnamed-chunk-9-1.png" width="1152" style="display: block; margin: auto;" /></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="dosing.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="azrnlme.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": false,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/AZQCP/AZRsim/edit/master/05-examples.Rmd",
+"text": "Edit"
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

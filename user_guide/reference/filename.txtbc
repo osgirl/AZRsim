@@ -1,0 +1,126 @@
+********** MODEL NAME
+
+Novak-Tyson Model
+
+********** MODEL NOTES
+
+Novak-Tyson cell cycle model, described in J. theor. Biol. (1998) 195, 69-85
+Used in IQRsim as an example model for quick model generation and testing.
+
+********** MODEL STATE INFORMATION
+
+ 
+Cyclin(0) = 0.0172
+YT(0) = 0.0116
+PYT(0) = 9e-04
+PYTP(0) = 0.0198
+MPF(0) = 0.073
+Cdc25P(0) = 0.95
+Wee1P(0) = 0.95
+IEP(0) = 0.242
+APCstar(0) = 0.3132
+ 
+********** MODEL PARAMETERS
+
+Ka = 0.1
+Kb = 1
+Kc = 0.01
+Kd = 1
+Ke = 0.1
+Kf = 1
+Kg = 0.01
+Kh = 0.01
+k1 = 0.01
+k3 = 0.5
+V2p = 0.005
+V2pp = 0.25
+V25p = 0.017
+V25pp = 0.17
+Vweep = 0.01
+Vweepp = 1
+kcak = 0.64
+kpp = 0.004
+kas = 2
+kbs = 0.1
+kcs = 0.13
+kds = 0.13
+kes = 2
+kfs = 0.1
+kgs = 2
+khs = 0.15
+ 
+********** MODEL VARIABLES
+
+k2 = V2p+APCstar*(V2pp-V2p)
+kwee = Vweepp+Wee1P*(Vweep-Vweepp)
+k25 = V25p+Cdc25P*(V25pp-V25p)
+ 
+********** MODEL REACTIONS
+
+ => Cyclin : R1
+	vf = k1
+
+Cyclin =>  : R2
+	vf = k2*Cyclin
+
+Cyclin => YT : R3
+	vf = k3*Cyclin
+
+MPF => YT : R4
+	vf = kpp*MPF
+
+YT => PYT : R5
+	vf = kwee*YT
+
+YT => MPF : R6
+	vf = kcak*YT
+
+YT =>  : R7
+	vf = k2*YT
+
+PYT => YT : R8
+	vf = k25*PYT
+
+PYT => PYTP : R9
+	vf = kcak*PYT
+
+PYT =>  : R10
+	vf = k2*PYT
+
+PYTP => PYT : R11
+	vf = kpp*PYTP
+
+MPF => PYTP : R12
+	vf = kwee*MPF
+
+PYTP => MPF : R13
+	vf = k25*PYTP
+
+PYTP =>  : R14
+	vf = k2*PYTP
+
+MPF =>  : R15
+	vf = k2*MPF
+
+ <=> Cdc25P : R16
+	vf = kas*MPF*(1-Cdc25P)/(1+Ka-Cdc25P)
+	vr = kbs*Cdc25P/(Kb+Cdc25P)
+
+ <=> Wee1P : R17
+	vf = kes*MPF*(1-Wee1P)/(1+Ke-Wee1P)
+	vr = kfs*Wee1P/(Kf+Wee1P)
+
+ <=> IEP : R18
+	vf = kgs*MPF*(1-IEP)/(1+Kg-IEP)
+	vr = khs*IEP/(Kh+IEP)
+
+ <=> APCstar : R19
+	vf = kcs*IEP*(1-APCstar)/(1+Kc-APCstar)
+	vr = kds*APCstar/(Kd+APCstar)
+
+********** MODEL FUNCTIONS
+
+ 
+********** MODEL EVENTS
+
+ 
