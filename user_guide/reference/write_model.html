@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return evaluated RHS of AZRmodel ODEs — AZRxdotcalc â€¢ AZRsim</title>
+<title>export model to a file — write_model â€¢ AZRsim</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,52 +74,30 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Return evaluated RHS of AZRmodel ODEs</h1>
+    <h1>export model to a file</h1>
     </div>
 
     
-    <p>Calculates and returns the RHS of ODEs in an AZRmodel for given states,
-parameters, and time (needs to be scalar). Dosing tables not allowed.
-Useful to assess issues in a larger AZRmodel.</p>
+    <p>export model to a file</p>
     
 
-    <pre><span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>states</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre><span class='fu'>write_model</span>(<span class='no'>model</span>, <span class='no'>.file</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>model</dt>
-      <dd>An AZRmodel</dd>
-      <dt>time</dt>
-      <dd>Scalar time at which to evaluate the RHS</dd>
-      <dt>states</dt>
-      <dd>Names vector with state values at which to evaluate the ODE RHS
-Values for all states in the model need to be provided. If not provided
-then the initial conditions in the model will be used. If non-numeric then
-potential changes through parameter settings are taken into account.</dd>
-      <dt>parameters</dt>
-      <dd>A named parameter vector to be used for evaluation
-Named parameters need to be present in the model.</dd>
+      <dd>azrmodel object</dd>
+      <dt>.file</dt>
+      <dd>path to write</dd>
     </dl>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Vector with evaluated RHS of ODEs</p>
-    
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRmodel</span>(<span class='fu'>system.file</span>(<span class='st'>"examples/NovakTyson.txt"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"AZRsim"</span>))</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): could not find function &quot;AZRmodel&quot;</span></div><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>,<span class='fl'>400</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>,<span class='fl'>400</span>,<span class='kw'>parameters</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='kw'>k1</span><span class='kw'>=</span><span class='fl'>0.5</span>))</div><div class='output co'>#&gt; <span class='error'>Error in AZRxdotcalc(model, 400, parameters = c(k1 = 0.5)): AZRxdotcalc: provided parameter names contain names that are not present in the model</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+                </ul>
 
   </div>
 </div>

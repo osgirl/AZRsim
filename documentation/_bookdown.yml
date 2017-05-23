@@ -1,0 +1,13 @@
+new_session: yes
+
+rmd_files: [
+  "index.Rmd",
+  "01-installation.Rmd",
+  "02-blocks.Rmd",
+  "03-generics.Rmd",
+  "04-dosing.Rmd",
+  "05-examples.Rmd",
+  "06-azrnlme.Rmd"
+]
+output_dir: "../user_guide"
+before_chapter_script: "_common.R"

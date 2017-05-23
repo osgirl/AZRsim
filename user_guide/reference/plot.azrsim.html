@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return evaluated RHS of AZRmodel ODEs — AZRxdotcalc â€¢ AZRsim</title>
+<title>Plot a simulated model — plot.azrsim â€¢ AZRsim</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -74,42 +74,42 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Return evaluated RHS of AZRmodel ODEs</h1>
+    <h1>Plot a simulated model</h1>
     </div>
 
     
-    <p>Calculates and returns the RHS of ODEs in an AZRmodel for given states,
-parameters, and time (needs to be scalar). Dosing tables not allowed.
-Useful to assess issues in a larger AZRmodel.</p>
+    <p>Basic plotting functionality for an object of class <code>azrsim</code>, generated using
+the simulation function <code>AZRsim::simulate.azrmod()</code>.</p>
     
 
-    <pre><span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>states</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre><span class='co'># S3 method for azrsim</span>
+<span class='fu'>plot</span>(<span class='no'>object</span>, <span class='kw'>mfrow_val</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>plot_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
-      <dt>model</dt>
-      <dd>An AZRmodel</dd>
-      <dt>time</dt>
-      <dd>Scalar time at which to evaluate the RHS</dd>
-      <dt>states</dt>
-      <dd>Names vector with state values at which to evaluate the ODE RHS
-Values for all states in the model need to be provided. If not provided
-then the initial conditions in the model will be used. If non-numeric then
-potential changes through parameter settings are taken into account.</dd>
-      <dt>parameters</dt>
-      <dd>A named parameter vector to be used for evaluation
-Named parameters need to be present in the model.</dd>
+      <dt>object</dt>
+      <dd>An object of class <code>azrsim</code></dd>
+      <dt>mfrow_val</dt>
+      <dd>A vector of length two that describes the dimensions of the lattice plot
+(e.g. <code>mfrow = c(2,2)</code> will create a 2-by-2 grid of plots).</dd>
+      <dt>pars</dt>
+      <dd>A vector of parameter names to plot (as defined in the text file representation of the model).</dd>
+      <dt>plot_names</dt>
+      <dd>A vector of parameter names that will replace the title of each
+individual plot in the lattice.</dd>
+      <dt>...</dt>
+      <dd>Additional arguments to <code>plot()</code>.</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Vector with evaluated RHS of ODEs</p>
+    <p>A lattice plot of the variable simulations over time.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>model</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRmodel</span>(<span class='fu'>system.file</span>(<span class='st'>"examples/NovakTyson.txt"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"AZRsim"</span>))</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): could not find function &quot;AZRmodel&quot;</span></div><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>,<span class='fl'>400</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>AZRxdotcalc</span>(<span class='no'>model</span>,<span class='fl'>400</span>,<span class='kw'>parameters</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='kw'>k1</span><span class='kw'>=</span><span class='fl'>0.5</span>))</div><div class='output co'>#&gt; <span class='error'>Error in AZRxdotcalc(model, 400, parameters = c(k1 = 0.5)): AZRxdotcalc: provided parameter names contain names that are not present in the model</span></div></pre>
+    <pre class="examples"><div class='input'><span class='no'>sho</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='create_model.html'>create_model</a></span>(<span class='fu'>system.file</span>(<span class='st'>"examples/sho.txt"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"AZRsim"</span>))
+<span class='no'>sho_sim</span> <span class='kw'>&lt;-</span> <span class='fu'>simulate</span>(<span class='no'>sho</span>, <span class='fl'>100</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: package ‘bindrcpp’ was built under R version 3.3.3</span></div><div class='input'><span class='fu'>plot</span>(<span class='no'>sho_sim</span>, <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><img src='plot.azrsim-4.png' alt='' width='540' height='400' /></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
