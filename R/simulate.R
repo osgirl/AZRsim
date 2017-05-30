@@ -172,14 +172,14 @@ simulate.azrmod <- function (model,
   # Check and process dosingTable information - if undefined it remains undefined
   ##############################################################################
 
-  dosingTable <- checkProcessDosingTable(dosingTable)
+  dosingTable <- check_dosing_table(dosingTable)
 
   ##############################################################################
   # Handle simulation parameter values
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- get_all_parameters(model)$paramvalues
+  parametersDefault <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {

@@ -4,7 +4,7 @@
 ###############################################################################
 ###############################################################################
 
-checkProcessDosingTable <- function(dosingTable) {
+check_dosing_table <- function(dosingTable) {
 
   # Handle undefined dosingTable
   if (is.null(dosingTable)) return(NULL)
@@ -12,7 +12,7 @@ checkProcessDosingTable <- function(dosingTable) {
   # If dosing table contains ID this ID should be unique!
   if ("ID" %in% colnames(dosingTable)) {
     if (length(unique(dosingTable$ID))> 1)
-      stop("checkProcessDosingTable: dosingTable contains ID with non-unique entries. Plase check if you used the AZRsimulate instead of AZRsimpop function")
+      stop("check_dosing_table: dosingTable contains ID with non-unique entries. Plase check if you used the AZRsimulate instead of AZRsimpop function")
   }
 
   # Check if minimum required columns present
@@ -66,7 +66,7 @@ checkProcessDosingTable <- function(dosingTable) {
       dosingTableInputk$TEST_TIMING <- dosingTableInputk$TIME+dosingTableInputk$DURATION+dosingTableInputk$LAGTIME
       for (k in 1:(length(DoseTimes)-1)) {
         if (max(dplyr::filter(dosingTableInputk,TIME==DoseTimes[k])$TEST_TIMING) > DoseTimes[k+1])
-          stop("checkProcessDosingTable: dose administration of a dose happens after start of next dosing event")
+          stop("check_dosing_table: dose administration of a dose happens after start of next dosing event")
       }
     }
   }
