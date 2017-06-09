@@ -157,10 +157,10 @@ simulate.azrmod <- function (model,
     simtime <- 20
     # and 1.5x the max dosing time if a dosing_table is defined
     if (!is.null(dosing_table)) {
-      maxDoseTime <- max(dosing_table$TIME)
-      if (is.null(maxDoseTime)) stop("AZRsimulate: dosing_table provided without TIME column")
-      simtime <- maxDoseTime * 1.5
-      if (maxDoseTime==0) simtime <- 20
+      max_dose_time <- max(dosing_table$TIME)
+      if (is.null(max_dose_time)) stop("AZRsimulate: dosing_table provided without TIME column")
+      simtime <- max_dose_time * 1.5
+      if (max_dose_time==0) simtime <- 20
     }
   }
   # If simtime is a scalar then use 1001 equidistant time points for simulation
@@ -894,9 +894,9 @@ AZRsimpop <- function (model,
     simtime <- 20
     # and 1.5x the max dosing time if a dosing_table is defined
     if (!is.null(dosing_table)) {
-      maxDoseTime <- max(dosing_table$TIME)
-      if (is.null(maxDoseTime)) stop("AZRsimpop: dosing_table provided without TIME column")
-      simtime <- maxDoseTime * 1.5
+      max_dose_time <- max(dosing_table$TIME)
+      if (is.null(max_dose_time)) stop("AZRsimpop: dosing_table provided without TIME column")
+      simtime <- max_dose_time * 1.5
     }
   }
   # If simtime is a scalar then use 1001 equidistant time points for simulation
