@@ -465,7 +465,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
       }
 
       # Simulate piece
-      simresPiece <- .Call("cvodesAZRinterface",                       # Name of C-code CVODES interface function
+      simres_piece <- .Call("cvodesAZRinterface",                       # Name of C-code CVODES interface function
                            PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                            model_func_ptr,                      # Pointer to model function
                            as.integer(model_elements_nr),       # Integer vector with numbers of model elements
@@ -489,14 +489,14 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
       )
 
       # Get last state as next initial condition (time point of next dose)
-      ICsim <- unlist(simresPiece[nrow(simresPiece),2:(NRSTATES+1)])
+      ICsim <- unlist(simres_piece[nrow(simres_piece),2:(NRSTATES+1)])
       # Store simulation results
       # Previous piece contained as last entry the dose time and this piece contained as first entry the
       # same dose time. We keep the results from previous piece and remove the first from this piece.
       if (addFirst) {
-        simres_all <- rbind(simres_all,simresPiece[1:(nrow(simresPiece)),])
+        simres_all <- rbind(simres_all,simres_piece[1:(nrow(simres_piece)),])
       } else {
-        simres_all <- rbind(simres_all,simresPiece[2:(nrow(simresPiece)),])
+        simres_all <- rbind(simres_all,simres_piece[2:(nrow(simres_piece)),])
       }
 
       addFirst = FALSE
