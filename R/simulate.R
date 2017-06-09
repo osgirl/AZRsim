@@ -188,8 +188,8 @@ simulate.azrmod <- function (model,
   }
 
   # Determine simulation parameters based on default parameters and user requested parameters
-  parametersSim <- parameters_default
-  if (!is.null(parameters)) parametersSim[names(parameters)] <- parameters
+  parameters_sim <- parameters_default
+  if (!is.null(parameters)) parameters_sim[names(parameters)] <- parameters
 
   ##############################################################################
   # Handle simulation initial conditions
@@ -197,7 +197,7 @@ simulate.azrmod <- function (model,
 
   # Get default initial conditions, taking into account potentially non-numeric
   # initial conditions that might depend on parameters and varibles.
-  defaultIC <- calcNNic(model,parametersSim)
+  defaultIC <- calcNNic(model,parameters_sim)
 
   # If initial conditions are provided by the user then ensure that they are provided for ALL states
   # And bring them into the right order of states (IC needs to be a named vector)
@@ -247,7 +247,7 @@ simulate.azrmod <- function (model,
                        as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                        as.double(simtime),                  # Double vector with time points for simulation
                        as.double(ICsim),                    # Double vector with initial conditions
-                       as.double(parametersSim),            # Double vector with parameter values
+                       as.double(parameters_sim),            # Double vector with parameter values
                        as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                        as.double(opt_abstol),               # Double value for absolute tolerance
                        as.double(opt_reltol),               # Double value for relative tolerance
@@ -268,7 +268,7 @@ simulate.azrmod <- function (model,
                                              model_elements_nr,
                                              simtime,
                                              ICsim,
-                                             parametersSim,
+                                             parameters_sim,
                                              dosingTable,
                                              opt_method_stiff,
                                              opt_abstol,
@@ -342,7 +342,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                                         model_elements_nr,
                                         simtime,
                                         ICsim,
-                                        parametersSim,
+                                        parameters_sim,
                                         dosingTable,
                                         opt_method_stiff,
                                         opt_abstol,
@@ -387,7 +387,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                        as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                        as.double(simtime),                  # Double vector with time points for simulation
                        as.double(ICsim),                    # Double vector with initial conditions
-                       as.double(parametersSim),            # Double vector with parameter values
+                       as.double(parameters_sim),            # Double vector with parameter values
                        as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                        as.double(opt_abstol),               # Double value for absolute tolerance
                        as.double(opt_reltol),               # Double value for relative tolerance
@@ -417,7 +417,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                                 as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                                 as.double(simtimePreFirstDose),      # Double vector with time points for simulation
                                 as.double(ICsim),                    # Double vector with initial conditions
-                                as.double(parametersSim),            # Double vector with parameter values
+                                as.double(parameters_sim),            # Double vector with parameter values
                                 as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                                 as.double(opt_abstol),               # Double value for absolute tolerance
                                 as.double(opt_reltol),               # Double value for relative tolerance
@@ -455,10 +455,10 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
 
       # Need to generate an updated parameter vector with dosing information
       for (k2 in 1:nrow(doseInfo)) {
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
       }
 
       # Simulate piece
@@ -468,7 +468,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                            as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                            as.double(simtimePiece),             # Double vector with time points for simulation
                            as.double(ICsim),                    # Double vector with initial conditions
-                           as.double(parametersSim),            # Double vector with parameter values
+                           as.double(parameters_sim),            # Double vector with parameter values
                            as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                            as.double(opt_abstol),               # Double value for absolute tolerance
                            as.double(opt_reltol),               # Double value for relative tolerance
@@ -512,10 +512,10 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
 
     # Need to generate an updated parameter vector with dosing information
     for (k2 in 1:nrow(doseInfo)) {
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
     }
 
     # Simulate piece
@@ -525,7 +525,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                                  as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                                  as.double(simtimePostLastDose),      # Double vector with time points for simulation
                                  as.double(ICsim),                    # Double vector with initial conditions
-                                 as.double(parametersSim),            # Double vector with parameter values
+                                 as.double(parameters_sim),            # Double vector with parameter values
                                  as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                                  as.double(opt_abstol),               # Double value for absolute tolerance
                                  as.double(opt_reltol),               # Double value for relative tolerance
@@ -636,8 +636,8 @@ AZRxdotcalc <- function (model,
   }
 
   # Determine simulation parameters based on default parameters and user requested parameters
-  parametersSim <- parameters_default
-  if (!is.null(parameters)) parametersSim[names(parameters)] <- parameters
+  parameters_sim <- parameters_default
+  if (!is.null(parameters)) parameters_sim[names(parameters)] <- parameters
 
   ##############################################################################
   # Handle simulation initial conditions
@@ -645,7 +645,7 @@ AZRxdotcalc <- function (model,
 
   # Get default states for Xdot calculation, taking into account potentially non-numeric
   # initial conditions that might depend on parameters and varibles.
-  defaultStatesXdotCalc <- calcNNic(model,parametersSim)
+  defaultStatesXdotCalc <- calcNNic(model,parameters_sim)
 
   # If state values are provided by the user then ensure that they are provided for ALL states
   # And bring them into the right order of states (states needs to be a named vector)
@@ -692,7 +692,7 @@ AZRxdotcalc <- function (model,
                      as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                      as.double(time),                     # Double vector with time points for simulation
                      as.double(statesXdotCalc),           # Double vector with initial conditions
-                     as.double(parametersSim),            # Double vector with parameter values
+                     as.double(parameters_sim),            # Double vector with parameter values
                      as.integer(TRUE),                    # Integer flag (0: non-stiff, 1:stiff)
                      as.double(1.0e-6),                   # Double value for absolute tolerance
                      as.double(1.0e-6),                   # Double value for relative tolerance
@@ -722,7 +722,7 @@ AZRxdotcalc <- function (model,
 # parameter changes
 ##############################################################################
 
-calcNNic <- function(model,parametersSim) {
+calcNNic <- function(model,parameters_sim) {
 
   # Check if model contains non-numerical initial conditions ... if not just return the
   # numerical ones
@@ -730,7 +730,7 @@ calcNNic <- function(model,parametersSim) {
 
   # Model contains non-numerical initial conditions => evaluate them - taking into account
   # potential changes in the parameters
-  calcIC <- attr(model,"nnICsim")(parametersSim)
+  calcIC <- attr(model,"nnICsim")(parameters_sim)
 
   # Return result
   return(calcIC)
