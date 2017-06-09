@@ -377,10 +377,10 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   # Simulations need to be done from current TIME_DOSE_EFFECT_START to next TIME_DOSE_EFFECT_START ...
 
   # Get unique dosing start time points - can be empty if simulation time too short
-  dosingEffectStartTimes <- unique(dosing_table$TIME_DOSE_EFFECT_START)
+  dosing_effect_start_times <- unique(dosing_table$TIME_DOSE_EFFECT_START)
 
-  # If dosingEffectStartTimes empty then only do first piece in normal way
-  if (length(dosingEffectStartTimes)==0) {
+  # If dosing_effect_start_times empty then only do first piece in normal way
+  if (length(dosing_effect_start_times)==0) {
     simres_all <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
                        PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                        model_func_ptr,                      # Pointer to model function
@@ -407,7 +407,8 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   }
 
   # Create simulation time vector until and including first dose time
-  simtimePreFirstDose <- unique(c(simtime[simtime<dosingEffectStartTimes[1]],dosingEffectStartTimes[1]))
+  simtimePreFirstDose <- unique(c(simtime[simtime<dosing_effect_start_times[1]],
+                                  dosing_effect_start_times[1]))
 
   # Simulate until first dose
   if (length(simtimePreFirstDose)>1) {
@@ -444,14 +445,16 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   }
 
   # Simulate each dose if more than one dose
-  if (length(dosingEffectStartTimes) > 1) {
-    for (k in 1:(length(dosingEffectStartTimes)-1)) {
+  if (length(dosing_effect_start_times) > 1) {
+    for (k in 1:(length(dosing_effect_start_times)-1)) {
       # Create simulation time vector for piece
       # Add as first time point the time for dose and as last the time for next dose
-      simtimePiece <- unique(c(dosingEffectStartTimes[k],simtime[simtime>=dosingEffectStartTimes[k] & simtime<=dosingEffectStartTimes[k+1]],dosingEffectStartTimes[k+1]))
+      simtimePiece <- unique(c(dosing_effect_start_times[k],
+                               simtime[simtime>=dosing_effect_start_times[k] & simtime<=dosing_effect_start_times[k+1]],
+                               dosing_effect_start_times[k+1]))
 
       # Get dosing information for the dosing time
-      doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosingEffectStartTimes[k])
+      doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[k])
 
       # Need to generate an updated parameter vector with dosing information
       for (k2 in 1:nrow(doseInfo)) {
@@ -504,11 +507,12 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   # Only needed if more than More than 1 time points to simulate remain.
 
   # Create simulation time vector for time post last dose
-  simtimePostLastDose <- unique(c(dosingEffectStartTimes[length(dosingEffectStartTimes)],simtime[simtime>=dosingEffectStartTimes[length(dosingEffectStartTimes)]]))
+  simtimePostLastDose <- unique(c(dosing_effect_start_times[length(dosing_effect_start_times)],
+                                  simtime[simtime>=dosing_effect_start_times[length(dosing_effect_start_times)]]))
 
   if (length(simtimePostLastDose)>1) {
     # Get dosing information for the dosing time
-    doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosingEffectStartTimes[length(dosingEffectStartTimes)])
+    doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[length(dosing_effect_start_times)])
 
     # Need to generate an updated parameter vector with dosing information
     for (k2 in 1:nrow(doseInfo)) {
