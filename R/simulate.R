@@ -179,16 +179,16 @@ simulate.azrmod <- function (model,
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault <- get_all_parameters(model)$paramvalues
+  parameters_default <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
-    check <- setdiff(names(parameters),names(parametersDefault))
+    check <- setdiff(names(parameters),names(parameters_default))
     if (length(check) != 0) stop("AZRsimulate: provided parameter names contain names that are not present in the model")
   }
 
   # Determine simulation parameters based on default parameters and user requested parameters
-  parametersSim <- parametersDefault
+  parametersSim <- parameters_default
   if (!is.null(parameters)) parametersSim[names(parameters)] <- parameters
 
   ##############################################################################
@@ -627,16 +627,16 @@ AZRxdotcalc <- function (model,
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- get_all_parameters(model)$paramvalues
+  parameters_default        <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
-    check <- setdiff(names(parameters),names(parametersDefault))
+    check <- setdiff(names(parameters),names(parameters_default))
     if (length(check) != 0) stop("AZRxdotcalc: provided parameter names contain names that are not present in the model")
   }
 
   # Determine simulation parameters based on default parameters and user requested parameters
-  parametersSim <- parametersDefault
+  parametersSim <- parameters_default
   if (!is.null(parameters)) parametersSim[names(parameters)] <- parameters
 
   ##############################################################################
