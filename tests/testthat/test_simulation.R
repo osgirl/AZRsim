@@ -70,7 +70,7 @@ test_that("a dosing table in simulate.azrmod and an event data frame in deSolve 
                            "INPUT" = 1,
                            "LAGTIME" = 0,
                            stringsAsFactors = FALSE)
-          one_cpt_dt_simulation <- simulate(model, 10, dosingTable = dt)
+          one_cpt_dt_simulation <- simulate(model, 10, dosing_table = dt)
 
           one_cpt <- function(t, y, p) {
             with(as.list(c(y,p)), {

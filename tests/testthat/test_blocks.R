@@ -72,6 +72,6 @@ test_that("AZRsim dosing and deSolve events return the same dosing table simulat
                    "INPUT" = 1,
                    "LAGTIME" = 0,
                    stringsAsFactors = FALSE)
-  azr_one_cpt_dt <- simulate(model, seq(0, 10, by=0.01), dosingTable = dt, output = c("y"))
+  azr_one_cpt_dt <- simulate(model, seq(0, 10, by=0.01), dosing_table = dt, output = c("y"))
   expect_equal(azr_one_cpt_dt$y[-drop_obs], deSolve_one_cpt[-drop_obs,2], tolerance = 1e-3)
 })

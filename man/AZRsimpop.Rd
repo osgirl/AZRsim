@@ -5,7 +5,7 @@
 \title{Population simulation}
 \usage{
 AZRsimpop(model, simtime = NULL, icTable = NULL, parameterTable = NULL,
-  dosingTable = NULL, FLAGdosOut = FALSE, outputs = NULL,
+  dosing_table = NULL, FLAGdosOut = FALSE, outputs = NULL,
   FLAGaddParam = FALSE, FLAGaddIC = FALSE, ncores = 1,
   opt_method_stiff = TRUE, opt_abstol = 1e-06, opt_reltol = 1e-06,
   opt_minstep = 0, opt_maxstep = 0, opt_initstep = 0,
@@ -18,7 +18,7 @@ AZRsimpop(model, simtime = NULL, icTable = NULL, parameterTable = NULL,
 
 \item{simtime}{Simulation time vector. If scalar provided then 1001 simulation
 steps will be used. If not provided (NULL) seq(0,20,1000) will be used if
-no dosingTable provided. If not provided and a dosingTable is provided,
+no dosing_table provided. If not provided and a dosing_table is provided,
 seq(0,1.5x the max dosing time,1000) is used. For each individual the
 same simulation time vector will be used.}
 
@@ -46,10 +46,10 @@ conditions and dosing table numbers. Ordering of parameters for each subject
 needs to be as for ICs and dosing tables. The ID column in the dosing
 table is only used for defining individual subjects, not for ordering.}
 
-\item{dosingTable}{Can be NULL or a dataframe. If NULL, then no dosing is
+\item{dosing_table}{Can be NULL or a dataframe. If NULL, then no dosing is
 simulated. If a datafram is provided it can contain an ID column to
 define individual subjects dosings. If no ID column provided, same dosing
-used for all subjects. Each dosing is defined as the dosingTable in AZRsimulate.
+used for all subjects. Each dosing is defined as the dosing_table in AZRsimulate.
 If individual dosing tables are provided then the number of them needs
 to match potentially individual initial conditions and parameter numbers.
 Ordering of dosing tables for each subject needs to be as for ICs and
@@ -58,7 +58,7 @@ individual subjects, not for ordering.}
 
 \item{FLAGdosOut}{If TRUE then dosing table information will be added to the
 output variable. If FALSE then it will not be added. This flag only
-has effect if a dosingTable is given as input argument.}
+has effect if a dosing_table is given as input argument.}
 
 \item{outputs}{A vector with names of outputs to return from simulation.
 By default (NULL) all states, variables, reactions, are returned.}
