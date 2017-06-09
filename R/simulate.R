@@ -507,10 +507,10 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   # Only needed if more than More than 1 time points to simulate remain.
 
   # Create simulation time vector for time post last dose
-  simtimePostLastDose <- unique(c(dosing_effect_start_times[length(dosing_effect_start_times)],
+  simtime_post_last_dose <- unique(c(dosing_effect_start_times[length(dosing_effect_start_times)],
                                   simtime[simtime>=dosing_effect_start_times[length(dosing_effect_start_times)]]))
 
-  if (length(simtimePostLastDose)>1) {
+  if (length(simtime_post_last_dose)>1) {
     # Get dosing information for the dosing time
     doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[length(dosing_effect_start_times)])
 
@@ -523,11 +523,11 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
     }
 
     # Simulate piece
-    simresPostLastPiece <- .Call("cvodesAZRinterface",        # Name of C-code CVODES interface function
+    simres_post_last_piece <- .Call("cvodesAZRinterface",        # Name of C-code CVODES interface function
                                  PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                                  model_func_ptr,                      # Pointer to model function
                                  as.integer(model_elements_nr),       # Integer vector with numbers of model elements
-                                 as.double(simtimePostLastDose),      # Double vector with time points for simulation
+                                 as.double(simtime_post_last_dose),      # Double vector with time points for simulation
                                  as.double(ICsim),                    # Double vector with initial conditions
                                  as.double(parameters_sim),            # Double vector with parameter values
                                  as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
@@ -551,9 +551,9 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
     # same dose time. We keep the results from previous piece and remove the first from this piece.
 
     if (addFirst) {
-      simres_all <- rbind(simres_all,simresPostLastPiece[1:(nrow(simresPostLastPiece)),])
+      simres_all <- rbind(simres_all,simres_post_last_piece[1:(nrow(simres_post_last_piece)),])
     } else {
-      simres_all <- rbind(simres_all,simresPostLastPiece[2:(nrow(simresPostLastPiece)),])
+      simres_all <- rbind(simres_all,simres_post_last_piece[2:(nrow(simres_post_last_piece)),])
     }
 
   }
