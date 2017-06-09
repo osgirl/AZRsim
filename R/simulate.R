@@ -241,7 +241,7 @@ simulate.azrmod <- function (model,
   if (is.null(dosing_table)) {
     # Handle case where no dosing table is provided
     # Call cvodes integrator interface
-    simresALL <- .Call("cvodesAZRinterface",             # Name of C-code CVODES interface function
+    simres_all <- .Call("cvodesAZRinterface",             # Name of C-code CVODES interface function
                        PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                        model_func_ptr,                      # Pointer to model function
                        as.integer(model_elements_nr),       # Integer vector with numbers of model elements
@@ -264,7 +264,7 @@ simulate.azrmod <- function (model,
                        as.integer(verbose)                  # Integer flag for outputting additional diagnostic information
     )
   } else {
-    simresALL <- simulateAZRmodelDosingTable(model_func_ptr,
+    simres_all <- simulateAZRmodelDosingTable(model_func_ptr,
                                              model_elements_nr,
                                              simtime,
                                              ICsim,
@@ -290,13 +290,13 @@ simulate.azrmod <- function (model,
   ##############################################################################
 
   # Convert simulation output to dataframe
-  simresALL <- as.data.frame(simresALL)
+  simres_all <- as.data.frame(simres_all)
 
   # Update names
-  names(simresALL) <- c("TIME", get_all_states(model)$statenames, get_all_variables(model)$varnames,get_all_reactions(model)$reacnames)
+  names(simres_all) <- c("TIME", get_all_states(model)$statenames, get_all_variables(model)$varnames,get_all_reactions(model)$reacnames)
 
   # Keep only simtime elements
-  simresALL <- dplyr::filter(simresALL,TIME %in% simtime)
+  simres_all <- dplyr::filter(simres_all,TIME %in% simtime)
 
   #############################################################################
   # Handle outputs if defined
@@ -304,7 +304,7 @@ simulate.azrmod <- function (model,
 
   if (!is.null(outputs)) {
     # Keep only TIME and elements in outputs
-    simresALL <- simresALL[,c("TIME",outputs)]
+    simres_all <- simres_all[,c("TIME",outputs)]
   }
 
   #############################################################################
@@ -313,7 +313,7 @@ simulate.azrmod <- function (model,
   # On demand, integrate the dosing table into the simulation results
   # And remove added "inputn" variables
   if (FLAGdosOut && !is.null(dosing_table)) {
-    xe          <- simresALL
+    xe          <- simres_all
     xe$EVID     <- 0
     dte         <- dosing_table
     dte$EVID    <- 1
@@ -326,10 +326,10 @@ simulate.azrmod <- function (model,
         y[,paste("input",k,sep="")] <- NULL
       }
     }
-    simresALL    <- y
+    simres_all    <- y
   }
-  class(simresALL) <- c("azrsim", "data.frame")
-  return(simresALL)
+  class(simres_all) <- c("azrsim", "data.frame")
+  return(simres_all)
 }
 
 
@@ -362,8 +362,8 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   # Get number of states
   NRSTATES <- model_elements_nr[1]
 
-  # initialize simresALL
-  simresALL <- c()
+  # initialize simres_all
+  simres_all <- c()
 
   # Adjust dosing table to max TIME as in max simtime
   dosing_table <- dplyr::filter(dosing_table,dosing_table[,"TIME"]<=max(simtime))
@@ -381,7 +381,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
 
   # If dosingEffectStartTimes empty then only do first piece in normal way
   if (length(dosingEffectStartTimes)==0) {
-    simresALL <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
+    simres_all <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
                        PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                        model_func_ptr,                      # Pointer to model function
                        as.integer(model_elements_nr),       # Integer vector with numbers of model elements
@@ -403,7 +403,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                        as.integer(FALSE),                   # Integer value defining what to do: 0=do integration, 1=return RHS of ODE for given time[0], states, parameters
                        as.integer(verbose)                  # Integer flag for outputting additional diagnostic information
     )
-    return(simresALL)
+    return(simres_all)
   }
 
   # Create simulation time vector until and including first dose time
@@ -437,7 +437,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
     ICsim <- unlist(simresPreFirstDose[nrow(simresPreFirstDose),2:(NRSTATES+1)])
     # Store simulation results
     # Do not exclude last time point - which is the time of the next dose
-    simresALL <- rbind(simresALL,simresPreFirstDose[1:(nrow(simresPreFirstDose)),])
+    simres_all <- rbind(simres_all,simresPreFirstDose[1:(nrow(simresPreFirstDose)),])
     addFirst = FALSE
   } else {
     addFirst = TRUE
@@ -491,9 +491,9 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
       # Previous piece contained as last entry the dose time and this piece contained as first entry the
       # same dose time. We keep the results from previous piece and remove the first from this piece.
       if (addFirst) {
-        simresALL <- rbind(simresALL,simresPiece[1:(nrow(simresPiece)),])
+        simres_all <- rbind(simres_all,simresPiece[1:(nrow(simresPiece)),])
       } else {
-        simresALL <- rbind(simresALL,simresPiece[2:(nrow(simresPiece)),])
+        simres_all <- rbind(simres_all,simresPiece[2:(nrow(simresPiece)),])
       }
 
       addFirst = FALSE
@@ -547,14 +547,14 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
     # same dose time. We keep the results from previous piece and remove the first from this piece.
 
     if (addFirst) {
-      simresALL <- rbind(simresALL,simresPostLastPiece[1:(nrow(simresPostLastPiece)),])
+      simres_all <- rbind(simres_all,simresPostLastPiece[1:(nrow(simresPostLastPiece)),])
     } else {
-      simresALL <- rbind(simresALL,simresPostLastPiece[2:(nrow(simresPostLastPiece)),])
+      simres_all <- rbind(simres_all,simresPostLastPiece[2:(nrow(simresPostLastPiece)),])
     }
 
   }
 
-  return(simresALL)
+  return(simres_all)
 }
 
 
@@ -686,7 +686,7 @@ AZRxdotcalc <- function (model,
   # Call cvodes integrator interface
   ##############################################################################
 
-  simresALL <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
+  simres_all <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
                      PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                      model_func_ptr,                      # Pointer to model function
                      as.integer(model_elements_nr),       # Integer vector with numbers of model elements
@@ -710,10 +710,10 @@ AZRxdotcalc <- function (model,
   )
 
   # Update names
-  names(simresALL) <- c(get_all_states(model)$statenames)
+  names(simres_all) <- c(get_all_states(model)$statenames)
 
   # Return results
-  return(simresALL)
+  return(simres_all)
 }
 
 
