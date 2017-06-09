@@ -449,7 +449,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
     for (k in 1:(length(dosing_effect_start_times)-1)) {
       # Create simulation time vector for piece
       # Add as first time point the time for dose and as last the time for next dose
-      simtimePiece <- unique(c(dosing_effect_start_times[k],
+      simtime_piece <- unique(c(dosing_effect_start_times[k],
                                simtime[simtime>=dosing_effect_start_times[k] & simtime<=dosing_effect_start_times[k+1]],
                                dosing_effect_start_times[k+1]))
 
@@ -469,7 +469,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                            PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                            model_func_ptr,                      # Pointer to model function
                            as.integer(model_elements_nr),       # Integer vector with numbers of model elements
-                           as.double(simtimePiece),             # Double vector with time points for simulation
+                           as.double(simtime_piece),             # Double vector with time points for simulation
                            as.double(ICsim),                    # Double vector with initial conditions
                            as.double(parameters_sim),            # Double vector with parameter values
                            as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
