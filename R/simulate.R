@@ -16,7 +16,7 @@
 #'
 #' @param simtime Simulation time vector. If scalar provided then 1001 simulation
 #'        steps will be used. If not provided (20) seq(0,20,1000) will be used if
-#'        no dosingTable provided. If not provided and a dosingTable is provided,
+#'        no dosing_table provided. If not provided and a dosing_table is provided,
 #'        seq(0,1.5x the max dosing time,1000) is used.
 #'
 #' @param IC Named vector with numeric initial conditions for ALL states. If not
@@ -37,11 +37,11 @@
 #'        Otherwise an error message will appear during the import of a model from
 #'        text.
 #'
-#' @param dosingTable A dataframe defining a dosing table with the following columns:
+#' @param dosing_table A dataframe defining a dosing table with the following columns:
 #'        \code{TIME}, \code{INPUT}, \code{DOSE}, \code{DURATION}, and \code{LAGTIME}.
 #' @param FLAGdosOut If TRUE then dosing table information will be added to the
 #'        output variable. If FALSE then it will not be added. This flag only
-#'        has effect if a dosingTable is given as input argument.
+#'        has effect if a dosing_table is given as input argument.
 #'
 #' @param outputs A vector with names of outputs to return from simulation.
 #'        By default (NULL) all states, variables, reactions, are returned.
@@ -77,7 +77,7 @@
 #'                  "INPUT" = 1,
 #'                  "LAGTIME" = 0,
 #'                  stringsAsFactors = FALSE)
-#' one_cpt_sim <- simulate(one_cpt, seq(0, 10, by=0.01), dosingTable = dt, output = c("y"))
+#' one_cpt_sim <- simulate(one_cpt, seq(0, 10, by=0.01), dosing_table = dt, output = c("y"))
 #' plot(one_cpt_sim, lwd = 2, plot_names = "blood")
 #' @export
 
@@ -89,7 +89,7 @@ simulate.azrmod <- function (model,
                              # Parameter information
                              parameters            = NULL,
                              # Dosing / Event information
-                             dosingTable           = NULL,
+                             dosing_table           = NULL,
                              FLAGdosOut            = FALSE,
                              # Output definitions
                              outputs               = NULL,
@@ -155,12 +155,12 @@ simulate.azrmod <- function (model,
   if (is.null(simtime)) {
     # Use 20 time units as default simulation time if no dosing table is defined
     simtime <- 20
-    # and 1.5x the max dosing time if a dosingTable is defined
-    if (!is.null(dosingTable)) {
-      maxDoseTime <- max(dosingTable$TIME)
-      if (is.null(maxDoseTime)) stop("AZRsimulate: dosingTable provided without TIME column")
-      simtime <- maxDoseTime * 1.5
-      if (maxDoseTime==0) simtime <- 20
+    # and 1.5x the max dosing time if a dosing_table is defined
+    if (!is.null(dosing_table)) {
+      max_dose_time <- max(dosing_table$TIME)
+      if (is.null(max_dose_time)) stop("AZRsimulate: dosing_table provided without TIME column")
+      simtime <- max_dose_time * 1.5
+      if (max_dose_time==0) simtime <- 20
     }
   }
   # If simtime is a scalar then use 1001 equidistant time points for simulation
@@ -169,27 +169,27 @@ simulate.azrmod <- function (model,
   if (length(simtime) != length(unique(simtime))) stop("AZRsimulate: simtime vector does not contain unique elements")
 
   ##############################################################################
-  # Check and process dosingTable information - if undefined it remains undefined
+  # Check and process dosing_table information - if undefined it remains undefined
   ##############################################################################
 
-  dosingTable <- checkProcessDosingTable(dosingTable)
+  dosing_table <- check_dosing_table(dosing_table)
 
   ##############################################################################
   # Handle simulation parameter values
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- get_all_parameters(model)$paramvalues
+  parameters_default <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
-    check <- setdiff(names(parameters),names(parametersDefault))
+    check <- setdiff(names(parameters),names(parameters_default))
     if (length(check) != 0) stop("AZRsimulate: provided parameter names contain names that are not present in the model")
   }
 
   # Determine simulation parameters based on default parameters and user requested parameters
-  parametersSim <- parametersDefault
-  if (!is.null(parameters)) parametersSim[names(parameters)] <- parameters
+  parameters_sim <- parameters_default
+  if (!is.null(parameters)) parameters_sim[names(parameters)] <- parameters
 
   ##############################################################################
   # Handle simulation initial conditions
@@ -197,7 +197,7 @@ simulate.azrmod <- function (model,
 
   # Get default initial conditions, taking into account potentially non-numeric
   # initial conditions that might depend on parameters and varibles.
-  defaultIC <- calcNNic(model,parametersSim)
+  defaultIC <- calcNNic(model,parameters_sim)
 
   # If initial conditions are provided by the user then ensure that they are provided for ALL states
   # And bring them into the right order of states (IC needs to be a named vector)
@@ -235,19 +235,19 @@ simulate.azrmod <- function (model,
   model_func_ptr <- attr(model,"modelCfunAddress")
 
   ##############################################################################
-  # Call simulation functions - without or with dosingTable
+  # Call simulation functions - without or with dosing_table
   ##############################################################################
 
-  if (is.null(dosingTable)) {
+  if (is.null(dosing_table)) {
     # Handle case where no dosing table is provided
     # Call cvodes integrator interface
-    simresALL <- .Call("cvodesAZRinterface",             # Name of C-code CVODES interface function
+    simres_all <- .Call("cvodesAZRinterface",             # Name of C-code CVODES interface function
                        PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                        model_func_ptr,                      # Pointer to model function
                        as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                        as.double(simtime),                  # Double vector with time points for simulation
                        as.double(ICsim),                    # Double vector with initial conditions
-                       as.double(parametersSim),            # Double vector with parameter values
+                       as.double(parameters_sim),            # Double vector with parameter values
                        as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                        as.double(opt_abstol),               # Double value for absolute tolerance
                        as.double(opt_reltol),               # Double value for relative tolerance
@@ -264,12 +264,12 @@ simulate.azrmod <- function (model,
                        as.integer(verbose)                  # Integer flag for outputting additional diagnostic information
     )
   } else {
-    simresALL <- simulateAZRmodelDosingTable(model_func_ptr,
+    simres_all <- simulateAZRmodelDosingTable(model_func_ptr,
                                              model_elements_nr,
                                              simtime,
                                              ICsim,
-                                             parametersSim,
-                                             dosingTable,
+                                             parameters_sim,
+                                             dosing_table,
                                              opt_method_stiff,
                                              opt_abstol,
                                              opt_reltol,
@@ -290,13 +290,13 @@ simulate.azrmod <- function (model,
   ##############################################################################
 
   # Convert simulation output to dataframe
-  simresALL <- as.data.frame(simresALL)
+  simres_all <- as.data.frame(simres_all)
 
   # Update names
-  names(simresALL) <- c("TIME", get_all_states(model)$statenames, get_all_variables(model)$varnames,get_all_reactions(model)$reacnames)
+  names(simres_all) <- c("TIME", get_all_states(model)$statenames, get_all_variables(model)$varnames,get_all_reactions(model)$reacnames)
 
   # Keep only simtime elements
-  simresALL <- dplyr::filter(simresALL,TIME %in% simtime)
+  simres_all <- dplyr::filter(simres_all,TIME %in% simtime)
 
   #############################################################################
   # Handle outputs if defined
@@ -304,7 +304,7 @@ simulate.azrmod <- function (model,
 
   if (!is.null(outputs)) {
     # Keep only TIME and elements in outputs
-    simresALL <- simresALL[,c("TIME",outputs)]
+    simres_all <- simres_all[,c("TIME",outputs)]
   }
 
   #############################################################################
@@ -312,10 +312,10 @@ simulate.azrmod <- function (model,
   #############################################################################
   # On demand, integrate the dosing table into the simulation results
   # And remove added "inputn" variables
-  if (FLAGdosOut && !is.null(dosingTable)) {
-    xe          <- simresALL
+  if (FLAGdosOut && !is.null(dosing_table)) {
+    xe          <- simres_all
     xe$EVID     <- 0
-    dte         <- dosingTable
+    dte         <- dosing_table
     dte$EVID    <- 1
     y           <- dplyr::full_join(xe,dte,by=c("TIME","EVID"))
     y           <- dplyr::arrange(y,TIME)
@@ -326,10 +326,10 @@ simulate.azrmod <- function (model,
         y[,paste("input",k,sep="")] <- NULL
       }
     }
-    simresALL    <- y
+    simres_all    <- y
   }
-  class(simresALL) <- c("azrsim", "data.frame")
-  return(simresALL)
+  class(simres_all) <- c("azrsim", "data.frame")
+  return(simres_all)
 }
 
 
@@ -342,8 +342,8 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                                         model_elements_nr,
                                         simtime,
                                         ICsim,
-                                        parametersSim,
-                                        dosingTable,
+                                        parameters_sim,
+                                        dosing_table,
                                         opt_method_stiff,
                                         opt_abstol,
                                         opt_reltol,
@@ -362,32 +362,32 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   # Get number of states
   NRSTATES <- model_elements_nr[1]
 
-  # initialize simresALL
-  simresALL <- c()
+  # initialize simres_all
+  simres_all <- c()
 
   # Adjust dosing table to max TIME as in max simtime
-  dosingTable <- dplyr::filter(dosingTable,dosingTable[,"TIME"]<=max(simtime))
+  dosing_table <- dplyr::filter(dosing_table,dosing_table[,"TIME"]<=max(simtime))
 
   # Add information about actual dose administration start
-  dosingTable$TIME_DOSE_EFFECT_START <- dosingTable$TIME+dosingTable$LAGTIME
+  dosing_table$TIME_DOSE_EFFECT_START <- dosing_table$TIME+dosing_table$LAGTIME
 
   # Sort by start of dose effect
-  dosingTable <- dplyr::arrange(dosingTable,dosingTable[,"TIME_DOSE_EFFECT_START"])
+  dosing_table <- dplyr::arrange(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"])
 
   # Simulations need to be done from current TIME_DOSE_EFFECT_START to next TIME_DOSE_EFFECT_START ...
 
   # Get unique dosing start time points - can be empty if simulation time too short
-  dosingEffectStartTimes <- unique(dosingTable$TIME_DOSE_EFFECT_START)
+  dosing_effect_start_times <- unique(dosing_table$TIME_DOSE_EFFECT_START)
 
-  # If dosingEffectStartTimes empty then only do first piece in normal way
-  if (length(dosingEffectStartTimes)==0) {
-    simresALL <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
+  # If dosing_effect_start_times empty then only do first piece in normal way
+  if (length(dosing_effect_start_times)==0) {
+    simres_all <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
                        PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                        model_func_ptr,                      # Pointer to model function
                        as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                        as.double(simtime),                  # Double vector with time points for simulation
                        as.double(ICsim),                    # Double vector with initial conditions
-                       as.double(parametersSim),            # Double vector with parameter values
+                       as.double(parameters_sim),            # Double vector with parameter values
                        as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                        as.double(opt_abstol),               # Double value for absolute tolerance
                        as.double(opt_reltol),               # Double value for relative tolerance
@@ -403,11 +403,12 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                        as.integer(FALSE),                   # Integer value defining what to do: 0=do integration, 1=return RHS of ODE for given time[0], states, parameters
                        as.integer(verbose)                  # Integer flag for outputting additional diagnostic information
     )
-    return(simresALL)
+    return(simres_all)
   }
 
   # Create simulation time vector until and including first dose time
-  simtimePreFirstDose <- unique(c(simtime[simtime<dosingEffectStartTimes[1]],dosingEffectStartTimes[1]))
+  simtimePreFirstDose <- unique(c(simtime[simtime<dosing_effect_start_times[1]],
+                                  dosing_effect_start_times[1]))
 
   # Simulate until first dose
   if (length(simtimePreFirstDose)>1) {
@@ -417,7 +418,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                                 as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                                 as.double(simtimePreFirstDose),      # Double vector with time points for simulation
                                 as.double(ICsim),                    # Double vector with initial conditions
-                                as.double(parametersSim),            # Double vector with parameter values
+                                as.double(parameters_sim),            # Double vector with parameter values
                                 as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                                 as.double(opt_abstol),               # Double value for absolute tolerance
                                 as.double(opt_reltol),               # Double value for relative tolerance
@@ -437,38 +438,40 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
     ICsim <- unlist(simresPreFirstDose[nrow(simresPreFirstDose),2:(NRSTATES+1)])
     # Store simulation results
     # Do not exclude last time point - which is the time of the next dose
-    simresALL <- rbind(simresALL,simresPreFirstDose[1:(nrow(simresPreFirstDose)),])
+    simres_all <- rbind(simres_all,simresPreFirstDose[1:(nrow(simresPreFirstDose)),])
     addFirst = FALSE
   } else {
     addFirst = TRUE
   }
 
   # Simulate each dose if more than one dose
-  if (length(dosingEffectStartTimes) > 1) {
-    for (k in 1:(length(dosingEffectStartTimes)-1)) {
+  if (length(dosing_effect_start_times) > 1) {
+    for (k in 1:(length(dosing_effect_start_times)-1)) {
       # Create simulation time vector for piece
       # Add as first time point the time for dose and as last the time for next dose
-      simtimePiece <- unique(c(dosingEffectStartTimes[k],simtime[simtime>=dosingEffectStartTimes[k] & simtime<=dosingEffectStartTimes[k+1]],dosingEffectStartTimes[k+1]))
+      simtime_piece <- unique(c(dosing_effect_start_times[k],
+                               simtime[simtime>=dosing_effect_start_times[k] & simtime<=dosing_effect_start_times[k+1]],
+                               dosing_effect_start_times[k+1]))
 
       # Get dosing information for the dosing time
-      doseInfo <- dplyr::filter(dosingTable,dosingTable[,"TIME_DOSE_EFFECT_START"]==dosingEffectStartTimes[k])
+      doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[k])
 
       # Need to generate an updated parameter vector with dosing information
       for (k2 in 1:nrow(doseInfo)) {
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
-        parametersSim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
+        parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
       }
 
       # Simulate piece
-      simresPiece <- .Call("cvodesAZRinterface",                       # Name of C-code CVODES interface function
+      simres_piece <- .Call("cvodesAZRinterface",                       # Name of C-code CVODES interface function
                            PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                            model_func_ptr,                      # Pointer to model function
                            as.integer(model_elements_nr),       # Integer vector with numbers of model elements
-                           as.double(simtimePiece),             # Double vector with time points for simulation
+                           as.double(simtime_piece),             # Double vector with time points for simulation
                            as.double(ICsim),                    # Double vector with initial conditions
-                           as.double(parametersSim),            # Double vector with parameter values
+                           as.double(parameters_sim),            # Double vector with parameter values
                            as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                            as.double(opt_abstol),               # Double value for absolute tolerance
                            as.double(opt_reltol),               # Double value for relative tolerance
@@ -486,14 +489,14 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
       )
 
       # Get last state as next initial condition (time point of next dose)
-      ICsim <- unlist(simresPiece[nrow(simresPiece),2:(NRSTATES+1)])
+      ICsim <- unlist(simres_piece[nrow(simres_piece),2:(NRSTATES+1)])
       # Store simulation results
       # Previous piece contained as last entry the dose time and this piece contained as first entry the
       # same dose time. We keep the results from previous piece and remove the first from this piece.
       if (addFirst) {
-        simresALL <- rbind(simresALL,simresPiece[1:(nrow(simresPiece)),])
+        simres_all <- rbind(simres_all,simres_piece[1:(nrow(simres_piece)),])
       } else {
-        simresALL <- rbind(simresALL,simresPiece[2:(nrow(simresPiece)),])
+        simres_all <- rbind(simres_all,simres_piece[2:(nrow(simres_piece)),])
       }
 
       addFirst = FALSE
@@ -504,28 +507,29 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   # Only needed if more than More than 1 time points to simulate remain.
 
   # Create simulation time vector for time post last dose
-  simtimePostLastDose <- unique(c(dosingEffectStartTimes[length(dosingEffectStartTimes)],simtime[simtime>=dosingEffectStartTimes[length(dosingEffectStartTimes)]]))
+  simtime_post_last_dose <- unique(c(dosing_effect_start_times[length(dosing_effect_start_times)],
+                                  simtime[simtime>=dosing_effect_start_times[length(dosing_effect_start_times)]]))
 
-  if (length(simtimePostLastDose)>1) {
+  if (length(simtime_post_last_dose)>1) {
     # Get dosing information for the dosing time
-    doseInfo <- dplyr::filter(dosingTable,dosingTable[,"TIME_DOSE_EFFECT_START"]==dosingEffectStartTimes[length(dosingEffectStartTimes)])
+    doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[length(dosing_effect_start_times)])
 
     # Need to generate an updated parameter vector with dosing information
     for (k2 in 1:nrow(doseInfo)) {
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
-      parametersSim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"time",sep="")] <- doseInfo$TIME[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
+      parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
     }
 
     # Simulate piece
-    simresPostLastPiece <- .Call("cvodesAZRinterface",        # Name of C-code CVODES interface function
+    simres_post_last_piece <- .Call("cvodesAZRinterface",        # Name of C-code CVODES interface function
                                  PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                                  model_func_ptr,                      # Pointer to model function
                                  as.integer(model_elements_nr),       # Integer vector with numbers of model elements
-                                 as.double(simtimePostLastDose),      # Double vector with time points for simulation
+                                 as.double(simtime_post_last_dose),      # Double vector with time points for simulation
                                  as.double(ICsim),                    # Double vector with initial conditions
-                                 as.double(parametersSim),            # Double vector with parameter values
+                                 as.double(parameters_sim),            # Double vector with parameter values
                                  as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                                  as.double(opt_abstol),               # Double value for absolute tolerance
                                  as.double(opt_reltol),               # Double value for relative tolerance
@@ -547,14 +551,14 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
     # same dose time. We keep the results from previous piece and remove the first from this piece.
 
     if (addFirst) {
-      simresALL <- rbind(simresALL,simresPostLastPiece[1:(nrow(simresPostLastPiece)),])
+      simres_all <- rbind(simres_all,simres_post_last_piece[1:(nrow(simres_post_last_piece)),])
     } else {
-      simresALL <- rbind(simresALL,simresPostLastPiece[2:(nrow(simresPostLastPiece)),])
+      simres_all <- rbind(simres_all,simres_post_last_piece[2:(nrow(simres_post_last_piece)),])
     }
 
   }
 
-  return(simresALL)
+  return(simres_all)
 }
 
 
@@ -627,17 +631,17 @@ AZRxdotcalc <- function (model,
   ##############################################################################
 
   # Get default parameter values stored in the AZRmodel
-  parametersDefault        <- get_all_parameters(model)$paramvalues
+  parameters_default        <- get_all_parameters(model)$paramvalues
 
   # Need to check if provided parameter names are all available in the model
   if (!is.null(parameters)) {
-    check <- setdiff(names(parameters),names(parametersDefault))
+    check <- setdiff(names(parameters),names(parameters_default))
     if (length(check) != 0) stop("AZRxdotcalc: provided parameter names contain names that are not present in the model")
   }
 
   # Determine simulation parameters based on default parameters and user requested parameters
-  parametersSim <- parametersDefault
-  if (!is.null(parameters)) parametersSim[names(parameters)] <- parameters
+  parameters_sim <- parameters_default
+  if (!is.null(parameters)) parameters_sim[names(parameters)] <- parameters
 
   ##############################################################################
   # Handle simulation initial conditions
@@ -645,7 +649,7 @@ AZRxdotcalc <- function (model,
 
   # Get default states for Xdot calculation, taking into account potentially non-numeric
   # initial conditions that might depend on parameters and varibles.
-  defaultStatesXdotCalc <- calcNNic(model,parametersSim)
+  defaultStatesXdotCalc <- calcNNic(model,parameters_sim)
 
   # If state values are provided by the user then ensure that they are provided for ALL states
   # And bring them into the right order of states (states needs to be a named vector)
@@ -686,13 +690,13 @@ AZRxdotcalc <- function (model,
   # Call cvodes integrator interface
   ##############################################################################
 
-  simresALL <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
+  simres_all <- .Call("cvodesAZRinterface",                # Name of C-code CVODES interface function
                      PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                      model_func_ptr,                      # Pointer to model function
                      as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                      as.double(time),                     # Double vector with time points for simulation
                      as.double(statesXdotCalc),           # Double vector with initial conditions
-                     as.double(parametersSim),            # Double vector with parameter values
+                     as.double(parameters_sim),            # Double vector with parameter values
                      as.integer(TRUE),                    # Integer flag (0: non-stiff, 1:stiff)
                      as.double(1.0e-6),                   # Double value for absolute tolerance
                      as.double(1.0e-6),                   # Double value for relative tolerance
@@ -710,10 +714,10 @@ AZRxdotcalc <- function (model,
   )
 
   # Update names
-  names(simresALL) <- c(get_all_states(model)$statenames)
+  names(simres_all) <- c(get_all_states(model)$statenames)
 
   # Return results
-  return(simresALL)
+  return(simres_all)
 }
 
 
@@ -722,7 +726,7 @@ AZRxdotcalc <- function (model,
 # parameter changes
 ##############################################################################
 
-calcNNic <- function(model,parametersSim) {
+calcNNic <- function(model,parameters_sim) {
 
   # Check if model contains non-numerical initial conditions ... if not just return the
   # numerical ones
@@ -730,7 +734,7 @@ calcNNic <- function(model,parametersSim) {
 
   # Model contains non-numerical initial conditions => evaluate them - taking into account
   # potential changes in the parameters
-  calcIC <- attr(model,"nnICsim")(parametersSim)
+  calcIC <- attr(model,"nnICsim")(parameters_sim)
 
   # Return result
   return(calcIC)
@@ -751,7 +755,7 @@ calcNNic <- function(model,parametersSim) {
 #'
 #' @param simtime Simulation time vector. If scalar provided then 1001 simulation
 #'        steps will be used. If not provided (NULL) seq(0,20,1000) will be used if
-#'        no dosingTable provided. If not provided and a dosingTable is provided,
+#'        no dosing_table provided. If not provided and a dosing_table is provided,
 #'        seq(0,1.5x the max dosing time,1000) is used. For each individual the
 #'        same simulation time vector will be used.
 #'
@@ -779,10 +783,10 @@ calcNNic <- function(model,parametersSim) {
 #'        needs to be as for ICs and dosing tables. The ID column in the dosing
 #'        table is only used for defining individual subjects, not for ordering.
 #'
-#' @param dosingTable Can be NULL or a dataframe. If NULL, then no dosing is
+#' @param dosing_table Can be NULL or a dataframe. If NULL, then no dosing is
 #'        simulated. If a datafram is provided it can contain an ID column to
 #'        define individual subjects dosings. If no ID column provided, same dosing
-#'        used for all subjects. Each dosing is defined as the dosingTable in AZRsimulate.
+#'        used for all subjects. Each dosing is defined as the dosing_table in AZRsimulate.
 #'        If individual dosing tables are provided then the number of them needs
 #'        to match potentially individual initial conditions and parameter numbers.
 #'        Ordering of dosing tables for each subject needs to be as for ICs and
@@ -791,7 +795,7 @@ calcNNic <- function(model,parametersSim) {
 #'
 #' @param FLAGdosOut If TRUE then dosing table information will be added to the
 #'        output variable. If FALSE then it will not be added. This flag only
-#'        has effect if a dosingTable is given as input argument.
+#'        has effect if a dosing_table is given as input argument.
 #'
 #' @param outputs A vector with names of outputs to return from simulation.
 #'        By default (NULL) all states, variables, reactions, are returned.
@@ -834,7 +838,7 @@ AZRsimpop <- function (model,
                        # Parameter information
                        parameterTable        = NULL,
                        # Dosing / Event information
-                       dosingTable           = NULL,
+                       dosing_table           = NULL,
                        FLAGdosOut            = FALSE,
                        # Outputs
                        outputs               = NULL,
@@ -888,11 +892,11 @@ AZRsimpop <- function (model,
   if (is.null(simtime)) {
     # Use 20 time units as default simulation time if no dosing table is defined
     simtime <- 20
-    # and 1.5x the max dosing time if a dosingTable is defined
-    if (!is.null(dosingTable)) {
-      maxDoseTime <- max(dosingTable$TIME)
-      if (is.null(maxDoseTime)) stop("AZRsimpop: dosingTable provided without TIME column")
-      simtime <- maxDoseTime * 1.5
+    # and 1.5x the max dosing time if a dosing_table is defined
+    if (!is.null(dosing_table)) {
+      max_dose_time <- max(dosing_table$TIME)
+      if (is.null(max_dose_time)) stop("AZRsimpop: dosing_table provided without TIME column")
+      simtime <- max_dose_time * 1.5
     }
   }
   # If simtime is a scalar then use 1001 equidistant time points for simulation
@@ -961,26 +965,26 @@ AZRsimpop <- function (model,
     stop("AZRsimpop: ID column present in parameterTable. This is not allowed - to avoid thinking ICs, parameters, and dosings are matched by ID!")
 
   ##############################################################################
-  # Handle/check dosingTable
+  # Handle/check dosing_table
   # We do not need to handle dosing table completely ... this is done for each
   # subject in the AZRsimulate function ... only sanity checks
   ##############################################################################
 
-  if (!is.null(dosingTable)) {
-    # dosingTable provided
+  if (!is.null(dosing_table)) {
+    # dosing_table provided
     # If given it needs to be a dataframe
-    if (!is.data.frame(dosingTable))
-      stop("AZRsimpop: provided dosingTable is not a dataframe")
+    if (!is.data.frame(dosing_table))
+      stop("AZRsimpop: provided dosing_table is not a dataframe")
 
     # Check if ID column present - it is OK not to have an ID column and in this case
     # the same dosing will be given to all subjects
-    if ("ID" %in% colnames(dosingTable)) {
-      NR_DOSINGTABLE <- length(unique(dosingTable$ID))
+    if ("ID" %in% colnames(dosing_table)) {
+      NR_DOSINGTABLE <- length(unique(dosing_table$ID))
     } else {
       NR_DOSINGTABLE <- 1
     }
   } else {
-    # No dosingTable given
+    # No dosing_table given
     NR_DOSINGTABLE <- 0
   }
 
@@ -1005,7 +1009,7 @@ AZRsimpop <- function (model,
     NR_SUBJECTS <- max(NR_DOSINGTABLE,1)
   } else {
     if (NR_DOSINGTABLE > 1) {
-      if (NR_DOSINGTABLE != NR_SUBJECTS) stop("AZRsimpop: wrong number of subject level dosing information in dosingTable")
+      if (NR_DOSINGTABLE != NR_SUBJECTS) stop("AZRsimpop: wrong number of subject level dosing information in dosing_table")
     }
   }
 
@@ -1029,7 +1033,7 @@ AZRsimpop <- function (model,
                       NR_PARAMETERS,
                       parameterTable,
                       NR_DOSINGTABLE,
-                      dosingTable,
+                      dosing_table,
                       k,
                       model,
                       simtime,
@@ -1086,7 +1090,7 @@ AZRsimpop <- function (model,
                       NR_PARAMETERS,
                       parameterTable,
                       NR_DOSINGTABLE,
-                      dosingTable,
+                      dosing_table,
                       k,
                       model,
                       simtime,
@@ -1132,7 +1136,7 @@ indivSimulation <- function(NR_ICS,
                             NR_PARAMETERS,
                             parameterTable,
                             NR_DOSINGTABLE,
-                            dosingTable,
+                            dosing_table,
                             k,
                             model,
                             simtime,
@@ -1189,17 +1193,17 @@ indivSimulation <- function(NR_ICS,
 
   # Determine individual dosing table
   if (NR_DOSINGTABLE == 0) {
-    dosingTableIndiv <- NULL
+    dosing_tableIndiv <- NULL
   } else {
     if (NR_DOSINGTABLE == 1) {
-      dosingTableIndiv <- dosingTable
+      dosing_tableIndiv <- dosing_table
     } else {
       # In contrast to MATLAB unique() in R does not sort ... which is nice!
-      allID <- unique(dosingTable$ID)
-      dosingTableIndiv <- dplyr::filter(dosingTable,ID==allID[k])
+      allID <- unique(dosing_table$ID)
+      dosing_tableIndiv <- dplyr::filter(dosing_table,ID==allID[k])
     }
     # Remove ID if present
-    dosingTableIndiv$ID <- NULL
+    dosing_tableIndiv$ID <- NULL
   }
 
   # Simulate individual
@@ -1207,7 +1211,7 @@ indivSimulation <- function(NR_ICS,
                              simtime               = simtime,
                              IC                    = icIndiv,
                              parameters            = parametersIndiv,
-                             dosingTable           = dosingTableIndiv,
+                             dosing_table           = dosing_tableIndiv,
                              FLAGdosOut            = FLAGdosOut,
                              outputs               = outputs,
                              opt_method_stiff      = opt_method_stiff,

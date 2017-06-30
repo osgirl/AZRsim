@@ -5,7 +5,7 @@
 \title{Simulate an AZRmodel}
 \usage{
 \method{simulate}{azrmod}(model, simtime = NULL, IC = NULL,
-  parameters = NULL, dosingTable = NULL, FLAGdosOut = FALSE,
+  parameters = NULL, dosing_table = NULL, FLAGdosOut = FALSE,
   outputs = NULL, opt_method_stiff = TRUE, opt_abstol = 1e-06,
   opt_reltol = 1e-06, opt_minstep = 0, opt_maxstep = 0,
   opt_initstep = 0, opt_maxnumsteps = 1e+05, opt_maxerrtestfails = 50,
@@ -17,7 +17,7 @@
 
 \item{simtime}{Simulation time vector. If scalar provided then 1001 simulation
 steps will be used. If not provided (20) seq(0,20,1000) will be used if
-no dosingTable provided. If not provided and a dosingTable is provided,
+no dosing_table provided. If not provided and a dosing_table is provided,
 seq(0,1.5x the max dosing time,1000) is used.}
 
 \item{IC}{Named vector with numeric initial conditions for ALL states. If not
@@ -38,12 +38,12 @@ A states IC can depend on a previously defined state in the model.
 Otherwise an error message will appear during the import of a model from
 text.}
 
-\item{dosingTable}{A dataframe defining a dosing table with the following columns:
+\item{dosing_table}{A dataframe defining a dosing table with the following columns:
 \code{TIME}, \code{INPUT}, \code{DOSE}, \code{DURATION}, and \code{LAGTIME}.}
 
 \item{FLAGdosOut}{If TRUE then dosing table information will be added to the
 output variable. If FALSE then it will not be added. This flag only
-has effect if a dosingTable is given as input argument.}
+has effect if a dosing_table is given as input argument.}
 
 \item{outputs}{A vector with names of outputs to return from simulation.
 By default (NULL) all states, variables, reactions, are returned.}
@@ -96,6 +96,6 @@ dt <- data.frame("TIME" = seq(1,9, by = 1),
                  "INPUT" = 1,
                  "LAGTIME" = 0,
                  stringsAsFactors = FALSE)
-one_cpt_sim <- simulate(one_cpt, seq(0, 10, by=0.01), dosingTable = dt, output = c("y"))
+one_cpt_sim <- simulate(one_cpt, seq(0, 10, by=0.01), dosing_table = dt, output = c("y"))
 plot(one_cpt_sim, lwd = 2, plot_names = "blood")
 }
