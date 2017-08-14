@@ -294,10 +294,10 @@ simulate.azrmod <- function (model,
 
   # Update names
   names(simres_all) <- c("TIME", get_all_states(model)$statenames, get_all_variables(model)$varnames,get_all_reactions(model)$reacnames)
-
+  simres_all <- simres_all[simres_all$TIME %in% simtime,]
   # Keep only simtime elements
-  simres_all <- dplyr::filter(simres_all,TIME %in% simtime)
-
+  # simres_all <- dplyr::filter(simres_all,TIME %in% simtime)
+  #simres_all <- simres_all[apply(simres_all["TIME"],2, function(x) which(x %in% simtime)),]
   #############################################################################
   # Handle outputs if defined
   #############################################################################
@@ -366,14 +366,15 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
   simres_all <- c()
 
   # Adjust dosing table to max TIME as in max simtime
-  dosing_table <- dplyr::filter(dosing_table,dosing_table[,"TIME"]<=max(simtime))
-
+  #dosing_table <- dplyr::filter(dosing_table,dosing_table[,"TIME"]<=max(simtime))
+  #dosing_table <- dosing_table[apply(dosing_table["TIME"],2, function(x) which(x<=max(simtime))),]
+  dosing_table <- dosing_table[dosing_table$TIME <= max(simtime),]
   # Add information about actual dose administration start
   dosing_table$TIME_DOSE_EFFECT_START <- dosing_table$TIME+dosing_table$LAGTIME
 
   # Sort by start of dose effect
-  dosing_table <- dplyr::arrange(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"])
-
+  #dosing_table <- dplyr::arrange(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"])
+  dosing_table <- dosing_table[order(dosing_table$TIME_DOSE_EFFECT_START),]
   # Simulations need to be done from current TIME_DOSE_EFFECT_START to next TIME_DOSE_EFFECT_START ...
 
   # Get unique dosing start time points - can be empty if simulation time too short
@@ -446,16 +447,20 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
 
   # Simulate each dose if more than one dose
   if (length(dosing_effect_start_times) > 1) {
+    new_simtime_piece <- c()
+    simtime_piece <- list()
+    new_parameters_sim <- as.data.frame(parameters_sim)
     for (k in 1:(length(dosing_effect_start_times)-1)) {
       # Create simulation time vector for piece
       # Add as first time point the time for dose and as last the time for next dose
-      simtime_piece <- unique(c(dosing_effect_start_times[k],
+      new_simtime_piece <- unique(c(dosing_effect_start_times[k],
                                simtime[simtime>=dosing_effect_start_times[k] & simtime<=dosing_effect_start_times[k+1]],
                                dosing_effect_start_times[k+1]))
-
+      simtime_piece[[k]] <- new_simtime_piece
       # Get dosing information for the dosing time
-      doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[k])
-
+      # doseInfo <- dosing_table[apply(dosing_table["TIME_DOSE_EFFECT_START"],2, function(x) which(x==dosing_effect_start_times[k])),]
+      doseInfo <- dosing_table[dosing_table$TIME_DOSE_EFFECT_START == dosing_effect_start_times[k],]
+      #doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[k])
       # Need to generate an updated parameter vector with dosing information
       for (k2 in 1:nrow(doseInfo)) {
         parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
@@ -463,15 +468,19 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
         parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"duration",sep="")] <- doseInfo$DURATION[k2]
         parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"lagtime",sep="")] <- doseInfo$LAGTIME[k2]
       }
-
+      new_parameters_sim[k] <- parameters_sim
+    }
+    simtime_lengths <- sapply(simtime_piece, length)
+    simtime_piece <- unlist(simtime_piece, use.names = FALSE)
+    new_parameters_sim <-unlist(new_parameters_sim, use.names = FALSE)
       # Simulate piece
-      simres_piece <- .Call("cvodesAZRinterface",                       # Name of C-code CVODES interface function
+      new_simres_piece <- .Call("cvodes_simdosingtable",                       # Name of C-code CVODES interface function
                            PACKAGE="AZRsim",                    # Name of the DLL file in which the interface function is located
                            model_func_ptr,                      # Pointer to model function
                            as.integer(model_elements_nr),       # Integer vector with numbers of model elements
                            as.double(simtime_piece),             # Double vector with time points for simulation
                            as.double(ICsim),                    # Double vector with initial conditions
-                           as.double(parameters_sim),            # Double vector with parameter values
+                           as.double(new_parameters_sim),            # Double vector with parameter values
                            as.integer(opt_method_stiff),        # Integer flag (0: non-stiff, 1:stiff)
                            as.double(opt_abstol),               # Double value for absolute tolerance
                            as.double(opt_reltol),               # Double value for relative tolerance
@@ -485,22 +494,26 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
                            as.integer(opt_maxconvfails),        # Integer value for maximum number of nonlinear solver convergence failures in one step
                            as.integer(opt_maxnonlineariter),    # Integer value for maximum number of nonlinear solver iterations permitted per step
                            as.integer(FALSE),                   # Integer value defining what to do: 0=do integration, 1=return RHS of ODE for given time[0], states, parameters
-                           as.integer(verbose)                  # Integer flag for outputting additional diagnostic information
-      )
+                           as.integer(verbose),                  # Integer flag for outputting additional diagnostic information
+                           as.integer(length(dosing_effect_start_times)-1),
+                           as.double(simtime_lengths),
+                           dosing_table
+                           )
 
       # Get last state as next initial condition (time point of next dose)
-      ICsim <- unlist(simres_piece[nrow(simres_piece),2:(NRSTATES+1)])
+      #####################SG
+      #ICsim <- unlist(simres_piece[nrow(simres_piece),2:(NRSTATES+1)])
+      #####################SG
       # Store simulation results
       # Previous piece contained as last entry the dose time and this piece contained as first entry the
       # same dose time. We keep the results from previous piece and remove the first from this piece.
-      if (addFirst) {
-        simres_all <- rbind(simres_all,simres_piece[1:(nrow(simres_piece)),])
-      } else {
-        simres_all <- rbind(simres_all,simres_piece[2:(nrow(simres_piece)),])
-      }
-
+        if (addFirst) {
+          simres_all <- rbind(simres_all,new_simres_piece[1:(nrow(new_simres_piece)),])
+        } else {
+          simres_all <- result_binding(simres_all, new_simres_piece[2:(nrow(new_simres_piece)),])
+          #simres_all <- rbind(simres_all,new_simres_piece[2:(nrow(new_simres_piece)),])
+        }
       addFirst = FALSE
-    }
   }
 
   # Simulate last dose until final time
@@ -512,8 +525,9 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
 
   if (length(simtime_post_last_dose)>1) {
     # Get dosing information for the dosing time
-    doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[length(dosing_effect_start_times)])
-
+    #doseInfo <- dplyr::filter(dosing_table,dosing_table[,"TIME_DOSE_EFFECT_START"]==dosing_effect_start_times[length(dosing_effect_start_times)])
+    #doseInfo <- dosing_table[apply(dosing_table["TIME_DOSE_EFFECT_START"],2, function(x) which(x==dosing_effect_start_times[length(dosing_effect_start_times)])),]
+    doseInfo <- dosing_table[dosing_table$TIME_DOSE_EFFECT_START == dosing_effect_start_times[length(dosing_effect_start_times)],]
     # Need to generate an updated parameter vector with dosing information
     for (k2 in 1:nrow(doseInfo)) {
       parameters_sim[paste("INPUT",doseInfo$INPUT[k2],"dose",sep="")] <- doseInfo$DOSE[k2]
@@ -1200,7 +1214,8 @@ indivSimulation <- function(NR_ICS,
     } else {
       # In contrast to MATLAB unique() in R does not sort ... which is nice!
       allID <- unique(dosing_table$ID)
-      dosing_tableIndiv <- dplyr::filter(dosing_table,ID==allID[k])
+      dosing_tableIndiv <- dosing_table[dosing_table$ID == allID[k],]
+      #dosing_tableIndiv <- dplyr::filter(dosing_table,ID==allID[k])
     }
     # Remove ID if present
     dosing_tableIndiv$ID <- NULL

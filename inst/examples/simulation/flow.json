@@ -1,0 +1,211 @@
+{
+  "package": {},
+  "exports": {},
+  "functions": [
+    {
+      "ID": "_",
+      "file": "test.r",
+      "own": true,
+      "exported": false
+    },
+    {
+      "ID": "create_model",
+      "own": false,
+      "exported": false
+    },
+    {
+      "ID": "sourceCpp",
+      "own": false,
+      "exported": false
+    },
+    {
+      "ID": "simulate",
+      "own": false,
+      "exported": false
+    },
+    {
+      "ID": "plot",
+      "own": false,
+      "exported": false
+    },
+    {
+      "ID": "microbenchmark",
+      "own": false,
+      "exported": false
+    },
+    {
+      "ID": "rnorm",
+      "own": false,
+      "exported": false
+    },
+    {
+      "ID": "AZRsimpop",
+      "own": false,
+      "exported": false
+    }
+  ],
+  "calls": [
+    {
+      "from": "_",
+      "to": "create_model",
+      "type": "call",
+      "line": 12,
+      "col1": 16,
+      "col2": 27,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "sourceCpp",
+      "type": "call",
+      "line": 16,
+      "col1": 1,
+      "col2": 9,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "simulate",
+      "type": "call",
+      "line": 17,
+      "col1": 16,
+      "col2": 23,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "plot",
+      "type": "call",
+      "line": 19,
+      "col1": 1,
+      "col2": 4,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "create_model",
+      "type": "call",
+      "line": 25,
+      "col1": 17,
+      "col2": 28,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "sourceCpp",
+      "type": "call",
+      "line": 44,
+      "col1": 1,
+      "col2": 9,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "simulate",
+      "type": "call",
+      "line": 45,
+      "col1": 16,
+      "col2": 23,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "plot",
+      "type": "call",
+      "line": 47,
+      "col1": 1,
+      "col2": 4,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "microbenchmark",
+      "type": "call",
+      "line": 53,
+      "col1": 1,
+      "col2": 14,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "simulate",
+      "type": "call",
+      "line": 54,
+      "col1": 3,
+      "col2": 10,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "create_model",
+      "type": "call",
+      "line": 63,
+      "col1": 10,
+      "col2": 21,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "rnorm",
+      "type": "call",
+      "line": 85,
+      "col1": 60,
+      "col2": 64,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "sourceCpp",
+      "type": "call",
+      "line": 86,
+      "col1": 1,
+      "col2": 9,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "AZRsimpop",
+      "type": "call",
+      "line": 87,
+      "col1": 12,
+      "col2": 20,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "microbenchmark",
+      "type": "call",
+      "line": 89,
+      "col1": 1,
+      "col2": 14,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "AZRsimpop",
+      "type": "call",
+      "line": 90,
+      "col1": 14,
+      "col2": 22,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "microbenchmark",
+      "type": "call",
+      "line": 93,
+      "col1": 1,
+      "col2": 14,
+      "file": "test.r"
+    },
+    {
+      "from": "_",
+      "to": "AZRsimpop",
+      "type": "call",
+      "line": 94,
+      "col1": 14,
+      "col2": 22,
+      "file": "test.r"
+    }
+  ]
+}

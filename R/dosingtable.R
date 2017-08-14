@@ -5,7 +5,7 @@
 ###############################################################################
 
 check_dosing_table <- function(dosing_table) {
-
+  #sourceCpp("C:/Users/kgvg850/OneDrive - AZCollaboration/AZRsim/R/filter_check_dosing_table.cpp")
   # Handle undefined dosing_table
   if (is.null(dosing_table)) return(NULL)
 
@@ -22,7 +22,8 @@ check_dosing_table <- function(dosing_table) {
   if (!("DOSE" %in% names(dosing_table))) stop("DOSE column required in a dosing table")
 
   # Sort the dosing table after TIME and INPUT
-  dosing_table <- dplyr::arrange(dosing_table,TIME,INPUT)
+  # dosing_table <- dplyr::arrange(dosing_table,TIME,INPUT)
+  dosing_table <- dosing_table[order(dosing_table$TIME, dosing_table$INPUT),]
 
   # Check if DURATION is present in dosing table
   # Handle DURATION and RATE columns
@@ -59,18 +60,27 @@ check_dosing_table <- function(dosing_table) {
   # with one input and daily dosing with the other.
   # (time+duration+lagtime < next dosing time)
   inputs <- unique(dosing_table$INPUT)
-  for (k in 1:length(inputs)) {
-    dosing_tableInputk <- dplyr::filter(dosing_table,INPUT==inputs[k])
-    DoseTimes <- sort(unique(dosing_tableInputk$TIME))
-    if (length(DoseTimes) > 1) {
-      dosing_tableInputk$TEST_TIMING <- dosing_tableInputk$TIME+dosing_tableInputk$DURATION+dosing_tableInputk$LAGTIME
-      for (k in 1:(length(DoseTimes)-1)) {
-        if (max(dplyr::filter(dosing_tableInputk,TIME==DoseTimes[k])$TEST_TIMING) > DoseTimes[k+1])
-          stop("check_dosing_table: dose administration of a dose happens after start of next dosing event")
-      }
-    }
-  }
+  #sourceCpp("filter_check_dosing_table.cpp")
+  cpp_dose_fun <- filter_check_dosing_table(dosing_table, inputs)
+  if(cpp_dose_fun)
+    stop("check_dosing_table: dose administration of a dose happens after start of next dosing event")
 
+  ####SG COMMENT
+  # for (k in 1:length(inputs)) {
+  #   dosing_tableInputk <- dplyr::filter(dosing_table,INPUT==inputs[k])
+  #   #dosing_tableInputk <- filter_check_dosing_table(dosing_table, inputs[k])
+  #   #dosing_tableInputk <- first_filter(dosing_table, inputs[k])
+  #   DoseTimes <- sort(unique(dosing_tableInputk$TIME))
+  #   if (length(DoseTimes) > 1) {
+  #     dosing_tableInputk$TEST_TIMING <- dosing_tableInputk$TIME+dosing_tableInputk$DURATION+dosing_tableInputk$LAGTIME
+  #     for (k in 1:(length(DoseTimes)-1)) {
+  #       if (max(dplyr::filter(dosing_tableInputk,TIME==DoseTimes[k])$TEST_TIMING) > DoseTimes[k+1])
+  #         stop("check_dosing_table: dose administration of a dose happens after start of next dosing event")
+  #     }
+  #   }
+  # }
+
+  ######
   # All adjusted and OK - return updated dosing_table
   return(dosing_table)
 }
