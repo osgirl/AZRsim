@@ -1,2 +1,0 @@
-PKG_CPPFLAGS=-IC:/Users/kgvg850/DOCUME~1/R/R-34~1.1/library/RxODE/include
-PKG_LIBS=-LC:/Users/kgvg850/DOCUME~1/R/R-34~1.1/library/RxODE/libs/x64 -lodeaux $(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS)

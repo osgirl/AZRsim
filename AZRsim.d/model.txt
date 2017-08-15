@@ -1,4 +1,0 @@
- C2 = centr/V2;
-d/dt(depot) = -KA * depot;
-d/dt(centr) = KA * depot - CL *C2;
- 

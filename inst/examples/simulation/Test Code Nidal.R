@@ -6,8 +6,8 @@
 # path<-"J:/Projects/Programmers/Rpackages/azrtest.7z"
 
 
-.libPaths( c( .libPaths("J:/R/R-3.3.3/library"), "J:/Projects/Programmers/Rpackages/Library") )
-.libPaths()[2]
+#.libPaths( c( .libPaths("J:/R/R-3.3.3/library"), "J:/Projects/Programmers/Rpackages/Library") )
+#.libPaths()[2]
 
 
 
@@ -26,7 +26,7 @@ rm(list = ls())
 #########################
 
 
-setwd("J:/Projects/Programmers/Rpackages/AZRsim-master/inst/examples/simulation")
+#setwd("J:/Projects/Programmers/Rpackages/AZRsim-master/inst/examples/simulation")
 list.files()
 
 
@@ -161,7 +161,7 @@ $GLOBAL
 #define CP (CENT/V)
 $ODE
 dxdt_GUT = -KA*GUT;
-dxdt_CENT = KA*CENT + CP*CL;
+dxdt_CENT = KA*GUT - CP*CL/V;
 $CAPTURE CP'
 
 # compile all models
