@@ -28,7 +28,7 @@ Suggests:
     devtools,
     roxygen2,
     testthat
-Imports:
+Imports: 
     shiny (>= 0.14.1),
     ggplot2 (>= 2.1.0),
     tidyr (>= 0.6.0),
@@ -36,4 +36,7 @@ Imports:
     purrr (>= 0.2.2),
     readr (>= 1.0.0),
     methods (>= 3.3.1),
-    DiagrammeR
+    DiagrammeR,
+    Rcpp
+LinkingTo: 
+    Rcpp
