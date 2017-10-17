@@ -1,6 +1,6 @@
 Package: AZRsim
 Type: Package
-Version: 0.0.0.9000
+Version: 0.1.0
 Title: Powerful Dynamic Model Representation and Simulation
 Authors@R: c(
   person("Henning", "Schmidt", role = c("aut", "cre"), email = "unknown@intiquan.com"),
