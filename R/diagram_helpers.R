@@ -129,10 +129,10 @@ chunk_ode <- function(.string) {
 #' nodes for diagrammer need to be specified, this will extract the
 #' compartments and the inputs and generate the required syntax
 prepare_inputs <- function(model_states) {
-  model_inputs <- unlist(purrr::set_names(
+  model_inputs <- purrr::set_names(
     stringr::str_extract_all(model_states, "input\\d+" ),
     names(model_states)
-  ) )
+  )
   paste0(purrr::flatten_chr(
     purrr::map(names(model_inputs), ~ paste0(model_inputs[[.x]], " -> ", .x, ";"))
   ), collapse = " ")
