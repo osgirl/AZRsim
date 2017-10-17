@@ -106,17 +106,11 @@ simulate.azrmod <- function (model,
                              opt_maxorder_nonstiff = 12,
                              opt_maxconvfails      = 10,
                              opt_maxnonlineariter  = 3,
-                             verbose               = FALSE,
-                             FlagCPP  = FALSE
+                             verbose               = FALSE
 ) {
 
-  #######################
-  # Sourcecpp check
-  #######################
-  #if(!("ID" %in% colnames(dosing_table)))
-  if(FlagCPP == FALSE)
-    sourceCpp("filter_check_dosing_table.cpp")
-    sourceCpp("result_binding.cpp")
+
+
 
   ##############################################################################
   # Basic AZRmodel checks
@@ -885,13 +879,6 @@ AZRsimpop <- function (model,
                        verbose               = FALSE
 ) {
 
-  ##########################
-  # Source required cpp files
-  # Move the cpp files from AZRsim/inst/examples/simulation to AZRSim/R
-  ##########################
-  sourceCpp("filter_check_dosing_table.cpp")
-  sourceCpp("result_binding.cpp")
-
   ##############################################################################
   # Basic AZRmodel checks
   ##############################################################################
@@ -1257,8 +1244,7 @@ indivSimulation <- function(NR_ICS,
                              opt_maxorder_nonstiff = opt_maxorder_nonstiff,
                              opt_maxconvfails      = opt_maxconvfails,
                              opt_maxnonlineariter  = opt_maxnonlineariter,
-                             verbose               = verbose,
-                          FlagCPP = TRUE)
+                             verbose               = verbose)
 
   # Construct individual result
   # Always add ID
