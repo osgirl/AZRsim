@@ -28,7 +28,7 @@ parameters, and time (needs to be scalar). Dosing tables not allowed.
 Useful to assess issues in a larger AZRmodel.
 }
 \examples{
-model <- AZRmodel(system.file("examples/NovakTyson.txt", package="AZRsim"))
+model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
 x <- AZRxdotcalc(model)
 x <- AZRxdotcalc(model,400)
 x <- AZRxdotcalc(model,400,parameters=c(k1=0.5))

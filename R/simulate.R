@@ -1,13 +1,3 @@
-###############################################################################
-###############################################################################
-# Main simulation interface functions for AZRmodels, dosing schemes, etc.
-# Simulation is done only in CVODES.
-###############################################################################
-###############################################################################
-
-###############################################################################
-# AZRsimulate: Simulate an AZRmodel
-###############################################################################
 #' Simulate an AZRmodel
 #'
 #' Simulation function for \code{azrmod} objects which is able to handle dosing events.
@@ -846,7 +836,6 @@ calcNNic <- function(model,parameters_sim) {
 #' x <- simulate(model,400)
 #' x <- simulate(model,400,parameters=c(k1=0.5))
 #' @export
-
 AZRsimpop <- function (model,
                        # Simulation time vector
                        simtime               = NULL,

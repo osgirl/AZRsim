@@ -16,5 +16,5 @@ TRUE or FALSE
 Check function if it is an azrmod
 }
 \examples{
-  is_azrmod(AZRmodel())
+  is_azrmod(create_model())
 }
