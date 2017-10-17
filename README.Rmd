@@ -3,4 +3,4 @@ README
 
 User guide at [https://astrazeneca.github.io/AZRsim/user_guide/](https://astrazeneca.github.io/AZRsim/user_guide/)
 
-package function docs at [https://astrazeneca.github.io/AZRsim/pkg/](https://astrazeneca.github.io/AZRsim/pkg/)
+package function docs at [https://astrazeneca.github.io/AZRsim/pkg/](https://astrazeneca.github.io/AZRsim/pkg/index.html)
