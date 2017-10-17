@@ -80,10 +80,10 @@ centerTrans   <- log(center)
 indivParam    <- exp(t(replicate(n=Nsubjects,centerTrans + rnorm(mean=0,sd=0.5,n=length(centerTrans)))))
 results <- AZRsimpop(model,ncores=1,simtime=seq(0,200),parameterTable=indivParam,dosing_table=dosingTable)
 
-microbenchmark(
+microbenchmark::microbenchmark(
   results <- AZRsimpop(model,ncores=1,simtime=seq(0,200),parameterTable=indivParam,dosing_table=dosingTable)
   ,times=1)
 
-microbenchmark(
+microbenchmark::microbenchmark(
   results <- AZRsimpop(model,ncores=8,simtime=seq(0,200),parameterTable=indivParam,dosing_table=dosingTable)
   ,times=1)

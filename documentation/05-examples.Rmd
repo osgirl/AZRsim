@@ -1,5 +1,9 @@
 # Examples
 
+```{r, include = FALSE}
+library(AZRsim)
+```
+
 ## Simple Harmonic Oscillator
 
 The equations that govern a harmonic oscillator are the following,
