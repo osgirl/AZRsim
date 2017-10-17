@@ -108,7 +108,7 @@ Simulation time vector is always the same across simulated subjects. Results
 are returned as a dataframe with an ID column, specifying the subjects ID.
 }
 \examples{
-model <- AZRmodel(system.file("examples/NovakTyson.txt", package="AZRsim"))
-x <- AZRsimulate(model,400)
-x <- AZRsimulate(model,400,parameters=c(k1=0.5))
+model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
+x <- simulate(model,400)
+x <- simulate(model,400,parameters=c(k1=0.5))
 }

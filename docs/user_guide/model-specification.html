@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AZRtools documentation</title>
+  <meta name="description" content="AZRtools documentation">
+  <meta name="generator" content="bookdown 0.5 and GitBook 2.6.7">
+
+  <meta property="og:title" content="AZRtools documentation" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="AZRtools documentation" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="AZRtools documentation" />
+  
+  <meta name="twitter:description" content="AZRtools documentation" />
+  
+
+<meta name="author" content="Devin Pastoor">
+<meta name="author" content="Imad Mali">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="installation.html">
+<link rel="next" href="modeling-functions.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="azrsim.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>User Guide</a></li>
+<li class="chapter" data-level="1" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>1</b> Installation</a></li>
+<li class="chapter" data-level="2" data-path="model-specification.html"><a href="model-specification.html"><i class="fa fa-check"></i><b>2</b> Model Specification</a><ul>
+<li class="chapter" data-level="2.1" data-path="model-specification.html"><a href="model-specification.html#model-name-and-model-notes"><i class="fa fa-check"></i><b>2.1</b> Model Name and Model Notes</a></li>
+<li class="chapter" data-level="2.2" data-path="model-specification.html"><a href="model-specification.html#model-states"><i class="fa fa-check"></i><b>2.2</b> Model States</a></li>
+<li class="chapter" data-level="2.3" data-path="model-specification.html"><a href="model-specification.html#model-parameters"><i class="fa fa-check"></i><b>2.3</b> Model Parameters</a></li>
+<li class="chapter" data-level="2.4" data-path="model-specification.html"><a href="model-specification.html#model-variables"><i class="fa fa-check"></i><b>2.4</b> Model Variables</a></li>
+<li class="chapter" data-level="2.5" data-path="model-specification.html"><a href="model-specification.html#model-reactions"><i class="fa fa-check"></i><b>2.5</b> Model Reactions</a></li>
+<li class="chapter" data-level="2.6" data-path="model-specification.html"><a href="model-specification.html#model-functions"><i class="fa fa-check"></i><b>2.6</b> Model Functions</a></li>
+<li class="chapter" data-level="2.7" data-path="model-specification.html"><a href="model-specification.html#model-events"><i class="fa fa-check"></i><b>2.7</b> Model Events</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="modeling-functions.html"><a href="modeling-functions.html"><i class="fa fa-check"></i><b>3</b> Modeling Functions</a><ul>
+<li class="chapter" data-level="3.1" data-path="modeling-functions.html"><a href="modeling-functions.html#create_model"><i class="fa fa-check"></i><b>3.1</b> create_model</a></li>
+<li class="chapter" data-level="3.2" data-path="modeling-functions.html"><a href="modeling-functions.html#simulate"><i class="fa fa-check"></i><b>3.2</b> simulate</a></li>
+<li class="chapter" data-level="3.3" data-path="modeling-functions.html"><a href="modeling-functions.html#plot"><i class="fa fa-check"></i><b>3.3</b> plot</a></li>
+<li class="chapter" data-level="3.4" data-path="modeling-functions.html"><a href="modeling-functions.html#shiny_plot"><i class="fa fa-check"></i><b>3.4</b> shiny_plot</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="dosing.html"><a href="dosing.html"><i class="fa fa-check"></i><b>4</b> Dosing</a><ul>
+<li class="chapter" data-level="4.1" data-path="dosing.html"><a href="dosing.html#dosing-in-the-model-events-block"><i class="fa fa-check"></i><b>4.1</b> Dosing in the Model Events Block</a></li>
+<li class="chapter" data-level="4.2" data-path="dosing.html"><a href="dosing.html#dosing-with-a-dosing-table"><i class="fa fa-check"></i><b>4.2</b> Dosing with a Dosing Table</a></li>
+<li class="chapter" data-level="4.3" data-path="dosing.html"><a href="dosing.html#outputs"><i class="fa fa-check"></i><b>4.3</b> Outputs</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="examples.html"><a href="examples.html"><i class="fa fa-check"></i><b>5</b> Examples</a><ul>
+<li class="chapter" data-level="5.1" data-path="examples.html"><a href="examples.html#simple-harmonic-oscillator"><i class="fa fa-check"></i><b>5.1</b> Simple Harmonic Oscillator</a></li>
+<li class="chapter" data-level="5.2" data-path="examples.html"><a href="examples.html#two-compartment-model"><i class="fa fa-check"></i><b>5.2</b> Two Compartment Model</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="azrnlme.html"><a href="azrnlme.html"><i class="fa fa-check"></i><b>6</b> AZRnlme</a><ul>
+<li class="chapter" data-level="6.1" data-path="azrnlme.html"><a href="azrnlme.html#running-a-model"><i class="fa fa-check"></i><b>6.1</b> Running a model</a></li>
+<li class="chapter" data-level="6.2" data-path="azrnlme.html"><a href="azrnlme.html#dosing-1"><i class="fa fa-check"></i><b>6.2</b> dosing</a></li>
+<li class="chapter" data-level="6.3" data-path="azrnlme.html"><a href="azrnlme.html#project-path"><i class="fa fa-check"></i><b>6.3</b> project path</a></li>
+<li class="chapter" data-level="6.4" data-path="azrnlme.html"><a href="azrnlme.html#data"><i class="fa fa-check"></i><b>6.4</b> data</a></li>
+<li class="chapter" data-level="6.5" data-path="azrnlme.html"><a href="azrnlme.html#model-specification-1"><i class="fa fa-check"></i><b>6.5</b> model specification:</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="azrnlme.html"><a href="azrnlme.html#popvalues0-and-popestimate"><i class="fa fa-check"></i><b>6.5.1</b> <code>POPvalues0</code> and <code>POPestimate</code></a></li>
+<li class="chapter" data-level="6.5.2" data-path="azrnlme.html"><a href="azrnlme.html#iivdistribution"><i class="fa fa-check"></i><b>6.5.2</b> <code>IIVdistribution</code></a></li>
+<li class="chapter" data-level="6.5.3" data-path="azrnlme.html"><a href="azrnlme.html#iivvalues0-and-iivestimate"><i class="fa fa-check"></i><b>6.5.3</b> <code>IIVvalues0</code> and <code>IIVestimate</code></a></li>
+<li class="chapter" data-level="6.5.4" data-path="azrnlme.html"><a href="azrnlme.html#errormodel"><i class="fa fa-check"></i><b>6.5.4</b> <code>errorModel</code></a></li>
+<li class="chapter" data-level="6.5.5" data-path="azrnlme.html"><a href="azrnlme.html#covariancemodel"><i class="fa fa-check"></i><b>6.5.5</b> <code>covarianceModel</code></a></li>
+<li class="chapter" data-level="6.5.6" data-path="azrnlme.html"><a href="azrnlme.html#covariatemodel"><i class="fa fa-check"></i><b>6.5.6</b> <code>covariateModel</code></a></li>
+<li class="chapter" data-level="6.5.7" data-path="azrnlme.html"><a href="azrnlme.html#covariatemodelvalues"><i class="fa fa-check"></i><b>6.5.7</b> <code>covariateModelValues</code></a></li>
+<li class="chapter" data-level="6.5.8" data-path="azrnlme.html"><a href="azrnlme.html#covestimate"><i class="fa fa-check"></i><b>6.5.8</b> <code>COVestimate</code></a></li>
+<li class="chapter" data-level="6.5.9" data-path="azrnlme.html"><a href="azrnlme.html#covcentering"><i class="fa fa-check"></i><b>6.5.9</b> <code>COVcentering</code></a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="azrnlme.html"><a href="azrnlme.html#algorithm-spec"><i class="fa fa-check"></i><b>6.6</b> algorithm spec</a></li>
+<li class="chapter" data-level="6.7" data-path="azrnlme.html"><a href="azrnlme.html#additional-assumptions"><i class="fa fa-check"></i><b>6.7</b> Additional Assumptions</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">AZRtools documentation</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="model-specification" class="section level1">
+<h1><span class="header-section-number">2</span> Model Specification</h1>
+<p>In order to simulate the time varying variables of a system of ordinary differential equations you need to provide a specific representation of your mathematical model in a text file (a file with extension <code>.txt</code>). Every text file representation of a model must contain the following blocks presented exactly as defined below. Notice that each block name is preceded with ten <code>*</code>s. It is possible to comment out a line of code using <code>%</code>.</p>
+<pre><code>********** MODEL NAME
+
+********** MODEL NOTES
+
+********** MODEL STATES
+
+********** MODEL PARAMETERS
+
+********** MODEL VARIABLES
+
+********** MODEL REACTIONS
+
+********** MODEL FUNCTIONS
+
+********** MODEL EVENTS</code></pre>
+<p>The remainder of this section deals with what can be declared within each block.</p>
+<div id="model-name-and-model-notes" class="section level2">
+<h2><span class="header-section-number">2.1</span> Model Name and Model Notes</h2>
+<p><code>MODEL NAME</code> and <code>MODEL NOTES</code> are descriptive blocks that allow the user to specify a model name and any notes about the model. The name of the model will be presented when an <code>azrmod</code> object is printed to the console.</p>
+<p>Below are the model name and model notes blocks for the simple harmonic oscillator example in the <strong>AZRsim</strong> package (<code>sho.txt</code>).</p>
+<pre><code>********** MODEL NAME
+
+Harmonic Oscillator
+
+********** MODEL NOTES
+
+Harmonic Oscillator ODE example.
+</code></pre>
+<p>This meta data can be extracted from an <code>azrmod</code> object.</p>
+</div>
+<div id="model-states" class="section level2">
+<h2><span class="header-section-number">2.2</span> Model States</h2>
+<p>The <code>MODEL STATES</code> block is where the user describes the system of differential equations followed by the initial conditions for each variable. The left hand side of each differential equation <em>must</em> be declared as <code>d/dt(x)</code> where <code>x</code> is a variable name chosen by the user.</p>
+<p>The initial conditions <em>must</em> be defined, and they <em>must</em> be defined after the system of differential equations is defined. If variable <code>x</code> in the preceding paragraph had an initial condition value of 3 then we can declare <code>x(0) = 3</code> after defining the system of differential equations.</p>
+</div>
+<div id="model-parameters" class="section level2">
+<h2><span class="header-section-number">2.3</span> Model Parameters</h2>
+<p>The <code>MODEL PARAMETERS</code> block is where the user defines the values of the parameters in the system of differential equations defined in <code>MODEL STATES</code>.</p>
+</div>
+<div id="model-variables" class="section level2">
+<h2><span class="header-section-number">2.4</span> Model Variables</h2>
+<p>The <code>MODEL VARIABLES</code> block provides a way to reparametrize parts of the model. Variables for intermediate calculations should be defined under <code>MODEL VARIABLES</code>.</p>
+<pre><code>********** MODEL STATES
+
+d/dt(A) = -R
+d/dt(B) = R
+A(0) = 1
+B(0) = 0
+
+********** MODEL PARAMETERS
+
+k1 = 0.5
+
+********** MODEL VARIABLES
+
+R = k1*A
+</code></pre>
+</div>
+<div id="model-reactions" class="section level2">
+<h2><span class="header-section-number">2.5</span> Model Reactions</h2>
+<p>The <code>MODEL REACTIONS</code> block provides a way to reparametrize parts of the model. Reaction rates should be defined in the <code>MODEL REACTIONS</code> block.</p>
+<pre><code>********** MODEL STATES
+
+d/dt(A) = -R
+d/dt(B) = R
+A(0) = 1
+B(0) = 0
+
+********** MODEL PARAMETERS
+
+k1 = 0.5
+
+********** MODEL REACTIONS
+
+R = k1*A
+</code></pre>
+</div>
+<div id="model-functions" class="section level2">
+<h2><span class="header-section-number">2.6</span> Model Functions</h2>
+<p>The <code>MODEL FUNCTIONS</code> block can be used to define reoccuring calculations.</p>
+<p>As an example, the <code>sho_func.txt</code> example model in the <strong>AZRsim</strong> package applies the function <span class="math inline">\(f(x) = \frac{x}{100}\)</span> to the variable <span class="math inline">\(y_2\)</span> in <span class="math inline">\(\frac{d}{dt}y_2\)</span> equation in the system.</p>
+<pre><code>********** MODEL NAME
+
+Simple Harmonic Oscillator
+
+********** MODEL NOTES
+
+Simple Harmonic Oscillator ODE example.
+
+********** MODEL STATES
+
+% ODE system
+d/dt(y1) = y2
+d/dt(y2) = - y1 - theta * f(y2)
+
+% initial conditions
+y1(0) = 1
+y2(0) = 0
+
+********** MODEL PARAMETERS
+
+theta = 0.15
+
+********** MODEL VARIABLES
+********** MODEL REACTIONS
+********** MODEL FUNCTIONS
+
+f(x) = x * 0.01
+
+********** MODEL EVENTS</code></pre>
+</div>
+<div id="model-events" class="section level2">
+<h2><span class="header-section-number">2.7</span> Model Events</h2>
+<p>The <code>MODEL EVENTS</code> block can be used to define discrete state events. Note that the declaration of events is not vectorized.</p>
+<p>There are essentially two parts to defining a discrete event in the model:</p>
+<ol style="list-style-type: decimal">
+<li>When does the event take place?</li>
+<li>What is the event?</li>
+</ol>
+<p>Below is an example of a event block.</p>
+<pre><code>********* MODEL EVENTS
+
+event1 = eq(time, 1), y, y+40
+event2 = eq(time, 2), y, y+40
+</code></pre>
+<p>The term <code>eq(time, 1)</code> pertains to (1). This says that the event occurs when the time step is strictly equal to 1. The term <code>y, y+40</code> pertains to (2). This is the event that is to take place. In this case the event involves variable <code>y</code> and we want to add 40 units of the drug this variable, <code>y+40</code>. (Note that events cannot take place at time 0.) In summary, the above block defines adding 40 to the value of <code>y</code> at time steps 1 and 2.</p>
+<p>We can issue multiple events. The event defined below specifies resetting the value of <code>x</code> to 1 and <code>y</code> to 0 when <code>x</code> is equal to 0.1.</p>
+<pre><code>********* MODEL EVENTS
+
+event = eq(x, 0.1), x, 1, y, 0
+</code></pre>
+<p>Below is a summary of the options that can be used to declare when an event takes place.</p>
+<ul>
+<li><code>eq(a, 0)</code> implies variable a is strictly equal to 0.</li>
+<li><code>lq(a, 0)</code> implies variable a is less than or equal to 0.</li>
+<li><code>gq(a, 0)</code> implies variable a is greater than or equal to 0.</li>
+<li><code>lt(a, 0)</code> implies variable a is strictly less than 0.</li>
+<li><code>gt(a, 0)</code> implies variable a is strictly greater than 0.</li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="installation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="modeling-functions.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": false,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/AZQCP/AZRsim/edit/master/02-blocks.Rmd",
+"text": "Edit"
+},
+"download": null,
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

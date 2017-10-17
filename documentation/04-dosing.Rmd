@@ -1,5 +1,9 @@
 # Dosing
 
+```{r include=FALSE}
+library(AZRsim)
+```
+
 Dosing can be handled either in the `Model Events` block or by providing a data frame that describes a dosing table that can be called into the `simulate` function as the argument `dosingTable`. Both approaches are discussed below using, as an example, the following model of a simple one compartment model.
 
 $$
@@ -46,7 +50,7 @@ dt <- data.frame("TIME" = seq(1,9, by = 1),
                  "INPUT" = 1,
                  "LAGTIME" = 0,
                  stringsAsFactors = FALSE)
-one_cpt_dt_simulation <- simulate(one_cpt_dt, 10, dosingTable = dt)
+one_cpt_dt_simulation <- simulate(one_cpt_dt, 10, dosing_table = dt)
 plot(one_cpt_dt_simulation, col = "#808080", lwd = 3, pars = "y", plot_names = "blood")
 ```
 
@@ -68,6 +72,6 @@ dt <- data.frame("TIME" = seq(1,9, by = 1),
                  "INPUT" = 1,
                  "LAGTIME" = 0,
                  stringsAsFactors = FALSE)
-one_cpt_out_simulation <- simulate(one_cpt_out, 10, dosingTable = dt, output = c("y", "OUTPUT1"))
+one_cpt_out_simulation <- simulate(one_cpt_out, 10, dosing_table = dt, output = c("y", "OUTPUT1"))
 plot(one_cpt_out_simulation, col = "#808080", lwd = 3, plot_names = c("blood (y)", "blood (y/2)"))
 ```

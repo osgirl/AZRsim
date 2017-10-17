@@ -25,7 +25,7 @@ based .txtbc file. Note that .txtbc files also might contain ODEs, as not all
 models allow for the biochemical reaction notation.
 }
 \examples{
-model <- AZRmodel()
+model <- create_model()
 export_azrmod(model)
 filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
 model <- AZRmodel(filename)

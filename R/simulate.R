@@ -1,13 +1,3 @@
-###############################################################################
-###############################################################################
-# Main simulation interface functions for AZRmodels, dosing schemes, etc.
-# Simulation is done only in CVODES.
-###############################################################################
-###############################################################################
-
-###############################################################################
-# AZRsimulate: Simulate an AZRmodel
-###############################################################################
 #' Simulate an AZRmodel
 #'
 #' Simulation function for \code{azrmod} objects which is able to handle dosing events.
@@ -602,7 +592,7 @@ simulateAZRmodelDosingTable <- function(model_func_ptr,
 #'
 #' @return Vector with evaluated RHS of ODEs
 #' @examples
-#' model <- AZRmodel(system.file("examples/NovakTyson.txt", package="AZRsim"))
+#' model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
 #' x <- AZRxdotcalc(model)
 #' x <- AZRxdotcalc(model,400)
 #' x <- AZRxdotcalc(model,400,parameters=c(k1=0.5))
@@ -842,11 +832,10 @@ calcNNic <- function(model,parameters_sim) {
 #'
 #' @return Dataframe with simulation results
 #' @examples
-#' model <- AZRmodel(system.file("examples/NovakTyson.txt", package="AZRsim"))
-#' x <- AZRsimulate(model,400)
-#' x <- AZRsimulate(model,400,parameters=c(k1=0.5))
+#' model <- create_model(system.file("examples/NovakTyson.txt", package="AZRsim"))
+#' x <- simulate(model,400)
+#' x <- simulate(model,400,parameters=c(k1=0.5))
 #' @export
-
 AZRsimpop <- function (model,
                        # Simulation time vector
                        simtime               = NULL,

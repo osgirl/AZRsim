@@ -127,7 +127,7 @@ create_model <- function (input=NULL,simFlag=TRUE) {
 #'   purposes if TRUE. If FALSE, the originally imported model will be exported.
 #' @return None
 #' @examples
-#' model <- AZRmodel()
+#' model <- create_model()
 #' export_azrmod(model)
 #' filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
 #' model <- AZRmodel(filename)
@@ -188,7 +188,7 @@ azrmod_template <- function () {
 #' @param input azrmod object
 #' @return TRUE or FALSE
 #' @examples
-#'   is_azrmod(AZRmodel())
+#'   is_azrmod(create_model())
 #' @export
 is_azrmod <- function(input) {
   methods::is(input,"azrmod")
@@ -489,7 +489,7 @@ len_event_assign <- function(model,eventindex) {
 # @param notes String with notes about the state
 # @return An AZRmodel object with appended state variable
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
 # model <- add_state(model,'Parasites',IC=1e9,'(GR-KR)*Paasites')
 # @export
@@ -680,7 +680,7 @@ delete_state <- function(model, index) {
 # @param regressor Flag for parameter being a regressor in estimation
 # @return An AZRmodel object with appended parameter
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # add_parameter(model,'ka',2,notes="Hello World")
 # add_parameter(model,'F',value=0.5)
 # @export
@@ -862,7 +862,7 @@ delete_parameter <- function(model, index) {
 # @param notes String with notes about the variable
 # @return An AZRmodel object with appended variable
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # add_variable(model,'abc','a+b',notes="hello")
 # add_variable(model,'F',formula='a+b')
 # @export
@@ -1028,7 +1028,7 @@ delete_variable <- function(model, index) {
 # @param fast Flag for fast reaction (TRUE) otherwise FALSE
 # @return An AZRmodel object with appended reaction
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # add_reaction(model,'R1','hello',notes='hello notes',reversible=TRUE)
 # add_reaction(model,'R2',formula='a+b')
 # @export
@@ -1167,7 +1167,7 @@ delete_reaction <- function(model, index) {
 # @param notes String with notes about the function
 # @return An AZRmodel object with appended function
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # add_function(model,'ADD',arguments="x,y",formula="x+y")
 # add_function(model,'MM',arguments='X,VMAX,KM',formula='VMAX*X/(X+KM)')
 # @export
@@ -1202,7 +1202,7 @@ add_function <- function(model,
 # @param index Index of the function in the model
 # @return A list with the function information
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_function(model,'ADD',arguments="x,y",formula="x+y")
 # get_function(model,1)
 # @export
@@ -1233,7 +1233,7 @@ get_function <- function(model, index) {
 # @param notes String with notes about the function
 # @return An AZRmodel object with updated function
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_function(model,'ADD',arguments="x,y",formula="x+y")
 # set_function(model,1,formula='x*y')
 # @export
@@ -1267,7 +1267,7 @@ set_function <- function(model, index,
 # @param index Index of the function in the model
 # @return An AZRmodel with the indexed function removed
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_function(model,'ADD',arguments="x,y",formula="x+y")
 # del_function(model,1)
 # @export
@@ -1308,7 +1308,7 @@ del_function <- function(model, index) {
 # @param notes String with notes about the algebraic state
 # @return An AZRmodel object with appended algebraic state variable
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_algebraic(model,'X',IC=2,'A+B+X')
 # model <- add_algebraic(model,formula="A+B+X")
 # @export
@@ -1356,7 +1356,7 @@ add_algebraic <- function(model,
 # @param index Index of the algebraic state in the model
 # @return A list with the algebraic state information
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_algebraic(model,'X',IC=2,'A+B+X')
 # get_algebraic(model,1)
 # @export
@@ -1390,7 +1390,7 @@ get_algebraic <- function(model, index) {
 # @param notes String with notes about the algebraic state
 # @return An AZRmodel object with updated algebraic state variable
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_algebraic(model,'X',IC=2,'A+B+X')
 # set_algebraic(model,1,IC=0.14)
 # @export
@@ -1436,7 +1436,7 @@ set_algebraic <- function(model, index,
 # @param index Index of the algebraic state in the model
 # @return An AZRmodel with the indexed algebraic state removed
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_algebraic(model,'X',IC=2,'A+B+X')
 # del_algebraic(model,1)
 # @export
@@ -1476,7 +1476,7 @@ del_algebraic <- function(model, index) {
 # @param notes String with notes about the event
 # @return An AZRmodel object with appended event
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # add_event(model,'event1',trigger="lt(X,2)")
 # add_event(model,'event2',trigger="gt(time,10)")
 # @export
@@ -1507,7 +1507,7 @@ add_event <- function(model,
 # @param index Index of the event in the model
 # @return A list with the event information
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_event(model,'event1',trigger="lt(X,2)")
 # get_event(model,1)
 # @export
@@ -1537,7 +1537,7 @@ get_event <- function(model, index) {
 # @param notes String with notes about the event
 # @return An AZRmodel object with updated event variable
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_event(model,'event1',trigger="lt(X,2)")
 # set_event(model,1,name='myEvent')
 # @export
@@ -1569,7 +1569,7 @@ set_event <- function(model, index,
 # @param index Index of the event in the model
 # @return An AZRmodel with the indexed event removed
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_event(model,'event1',trigger="lt(X,2)")
 # delete_event(model,1)
 # @export
@@ -1609,7 +1609,7 @@ delete_event <- function(model, index) {
 # @param formula String with event assignment formula
 # @return An AZRmodel object with appended event assignment to the specified event
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_event(model,'event1',trigger="lt(X,2)")
 # model <- add_event_assign(model,eventindex=1,'A','A+5')
 # @export
@@ -1644,7 +1644,7 @@ add_event_assign <- function(model,
 # @param index Index of the event assignment to return
 # @return A list with the event information
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_event(model,'event1',trigger="lt(X,2)")
 # model <- add_event_assign(model,eventindex=1,'A','A+5')
 # get_event_assign(model,1,1)
@@ -1681,7 +1681,7 @@ get_event_assign <- function(model, eventindex, index) {
 # @param formula String with event assignment formula
 # @return An AZRmodel object with updated event assignment
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_event(model,'event1',trigger="lt(X,2)")
 # model <- add_event_assign(model,eventindex=1,'A','A+5')
 # set_event_assign(model,1,1,variable='b')
@@ -1719,7 +1719,7 @@ set_event_assign <- function(model, eventindex, index,
 # @param index Numerical index of the event assignment to delete
 # @return An AZRmodel with the indexed event assignment removed
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_event(model,'event1',trigger="lt(X,2)")
 # model <- add_event_assign(model,eventindex=1,'A','A+5')
 # del_event_assign(model,1,1)
@@ -1775,7 +1775,7 @@ del_event_assign <- function(model, eventindex, index) {
 # @param stateindex Scalar or vector with index/indices of states on which to add the input
 # @return An AZRmodel object with appended input
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
 # model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
 # model <- add_input(model,stateindex=2)
@@ -1827,7 +1827,7 @@ add_input <- function(model,
 # @param index Index of the input in the model
 # @return A list with the input information
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
 # model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
 # model <- add_input(model,stateindex=2)
@@ -1853,7 +1853,7 @@ get_input <- function(model, index) {
 # @param index Numerical index of the input to delete
 # @return An AZRmodel with the indexed input removed (parameter will be removed as well)
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_state(model,'Cyclin',IC=0.3,'Re1-Re2')
 # model <- add_state(model,'Cyclin2',IC=0.3,'Re2-Re3')
 # model <- add_input(model,stateindex=2)
@@ -1906,7 +1906,7 @@ delete_input <- function(model, index) {
 # @param notes String with notes for the output variable
 # @return An AZRmodel object with appended input
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # add_output(model,formula='Ac/Vc')
 # @export
 add_output <- function(model,
@@ -1938,7 +1938,7 @@ add_output <- function(model,
 # @param index Index of the output in the model
 # @return A list with the output information
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_output(model,formula='Ac/Vc')
 # get_output(model,1)
 # @export
@@ -1962,7 +1962,7 @@ get_output <- function(model, index) {
 # @param index Numerical index of the output to delete
 # @return An AZRmodel with the indexed output removed (variable will be removed as well)
 # @examples
-# model <- AZRmodel()
+# model <- create_model()
 # model <- add_output(model,formula='Ac/Vc')
 # delete_output(model,1)
 # @export

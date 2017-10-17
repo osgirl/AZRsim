@@ -2,8 +2,8 @@
 
 *The following does not apply to those who do not have access to the package while it is being maintained on GitHub as a private repository.*
 
-The **AZRsim** package can be installed from the [AZRQCP](https://github.com/AZQCP/AZRsim) repository as follows:
+The **AZRsim** package can be installed from the [AstraZeneca/AZRsim](https://github.com/AstraZeneca/AZRsim) repository as follows:
 
 ```{r, include=TRUE, eval=FALSE}
-devtools::install_github("AZRQCP/AZRsim")
+devtools::install_github("AstraZeneca/AZRsim")
 ```

@@ -5,7 +5,6 @@
 ###############################################################################
 
 check_dosing_table <- function(dosing_table) {
-  #sourceCpp("C:/Users/kgvg850/OneDrive - AZCollaboration/AZRsim/R/filter_check_dosing_table.cpp")
   # Handle undefined dosing_table
   if (is.null(dosing_table)) return(NULL)
 
@@ -60,7 +59,6 @@ check_dosing_table <- function(dosing_table) {
   # with one input and daily dosing with the other.
   # (time+duration+lagtime < next dosing time)
   inputs <- unique(dosing_table$INPUT)
-  #sourceCpp("filter_check_dosing_table.cpp")
   cpp_dose_fun <- filter_check_dosing_table(dosing_table, inputs)
   if(cpp_dose_fun)
     stop("check_dosing_table: dose administration of a dose happens after start of next dosing event")
