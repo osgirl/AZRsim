@@ -50,7 +50,7 @@
 # \item{reacreversible}{Vector with reversible flags for the reactions in reacnames}
 # @examples
 # filename <- system.file(package="AZRsim","examples","NovakTyson.txt")
-# model <- AZRmodel(filename)
+# model <- create_model(filename)
 # stoichiometryAZRmodel(model)
 # @export
 
