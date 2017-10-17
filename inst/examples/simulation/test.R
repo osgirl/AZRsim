@@ -1,7 +1,6 @@
 library(AZRsim)
 library(microbenchmark)
-library(inline)
-library(Rcpp)
+
 
 rm(list = ls())
 
@@ -13,8 +12,6 @@ model       <- create_model("modelPKtest.txt")
 simtime     <- seq(0,200,1)
 
 dosingTable <- data.frame(TIME=0,DOSE=400,DURATION=2,INPUT=1)
-#sourceCpp("filter_check_dosing_table.cpp")
-#sourceCpp("result_binding.cpp")
 results     <- simulate(model,simtime=simtime,dosing_table = dosingTable)
 
 plot(results$TIME,results$Cc,type="l")
@@ -41,8 +38,6 @@ dosing_INPUT2 <- data.frame(
   LAGTIME  = 0)
 
 dosingTable <- rbind(dosing_INPUT1,dosing_INPUT2)
-#sourceCpp("filter_check_dosing_table.cpp")
-#sourceCpp("result_binding.cpp")
 results     <- simulate(model,simtime=simtime,dosing_table=dosingTable)
 plot(results$TIME,results$Cc,type="l")
 
@@ -83,8 +78,6 @@ Nsubjects     <- 50
 center        <- c(ka=0.3, CL=0.4, Vc=12)
 centerTrans   <- log(center)
 indivParam    <- exp(t(replicate(n=Nsubjects,centerTrans + rnorm(mean=0,sd=0.5,n=length(centerTrans)))))
-#sourceCpp("filter_check_dosing_table.cpp")
-#sourceCpp("result_binding.cpp")
 results <- AZRsimpop(model,ncores=1,simtime=seq(0,200),parameterTable=indivParam,dosing_table=dosingTable)
 
 microbenchmark(
