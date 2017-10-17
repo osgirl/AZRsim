@@ -3,7 +3,6 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-// Function to replace rbind function of R
 NumericMatrix result_binding(NumericMatrix simres_all, NumericMatrix simres_piece)
 {
   int result_nrow = simres_all.nrow()+simres_piece.nrow();
